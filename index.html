@@ -195,15 +195,61 @@ function fillSelect(id,key){const el=$(id),old=el.value;el.innerHTML='<option va
 function buildFilters(){fillSelect("fBranch","branch");fillSelect("fSection","section");fillSelect("fCourse","name");fillSelect("fType","type");fillSelect("fTrainer","trainer");fillSelect("fPeriod","period");const starts=[...new Set(DATA.courses.map(c=>c.start).filter(Boolean))].sort((a,b)=>b.localeCompare(a)),latest=starts.slice(0,5);$("fStart").innerHTML='<option value="">الكل</option>'+starts.map(d=>`<option value="${esc(d)}">${latest.includes(d)?"★ "+d+" · حديث":d}</option>`).join("");$("latestDates").innerHTML='<span>أحدث 5 تواريخ بدء</span>'+latest.map(d=>`<button data-date="${esc(d)}" onclick="quickDate('${esc(d)}')">★ ${esc(d)} <i>حديث</i></button>`).join("")}
 function quickDate(date){$("fStart").value=$("fStart").value===date?"":date;applyFilters()}
 function resetFilters(){["fBranch","fSection","fCourse","fStart","fType","fTrainer","fPeriod"].forEach(id=>$(id).value="");applyFilters()}
-function applyFilters(){FILTERED=DATA.courses.filter(c=>(!$("fBranch").value||c.branch===$("fBranch").value)&&(!$("fSection").value||c.section===$("fSection").value)&&(!$("fCourse").value||c.name===$("fCourse").value)&&(!$("fStart").value||c.start===$("fStart").value)&&(!$("fType").value||c.type===$("fType").value)&&(!$("fTrainer").value||c.trainer===$("fTrainer").value)&&(!$("fPeriod").value||c.period===$("fPeriod").value));document.querySelectorAll("#latestDates button").forEach(b=>b.classList.toggle("selected",b.dataset.date===$("fStart").value));render()}
+function applyFilters(){
+
+  const hasAnyFilter =
+    $("fBranch").value ||
+    $("fSection").value ||
+    $("fCourse").value ||
+    $("fStart").value ||
+    $("fType").value ||
+    $("fTrainer").value ||
+    $("fPeriod").value;
+
+  if(!hasAnyFilter){
+
+    FILTERED = [];
+
+    document
+      .querySelectorAll("#latestDates button")
+      .forEach(b=>b.classList.remove("selected"));
+
+    render();
+    return;
+  }
+
+  FILTERED =
+    DATA.courses.filter(c=>
+      (!$("fBranch").value || c.branch === $("fBranch").value) &&
+      (!$("fSection").value || c.section === $("fSection").value) &&
+      (!$("fCourse").value || c.name === $("fCourse").value) &&
+      (!$("fStart").value || c.start === $("fStart").value) &&
+      (!$("fType").value || c.type === $("fType").value) &&
+      (!$("fTrainer").value || c.trainer === $("fTrainer").value) &&
+      (!$("fPeriod").value || c.period === $("fPeriod").value)
+    );
+
+  document
+    .querySelectorAll("#latestDates button")
+    .forEach(
+      b=>
+        b.classList.toggle(
+          "selected",
+          b.dataset.date === $("fStart").value
+        )
+    );
+
+  render();
+}
+
 function visibleIds(){return new Set(FILTERED.map(c=>c.id))}
 function visibleTasks(){const ids=visibleIds();return DATA.tasks.filter(t=>ids.has(t.courseId))}
 function visibleAlerts(){const ids=visibleIds();return DATA.alerts.filter(a=>ids.has(a.courseId))}
 function renderStats(){const students=FILTERED.reduce((s,c)=>s+c.students,0),alerts=visibleAlerts().length,completion=FILTERED.length?Math.round(FILTERED.reduce((s,c)=>s+c.completion,0)/FILTERED.length):0;$("statCourses").textContent=FILTERED.length;$("statStudents").textContent=students;$("statAlerts").textContent=alerts;$("statCompletion").textContent=completion+"%";$("navAlerts").textContent=alerts}
-function courseRows(){return FILTERED.map(c=>`<tr><td><div class="course-cell"><span class="level-icon">${esc(c.name.match(/\d+/)?.[0]||"F")}</span><div><b>${esc(c.name)}</b><small>${esc(c.branch)} · ${esc(c.section)} · ${esc(c.start)}</small></div></div></td><td><b>${esc(c.trainer)}</b><small class="td-sub">${esc(c.period)}</small></td><td><div class="progress-label"><b>${c.completion}%</b>${progress(c.completion,c.completion<65?"red":"")}</div></td><td><span class="badge ${c.attendance<90?"bad":"good"}">${c.attendance}%</span></td><td><button class="link-metric" onclick="openTask('comments_${esc(c.id)}')"><b>${c.comments}%</b>${progress(c.comments,c.comments===100?"green":"amber")}</button></td><td>${c.alerts?`<span class="badge bad">! ${c.alerts}</span>`:'<span class="badge good">✓ مكتمل</span>'}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">لا توجد دورات مطابقة</td></tr>'}
+function courseRows(){return FILTERED.map(c=>`<tr><td><div class="course-cell"><span class="level-icon">${esc(c.name.match(/\d+/)?.[0]||"F")}</span><div><b>${esc(c.name)}</b><small>${esc(c.branch)} · ${esc(c.section)} · ${esc(c.start)}</small></div></div></td><td><b>${esc(c.trainer)}</b><small class="td-sub">${esc(c.period)}</small></td><td><div class="progress-label"><b>${c.completion}%</b>${progress(c.completion,c.completion<65?"red":"")}</div></td><td><span class="badge ${c.attendance<90?"bad":"good"}">${c.attendance}%</span></td><td><button class="link-metric" onclick="openTask('comments_${esc(c.id)}')"><b>${c.comments}%</b>${progress(c.comments,c.comments===100?"green":"amber")}</button></td><td>${c.alerts?`<span class="badge bad">! ${c.alerts}</span>`:'<span class="badge good">✓ مكتمل</span>'}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">اختر فلترًا واحدًا على الأقل لعرض الدورات</td></tr>'}
 function coursesTable(){return`<div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب والفترة</th><th>إنجاز الطلاب</th><th>الحضور</th><th>التعليقات</th><th>التنبيهات</th></tr></thead><tbody>${courseRows()}</tbody></table></div>`}
-function taskCards(items=visibleTasks()){return`<div class="tasks">${items.map(t=>{const c=DATA.courses.find(x=>x.id===t.courseId),p=pct(t.completed,t.total);return`<button class="task" onclick="openTask('${esc(t.id)}')"><div class="task-top"><span class="kind ${kindClass(t.kind)}">${esc(t.kind)}</span><span class="task-status ${t.status}">${esc(t.due||"متابعة")}</span></div><h3>${esc(t.title)}</h3><p>${esc(c?.name||"")} · ${esc(c?.branch||"")} · ${esc(c?.period||"")}</p><div class="task-num"><b>${t.completed} من ${t.total}</b><span>${p}%</span></div>${progress(p,t.status==="danger"?"red":t.status==="warning"?"amber":"green")}<div class="task-foot"><span>${t.total-t.completed?`${t.total-t.completed} لم يكملوا`:"اكتمل الجميع"}</span><b>‹</b></div></button>`}).join("")||'<div class="empty">لا توجد عناصر مرتبطة بالدورات المحددة</div>'}</div>`}
-function alertsBox(){const alerts=visibleAlerts();return`<div class="alerts-list">${alerts.slice(0,7).map(a=>`<button class="alert-item ${a.status}"><i>${a.status==="danger"?"!":"⌛"}</i><span><b>${esc(a.title)}</b><small>${esc(a.text)}</small></span><time>${esc(a.time)}</time></button>`).join("")||'<div class="empty">لا توجد تنبيهات</div>'}</div>`}
+function taskCards(items=visibleTasks()){return`<div class="tasks">${items.map(t=>{const c=DATA.courses.find(x=>x.id===t.courseId),p=pct(t.completed,t.total);return`<button class="task" onclick="openTask('${esc(t.id)}')"><div class="task-top"><span class="kind ${kindClass(t.kind)}">${esc(t.kind)}</span><span class="task-status ${t.status}">${esc(t.due||"متابعة")}</span></div><h3>${esc(t.title)}</h3><p>${esc(c?.name||"")} · ${esc(c?.branch||"")} · ${esc(c?.period||"")}</p><div class="task-num"><b>${t.completed} من ${t.total}</b><span>${p}%</span></div>${progress(p,t.status==="danger"?"red":t.status==="warning"?"amber":"green")}<div class="task-foot"><span>${t.total-t.completed?`${t.total-t.completed} لم يكملوا`:"اكتمل الجميع"}</span><b>‹</b></div></button>`}).join("")||'<div class="empty">اختر فلترًا واحدًا على الأقل لعرض العناصر</div>'}</div>`}
+function alertsBox(){const alerts=visibleAlerts();return`<div class="alerts-list">${alerts.slice(0,7).map(a=>`<button class="alert-item ${a.status}"><i>${a.status==="danger"?"!":"⌛"}</i><span><b>${esc(a.title)}</b><small>${esc(a.text)}</small></span><time>${esc(a.time)}</time></button>`).join("")||'<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'}</div>`}
 function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
   if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة</h2><p>انقر على أي عنصر لعرض المكتملين وغير المكتملين</p></div></div>${taskCards()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
@@ -231,7 +277,7 @@ function preparePrintReport(){
   $("printFilters").innerHTML=selectedFilterText();
   $("printStats").innerHTML=`<article class="print-stat"><span>الدورات</span><b>${FILTERED.length}</b></article><article class="print-stat"><span>الطلاب</span><b>${students}</b></article><article class="print-stat"><span>التنبيهات</span><b>${alerts.length}</b></article><article class="print-stat"><span>متوسط الإنجاز</span><b>${completion}%</b></article>`;
   const courseTable=`<div class="print-section"><h2>أولًا: ملخص الدورات</h2><table class="print-table"><thead><tr><th>الفرع</th><th>القسم</th><th>الدورة</th><th>تاريخ البدء</th><th>نوع الدورة</th><th>المدرب</th><th>الفترة</th><th>الطلاب</th><th>الإنجاز</th><th>الحضور</th><th>التعليقات</th><th>التنبيهات</th></tr></thead><tbody>${FILTERED.map(c=>`<tr class="${c.alerts?"danger-row":""}"><td>${esc(c.branch)}</td><td>${esc(c.section)}</td><td>${esc(c.name)}</td><td>${esc(c.start)}</td><td>${esc(c.type)}</td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td>${c.students}</td><td>${c.completion}%</td><td>${c.attendance}%</td><td>${c.comments}%</td><td><span class="print-badge ${c.alerts?"bad":"good"}">${c.alerts||"مكتمل"}</span></td></tr>`).join("")}</tbody></table></div>`;
-  const alertsTable=`<div class="print-section"><h2>ثانيًا: التنبيهات والمتابعة</h2><table class="print-table"><thead><tr><th style="width:13%">الأولوية</th><th style="width:22%">التنبيه</th><th>التفاصيل</th><th style="width:16%">التاريخ / الحالة</th></tr></thead><tbody>${alerts.map(a=>`<tr class="danger-row"><td><span class="print-badge bad">${a.status==="danger"?"عاجل":"متابعة"}</span></td><td>${esc(a.title)}</td><td>${esc(a.text)}</td><td>${esc(a.time)}</td></tr>`).join("")||'<tr><td colspan="4">لا توجد تنبيهات</td></tr>'}</tbody></table></div>`;
+  const alertsTable=`<div class="print-section"><h2>ثانيًا: التنبيهات والمتابعة</h2><table class="print-table"><thead><tr><th style="width:13%">الأولوية</th><th style="width:22%">التنبيه</th><th>التفاصيل</th><th style="width:16%">التاريخ / الحالة</th></tr></thead><tbody>${alerts.map(a=>`<tr class="danger-row"><td><span class="print-badge bad">${a.status==="danger"?"عاجل":"متابعة"}</span></td><td>${esc(a.title)}</td><td>${esc(a.text)}</td><td>${esc(a.time)}</td></tr>`).join("")||'<tr><td colspan="4">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</td></tr>'}</tbody></table></div>`;
   const taskTable=`<div class="print-section"><h2>ثالثًا: إنجاز الواجبات والكويزات والأنشطة والتعليقات</h2><table class="print-table"><thead><tr><th>النوع</th><th style="width:25%">العنوان</th><th>الدورة</th><th>المدرب</th><th>أكملوا</th><th>لم يكملوا</th><th>نسبة الإنجاز</th><th>الحالة</th></tr></thead><tbody>${tasks.map(t=>{const c=DATA.courses.find(x=>x.id===t.courseId),p=pct(t.completed,t.total);return`<tr class="${t.status==="danger"?"danger-row":""}"><td>${esc(t.kind)}</td><td>${esc(t.title)}</td><td>${esc(c?.name||"")}</td><td>${esc(c?.trainer||"")}</td><td>${t.completed}</td><td>${t.total-t.completed}</td><td>${p}%</td><td><span class="print-badge ${p===100?"good":"bad"}">${p===100?"مكتمل":"يحتاج متابعة"}</span></td></tr>`}).join("")||'<tr><td colspan="8">لا توجد عناصر</td></tr>'}</tbody></table></div>`;
   $("printTables").innerHTML=courseTable+alertsTable+taskTable;
 }
