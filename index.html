@@ -4178,7 +4178,7 @@ function getSessionRoleCounts(){
 
 function setSessionRoleFilter(role){
   SESSION_ROLE_FILTER=
-    ["all","employee","trainer","manager","student"].includes(role)
+    ["all","employee","trainer","student"].includes(role)
       ? role
       : "all";
 
@@ -4635,14 +4635,6 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
             >
               المدربون
               <span class="session-filter-count">${counts.trainer}</span>
-            </button>
-
-            <button
-              class="session-filter-btn ${SESSION_ROLE_FILTER==="manager"?"active":""}"
-              onclick="setSessionRoleFilter('manager')"
-            >
-              المديرون
-              <span class="session-filter-count">${counts.manager}</span>
             </button>
 
             <button
