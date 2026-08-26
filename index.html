@@ -4178,7 +4178,7 @@ function getSessionRoleCounts(){
 
 function setSessionRoleFilter(role){
   SESSION_ROLE_FILTER=
-    ["all","employee","student"].includes(role)
+    ["all","employee","manager","student"].includes(role)
       ? role
       : "all";
 
