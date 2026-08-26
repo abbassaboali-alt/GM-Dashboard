@@ -989,6 +989,138 @@
   .pdf-multi-menu{width:min(320px,88vw)}
 }
 
+
+/* ===== Extra-large readable interface ===== */
+@media screen{
+  html,body{font-size:15px}
+
+  .sidebar{width:270px}
+  .workspace{margin-right:270px}
+  .brand strong{font-size:25px}
+  .brand small{font-size:12px}
+  .side-label{font-size:14px}
+  .side-nav button{height:54px}
+  .side-nav b{font-size:15px}
+  .side-nav i{font-size:20px}
+
+  .topbar{height:88px}
+  .page-title h1{font-size:26px!important}
+  .page-title p{font-size:14px!important}
+  .top-actions button{font-size:13px}
+  .user-chip b{font-size:13px}
+  .user-chip small{font-size:11px}
+
+  .filter-head h2,.panel-head h2{font-size:20px!important}
+  .filter-head p,.panel-head p{font-size:13px!important}
+  .field label{font-size:13px!important}
+  .field select{font-size:14px!important;height:45px}
+  .reset-btn{font-size:12px}
+  .latest>span,.latest button{font-size:12px!important}
+
+  .stat span{font-size:13px!important}
+  .stat strong{font-size:30px}
+  .stat small{font-size:11px!important}
+
+  .data-table th{font-size:12.5px!important;padding:12px}
+  .data-table td{font-size:13.5px!important;padding:12px}
+  .course-cell b{font-size:14px!important}
+  .course-cell small,.td-sub{font-size:11px!important}
+  .progress-label>b,.link-metric b{font-size:11px}
+
+  .alert-item{padding:11px}
+  .alert-item b{font-size:13px!important}
+  .alert-item small{font-size:11px!important}
+  .alert-item time{font-size:10px!important}
+  .alert-course-chip{font-size:10px}
+
+  .task{padding:14px}
+  .task h3{font-size:14px!important}
+  .task p{font-size:11.5px!important}
+  .task-num{font-size:12px}
+  .kind,.task-status,.task-foot,.task-actions{font-size:11px!important}
+  .task-delete{font-size:10px}
+
+  .modal-head h2{font-size:20px}
+  .modal-head p{font-size:12px}
+  .modal-stats span{font-size:11px}
+  .modal-tabs button{font-size:12px}
+  .student-row b{font-size:13px}
+  .student-row small{font-size:10.5px}
+  .student-state{font-size:10px}
+  .student-score-box{min-width:130px}
+  .student-score-box b{font-size:13px}
+  .student-score-box small{font-size:10px}
+
+  .trainer-progress-head h3{font-size:18px!important}
+  .trainer-progress-head p{font-size:12px!important}
+  .trainer-progress-kpis span{font-size:11px!important}
+  .trainer-progress-table th{font-size:12px!important}
+  .trainer-progress-table td{font-size:12.5px!important}
+  .tp-badge,.tp-days-left{font-size:11px!important}
+  .tp-note{font-size:10.5px!important}
+}
+@media screen and (max-width:850px){
+  .workspace{margin-right:0}
+  .page-title h1{font-size:20px!important}
+  .data-table th{font-size:11px!important}
+  .data-table td{font-size:12px!important}
+}
+
+
+/* ===== Professional score details in PDF ===== */
+@media print{
+  .pdf-score-section{
+    margin:7px 0 10px;
+    border:1px solid #d7e2ea;
+    border-radius:8px;
+    overflow:hidden;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+  .pdf-score-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:6px 8px;
+    background:#f2f7fa;
+    border-bottom:1px solid #d7e2ea;
+    color:#164478;
+    font-size:6px;
+    font-weight:900;
+  }
+  .pdf-score-title small{
+    color:#71839a;
+    font-size:5.4px;
+    font-weight:700;
+  }
+  .pdf-score-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+  .pdf-score-table th{
+    padding:4px;
+    background:#164478;
+    color:#fff;
+    border:1px solid #2c5f89;
+    font-size:5.4px;
+    text-align:center;
+  }
+  .pdf-score-table td{
+    padding:4px;
+    border:1px solid #dfe7ed;
+    font-size:5.4px;
+    text-align:center;
+    vertical-align:middle;
+    word-break:break-word;
+  }
+  .pdf-score-table tbody tr:nth-child(even){background:#f8fbfd}
+  .pdf-score-good{color:#0f7b58;font-weight:900}
+  .pdf-score-mid{color:#a86a08;font-weight:900}
+  .pdf-score-low{color:#b83d47;font-weight:900}
+}
+
 </style>
 </head>
 <body>
@@ -1232,6 +1364,21 @@ async function loadAll(){
 }
 
 
+function numericValue(value){
+  if(
+    value===undefined ||
+    value===null ||
+    String(value).trim()===""
+  ){
+    return NaN;
+  }
+
+  const n=Number(value);
+  return Number.isFinite(n)
+    ? n
+    : NaN;
+}
+
 function getResultScoreInfo(result,totalFallback=0){
   if(!result){
     return null;
@@ -1240,9 +1387,15 @@ function getResultScoreInfo(result,totalFallback=0){
   const rawScore=first(
     result,
     [
-      "score","Score","points","Points","correct",
-      "correctCount","correctAnswers","rightAnswers",
-      "earnedScore","studentScore"
+      "score","Score",
+      "points","Points",
+      "earnedPoints","pointsEarned",
+      "earned","mark","marks","grade",
+      "correct","correctCount",
+      "correctAnswers","correctAnswersCount",
+      "rightAnswers","earnedScore",
+      "studentScore","finalScore",
+      "rawScore"
     ],
     ""
   );
@@ -1250,8 +1403,12 @@ function getResultScoreInfo(result,totalFallback=0){
   const rawTotal=first(
     result,
     [
-      "total","Total","totalQuestions","questionCount",
-      "maxScore","maximumScore","totalScore"
+      "total","Total",
+      "totalPoints","maxPoints",
+      "totalQuestions","questionsCount",
+      "questionCount","maxScore",
+      "maximumScore","totalScore",
+      "possibleScore","fullMark"
     ],
     totalFallback
   );
@@ -1259,37 +1416,48 @@ function getResultScoreInfo(result,totalFallback=0){
   const rawPercent=first(
     result,
     [
-      "percentage","percent","Percentage","Percent",
-      "scorePercent","scorePercentage"
+      "percentage","percent",
+      "Percentage","Percent",
+      "scorePercent","scorePercentage",
+      "percentageScore","percentScore",
+      "resultPercentage"
     ],
     ""
   );
 
-  const scoreNum=Number(rawScore);
-  const totalNum=Number(rawTotal);
-  let percentNum=Number(rawPercent);
+  const scoreNum=numericValue(rawScore);
+  const totalNum=numericValue(rawTotal);
+  let percentNum=numericValue(rawPercent);
 
-  if(!Number.isFinite(percentNum)){
-    percentNum =
-      Number.isFinite(scoreNum) &&
-      Number.isFinite(totalNum) &&
-      totalNum>0
-        ? Math.round((scoreNum/totalNum)*100)
-        : NaN;
+  if(
+    !Number.isFinite(percentNum) &&
+    Number.isFinite(scoreNum) &&
+    Number.isFinite(totalNum) &&
+    totalNum>0
+  ){
+    percentNum=
+      (scoreNum/totalNum)*100;
   }
 
   return {
     score:
       Number.isFinite(scoreNum)
-        ? scoreNum
+        ? Math.round(scoreNum*100)/100
         : "",
     total:
-      Number.isFinite(totalNum) && totalNum>0
-        ? totalNum
+      Number.isFinite(totalNum) &&
+      totalNum>0
+        ? Math.round(totalNum*100)/100
         : "",
     percentage:
       Number.isFinite(percentNum)
-        ? Math.max(0,Math.min(100,Math.round(percentNum)))
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              Math.round(percentNum)
+            )
+          )
         : ""
   };
 }
@@ -2581,8 +2749,8 @@ function renderStudentList(type){
 
           scoreHtml=`
             <div class="student-score-box">
-              <b>${esc(scoreText)}</b>
-              <small>النسبة ${esc(percentText)}</small>
+              <b>الدرجة ${esc(scoreText)}</b>
+              <small>النسبة المئوية ${esc(percentText)}</small>
             </div>
           `;
         }else{
@@ -2645,7 +2813,7 @@ function buildPdfCourseOptions(){
         onchange="setPdfAllCourses(this.checked)"
       >
       <span>
-        كل الدورات المعروضة (${FILTERED.length})
+        كل الدورات حسب الفلترة الحالية (${FILTERED.length})
       </span>
     </label>
 
@@ -2731,7 +2899,7 @@ function updatePdfMultiLabel(){
 
   if(PDF_ALL_SELECTED){
     label.textContent=
-      `PDF: كل الدورات (${FILTERED.length})`;
+      `PDF حسب الفلترة (${FILTERED.length})`;
     return;
   }
 
@@ -2957,6 +3125,107 @@ function pdfTaskCard(task){
       </div>
 
     </article>
+  `;
+}
+
+
+function taskScoreRowsForPdf(task){
+  if(
+    !task ||
+    ![
+      "نشاط",
+      "كويز",
+      "واجب"
+    ].includes(task.kind)
+  ){
+    return "";
+  }
+
+  const students=
+    (task.completedIds||[])
+      .map(id=>
+        DATA.students.find(
+          s=>s.id===id
+        )
+      )
+      .filter(Boolean);
+
+  if(!students.length){
+    return "";
+  }
+
+  const rows=
+    students.map((student,index)=>{
+      const info=
+        task.studentResults?.[student.id];
+
+      const scoreText=
+        info && info.score!==""
+          ? `${info.score}${
+              info.total!==""
+                ? ` / ${info.total}`
+                : ""
+            }`
+          : "—";
+
+      const percent=
+        info && info.percentage!==""
+          ? Number(info.percentage)
+          : null;
+
+      const percentText=
+        percent!==null
+          ? `${percent}%`
+          : "—";
+
+      const tone=
+        percent===null
+          ? ""
+          : percent>=80
+            ? "pdf-score-good"
+            : percent>=60
+              ? "pdf-score-mid"
+              : "pdf-score-low";
+
+      return `
+        <tr>
+          <td>${index+1}</td>
+          <td>${esc(student.name)}</td>
+          <td>${esc(student.iqama||student.id)}</td>
+          <td>${esc(scoreText)}</td>
+          <td class="${tone}">${esc(percentText)}</td>
+        </tr>
+      `;
+    }).join("");
+
+  return `
+    <div class="pdf-score-section">
+      <div class="pdf-score-title">
+        <span>
+          نتائج الطلاب — ${esc(task.title)}
+        </span>
+        <small>
+          ${esc(task.kind)}
+          ·
+          ${students.length} طالب
+        </small>
+      </div>
+
+      <table class="pdf-score-table">
+        <thead>
+          <tr>
+            <th style="width:6%">#</th>
+            <th style="width:34%">الطالب</th>
+            <th style="width:24%">الهوية</th>
+            <th style="width:18%">الدرجة</th>
+            <th style="width:18%">النسبة</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -3345,6 +3614,16 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                   لا توجد عناصر مطابقة للعرض الحالي في هذه الدورة.
                 </div>
               `
+          }
+
+          ${
+            sorted
+              .filter(t=>
+                ["نشاط","كويز","واجب"]
+                  .includes(t.kind)
+              )
+              .map(taskScoreRowsForPdf)
+              .join("")
           }
 
         </section>
