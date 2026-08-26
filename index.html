@@ -1740,7 +1740,14 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     if(midtermMissing)alerts.push({id:`mid_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Midterm غير مكتملة",text:`${midtermMissing} من ${courseStudents.length} طالبًا دون درجة`,time:midtermDue});
     if(finalMissing)alerts.push({id:`fin_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Final غير مكتملة",text:`${finalMissing} من ${courseStudents.length} طالبًا دون درجة`,time:finalDue});
     if(commentDone.length<courseStudents.length)alerts.push({id:`com_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"warning",title:"تعليقات الطلاب ناقصة",text:`${courseStudents.length-commentDone.length} طلاب دون تعليق`,time:"هذا الأسبوع"});
-    return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:courseTasks.length?Math.round(courseTasks.reduce((sum,t)=>sum+pct(t.completed,t.total),0)/courseTasks.length):0,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+    return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:courseTasks.length
+      ? Math.round(
+          courseTasks.reduce(
+            (sum,t)=>sum+pct(t.completed,t.total),
+            0
+          )/courseTasks.length
+        )
+      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
@@ -1803,8 +1810,137 @@ function applyFilters(){
 function visibleIds(){return new Set(FILTERED.map(c=>c.id))}
 function visibleTasks(){const ids=visibleIds();return DATA.tasks.filter(t=>ids.has(t.courseId))}
 function visibleAlerts(){const ids=visibleIds();return DATA.alerts.filter(a=>ids.has(a.courseId))}
-function renderStats(){const students=FILTERED.reduce((s,c)=>s+c.students,0),alerts=visibleAlerts().length,completion=FILTERED.length?Math.round(FILTERED.reduce((s,c)=>s+c.completion,0)/FILTERED.length):0;$("statCourses").textContent=FILTERED.length;$("statStudents").textContent=students;$("statAlerts").textContent=alerts;$("statCompletion").textContent=completion+"%";$("navAlerts").textContent=alerts}
-function courseRows(){return FILTERED.map(c=>`<tr><td><div class="course-cell"><span class="level-icon">${esc(c.name.match(/\d+/)?.[0]||"F")}</span><div><b>${esc(c.name)}</b><small>${esc(c.branch)} · ${esc(c.section)} · ${esc(c.start)}</small></div></div></td><td><b>${esc(c.trainer)}</b><small class="td-sub">${esc(c.period)}</small></td><td><div class="progress-label"><b>${c.completion}%</b>${progress(c.completion,c.completion<65?"red":"")}</div></td><td><span class="badge ${c.attendance<90?"bad":"good"}">${c.attendance}%</span></td><td><button class="link-metric" onclick="openTask('comments_${esc(c.id)}')"><b>${c.comments}%</b>${progress(c.comments,c.comments===100?"green":"amber")}</button></td><td>${c.alerts?`<span class="badge bad">! ${c.alerts}</span>`:'<span class="badge good">✓ مكتمل</span>'}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">اختر فلترًا واحدًا على الأقل لعرض الدورات</td></tr>'}
+function renderStats(){
+  const students=
+    FILTERED.reduce(
+      (s,c)=>s+c.students,
+      0
+    );
+
+  const alerts=
+    visibleAlerts().length;
+
+  const measurableCourses=
+    FILTERED.filter(
+      c=>Number.isFinite(c.completion)
+    );
+
+  const completion=
+    measurableCourses.length
+      ? Math.round(
+          measurableCourses.reduce(
+            (s,c)=>s+c.completion,
+            0
+          )/measurableCourses.length
+        )
+      : null;
+
+  $("statCourses").textContent=
+    FILTERED.length;
+
+  $("statStudents").textContent=
+    students;
+
+  $("statAlerts").textContent=
+    alerts;
+
+  $("statCompletion").textContent=
+    completion===null
+      ? "—"
+      : completion+"%";
+
+  $("navAlerts").textContent=
+    alerts;
+}
+function courseRows(){
+  return FILTERED.map(c=>{
+
+    const completionHtml=
+      Number.isFinite(c.completion)
+        ? `
+          <div class="progress-label">
+            <b>${c.completion}%</b>
+            ${progress(
+              c.completion,
+              c.completion<65
+                ? "red"
+                : ""
+            )}
+          </div>
+        `
+        : `
+          <div class="progress-label">
+            <b style="color:#8b99a8">—</b>
+            <small class="td-sub">
+              لا توجد مهام
+            </small>
+          </div>
+        `;
+
+    return `
+      <tr>
+        <td>
+          <div class="course-cell">
+            <span class="level-icon">
+              ${esc(c.name.match(/\d+/)?.[0]||"F")}
+            </span>
+            <div>
+              <b>${esc(c.name)}</b>
+              <small>
+                ${esc(c.branch)}
+                ·
+                ${esc(c.section)}
+                ·
+                ${esc(c.start)}
+              </small>
+            </div>
+          </div>
+        </td>
+
+        <td>
+          <b>${esc(c.trainer)}</b>
+          <small class="td-sub">
+            ${esc(c.period)}
+          </small>
+        </td>
+
+        <td>
+          ${completionHtml}
+        </td>
+
+        <td>
+          <span class="badge ${c.attendance<90?"bad":"good"}">
+            ${c.attendance}%
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="link-metric"
+            onclick="openTask('comments_${esc(c.id)}')"
+          >
+            <b>${c.comments}%</b>
+            ${progress(
+              c.comments,
+              c.comments===100
+                ? "green"
+                : "amber"
+            )}
+          </button>
+        </td>
+
+        <td>
+          ${
+            c.alerts
+              ? `<span class="badge bad">! ${c.alerts}</span>`
+              : '<span class="badge good">✓ مكتمل</span>'
+          }
+        </td>
+      </tr>
+    `;
+  }).join("") ||
+  '<tr><td colspan="6" class="empty">اختر فلترًا واحدًا على الأقل لعرض الدورات</td></tr>';
+}
 function coursesTable(){return`<div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب والفترة</th><th>إنجاز الطلاب</th><th>الحضور</th><th>التعليقات</th><th>التنبيهات</th></tr></thead><tbody>${courseRows()}</tbody></table></div>`}
 function taskCard(t){
   const c=DATA.courses.find(x=>x.id===t.courseId);
@@ -3307,7 +3443,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
           ) /
           displayedTasks.length
         )
-      : 0;
+      : null;
 
   const modeText=
     ACTIVITY_MODE_FILTER==="individual"
@@ -3350,7 +3486,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
     <article class="print-stat">
       <span>متوسط الإنجاز</span>
-      <b>${overallCompletion}%</b>
+      <b>${overallCompletion===null?"—":overallCompletion+"%"}</b>
     </article>
   `;
 
@@ -3430,7 +3566,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               ) /
               sorted.length
             )
-          : 0;
+          : null;
 
       const rows=
         sorted.map((t,index)=>{
@@ -3566,7 +3702,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
             <div class="exec-kpi">
               <span>الإنجاز</span>
-              <b>${cCompletion}%</b>
+              <b>${cCompletion===null?"—":cCompletion+"%"}</b>
             </div>
 
             <div class="exec-kpi">
