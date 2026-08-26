@@ -509,6 +509,235 @@
   }
 }
 
+
+/* ===== Executive Professional PDF v2 ===== */
+@media print{
+  .print-report{direction:rtl}
+
+  .exec-report-intro{
+    margin:8px 0 10px;
+    display:grid;
+    grid-template-columns:1.4fr .6fr;
+    gap:8px;
+  }
+
+  .exec-summary-box{
+    border:1px solid #d7e2ea;
+    border-radius:10px;
+    background:#f8fbfd;
+    padding:8px 10px;
+    font-size:6.5px;
+    line-height:1.8;
+    color:#496579;
+  }
+
+  .exec-summary-box b{color:#164478}
+
+  .exec-mode-box{
+    border-radius:10px;
+    padding:8px 10px;
+    background:linear-gradient(135deg,#164478,#2b78b2);
+    color:#fff;
+    text-align:center;
+  }
+
+  .exec-mode-box span{
+    display:block;
+    font-size:5.8px;
+    color:#d9e9f5;
+  }
+
+  .exec-mode-box b{
+    display:block;
+    margin-top:2px;
+    font-size:11px;
+    color:#fff;
+  }
+
+  .exec-course{
+    margin:0 0 10px;
+    border:1px solid #cbd8e3;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .exec-course-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:8px 10px;
+    background:#164478;
+    color:#fff;
+  }
+
+  .exec-course-title h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    border-radius:0!important;
+    color:#fff!important;
+    font-size:10px!important;
+  }
+
+  .exec-course-title p{
+    margin:2px 0 0;
+    font-size:5.8px;
+    color:#d8e7f2;
+  }
+
+  .exec-course-badges{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .exec-badge{
+    display:inline-block;
+    padding:3px 6px;
+    border-radius:10px;
+    font-size:5.3px;
+    font-weight:900;
+    white-space:nowrap;
+    border:1px solid transparent;
+  }
+
+  .exec-badge.light{
+    background:rgba(255,255,255,.14);
+    color:#fff;
+    border-color:rgba(255,255,255,.18);
+  }
+
+  .exec-badge.activity{background:#e6f6ef;color:#0f7b58;border-color:#c6eadb}
+  .exec-badge.quiz{background:#efeafb;color:#684bb4;border-color:#ddd3f6}
+  .exec-badge.homework{background:#e8f2f9;color:#256796;border-color:#cfe1ed}
+
+  .exec-kpis{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:0;
+    background:#f7fafc;
+    border-bottom:1px solid #dce5ec;
+  }
+
+  .exec-kpi{
+    padding:6px 5px;
+    text-align:center;
+    border-left:1px solid #e1e8ee;
+  }
+
+  .exec-kpi:last-child{border-left:0}
+
+  .exec-kpi span{
+    display:block;
+    font-size:5.2px;
+    color:#718397;
+  }
+
+  .exec-kpi b{
+    display:block;
+    margin-top:2px;
+    color:#153b5d;
+    font-size:8px;
+  }
+
+  .exec-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  .exec-table th{
+    background:#eef4f8;
+    color:#164478;
+    border-bottom:1px solid #d2dee7;
+    border-left:1px solid #dce5ec;
+    padding:5px 4px;
+    font-size:5.8px;
+    font-weight:900;
+    text-align:center;
+  }
+
+  .exec-table td{
+    border-bottom:1px solid #e5ebf0;
+    border-left:1px solid #e5ebf0;
+    padding:5px 4px;
+    font-size:5.7px;
+    text-align:center;
+    vertical-align:middle;
+    word-break:break-word;
+  }
+
+  .exec-table tbody tr:nth-child(even){background:#fbfdfe}
+  .exec-table tbody tr{break-inside:avoid;page-break-inside:avoid}
+  .exec-table tbody tr:last-child td{border-bottom:0}
+
+  .exec-title-cell{
+    text-align:right!important;
+    font-weight:800;
+    color:#1a3c58;
+  }
+
+  .exec-progress-wrap{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    justify-content:center;
+  }
+
+  .exec-progress-bar{
+    width:46px;
+    height:5px;
+    border-radius:8px;
+    overflow:hidden;
+    background:#e6edf2;
+  }
+
+  .exec-progress-bar i{
+    display:block;
+    height:100%;
+    border-radius:8px;
+    background:linear-gradient(90deg,#2b78b2,#149b70);
+  }
+
+  .exec-status{
+    display:inline-block;
+    min-width:48px;
+    padding:3px 5px;
+    border-radius:10px;
+    font-size:5.1px;
+    font-weight:900;
+  }
+
+  .exec-status.ok{background:#e6f6ef;color:#0f7b58}
+  .exec-status.warn{background:#fff5df;color:#a86a08}
+  .exec-status.bad{background:#fff0f1;color:#b83d47}
+
+  .exec-no-items{
+    padding:14px;
+    text-align:center;
+    color:#7f91a1;
+    font-size:6.5px;
+    background:#fafcfd;
+  }
+
+  .exec-report-footer-note{
+    margin-top:8px;
+    padding:7px 9px;
+    border-radius:8px;
+    background:#f7fafc;
+    border:1px solid #dce5ec;
+    color:#6f8191;
+    font-size:5.7px;
+    line-height:1.7;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1554,14 +1783,13 @@ function preparePrintReport(){
     );
 
   const displayedCourses=
-    FILTERED
-      .map(c=>({
-        ...c,
-        reportTasks:
-          displayedTasks.filter(
-            t=>t.courseId===c.id
-          )
-      }));
+    FILTERED.map(c=>({
+      ...c,
+      reportTasks:
+        displayedTasks.filter(
+          t=>t.courseId===c.id
+        )
+    }));
 
   displayedCourses.sort((a,b)=>{
 
@@ -1589,21 +1817,6 @@ function preparePrintReport(){
       0
     );
 
-  const completion=
-    displayedTasks.length
-      ? Math.round(
-          displayedTasks.reduce(
-            (sum,t)=>
-              sum+pct(
-                t.completed,
-                t.total
-              ),
-            0
-          ) /
-          displayedTasks.length
-        )
-      : 0;
-
   const activities=
     displayedTasks.filter(
       t=>t.kind==="نشاط"
@@ -1619,6 +1832,22 @@ function preparePrintReport(){
       t=>t.kind==="واجب"
     ).length;
 
+  const overallCompletion=
+    displayedTasks.length
+      ? Math.round(
+          displayedTasks.reduce(
+            (sum,t)=>
+              sum+
+              pct(
+                t.completed,
+                t.total
+              ),
+            0
+          ) /
+          displayedTasks.length
+        )
+      : 0;
+
   const modeText=
     ACTIVITY_MODE_FILTER==="individual"
       ? "Individual"
@@ -1626,12 +1855,17 @@ function preparePrintReport(){
         ? "Teams"
         : "الكل";
 
+  const sortText=
+    TASK_SORT_MODE==="period"
+      ? "حسب الفترة"
+      : "حسب الدورة";
+
   $("printMeta").innerHTML=`
-    <b>تاريخ التقرير</b><br>
+    <b>تاريخ الإصدار</b><br>
     ${new Date().toLocaleString("ar-SA")}
     <br>
-    <b>نوع عرض الأنشطة</b><br>
-    ${modeText}
+    <b>الترتيب</b><br>
+    ${sortText}
   `;
 
   $("printFilters").innerHTML=
@@ -1639,13 +1873,8 @@ function preparePrintReport(){
 
   $("printStats").innerHTML=`
     <article class="print-stat">
-      <span>الدورات المعروضة</span>
+      <span>الدورات</span>
       <b>${FILTERED.length}</b>
-    </article>
-
-    <article class="print-stat">
-      <span>العناصر المعروضة</span>
-      <b>${displayedTasks.length}</b>
     </article>
 
     <article class="print-stat">
@@ -1654,34 +1883,40 @@ function preparePrintReport(){
     </article>
 
     <article class="print-stat">
+      <span>العناصر</span>
+      <b>${displayedTasks.length}</b>
+    </article>
+
+    <article class="print-stat">
       <span>متوسط الإنجاز</span>
-      <b>${completion}%</b>
+      <b>${overallCompletion}%</b>
     </article>
   `;
 
-  const reportHeader=`
-    <div class="pdf-view-note">
-      <b>محتوى التقرير الحالي:</b>
-      أنشطة ${activities}
-      &nbsp; · &nbsp;
-      كويزات ${quizzes}
-      &nbsp; · &nbsp;
-      واجبات ${homework}
-      &nbsp; · &nbsp;
-      عرض الأنشطة: <b>${modeText}</b>
-      &nbsp; · &nbsp;
-      الترتيب:
-      <b>${
-        TASK_SORT_MODE==="period"
-          ? "حسب الفترة"
-          : "حسب الدورة"
-      }</b>
-      <br>
-      يعكس هذا التقرير نفس الفلاتر والعرض المختار في لوحة الإشراف وقت التصدير.
+  const intro=`
+    <div class="exec-report-intro">
+
+      <div class="exec-summary-box">
+        <b>ملخص التقرير:</b>
+        يعرض هذا التقرير الدورات المطابقة للفلاتر الحالية،
+        ويبين الأنشطة والكويزات والواجبات المرتبطة بكل دورة
+        بصورة مختصرة وسهلة للمتابعة.
+        <br>
+        <b>الإجمالي:</b>
+        ${activities} نشاط،
+        ${quizzes} كويز،
+        ${homework} واجب.
+      </div>
+
+      <div class="exec-mode-box">
+        <span>عرض الأنشطة الحالي</span>
+        <b>${modeText}</b>
+      </div>
+
     </div>
   `;
 
-  const courseSections=
+  const sections=
     displayedCourses.map(c=>{
 
       const sorted=
@@ -1705,96 +1940,245 @@ function preparePrintReport(){
               );
           });
 
-      const courseActivities=
+      const cActivities=
         sorted.filter(
           t=>t.kind==="نشاط"
         ).length;
 
-      const courseQuizzes=
+      const cQuizzes=
         sorted.filter(
           t=>t.kind==="كويز"
         ).length;
 
-      const courseHomework=
+      const cHomework=
         sorted.filter(
           t=>t.kind==="واجب"
         ).length;
 
+      const cCompletion=
+        sorted.length
+          ? Math.round(
+              sorted.reduce(
+                (sum,t)=>
+                  sum+
+                  pct(
+                    t.completed,
+                    t.total
+                  ),
+                0
+              ) /
+              sorted.length
+            )
+          : 0;
+
+      const rows=
+        sorted.map((t,index)=>{
+
+          const p=
+            pct(
+              t.completed,
+              t.total
+            );
+
+          const mode=
+            t.kind==="نشاط"
+              ? (
+                  t.activityMode==="individual"
+                    ? "Individual"
+                    : t.activityMode==="teams"
+                      ? "Teams"
+                      : t.activityMode==="both"
+                        ? "Individual + Teams"
+                        : "-"
+                )
+              : "-";
+
+          const statusClass=
+            p===100
+              ? "ok"
+              : p>=70
+                ? "warn"
+                : "bad";
+
+          const statusText=
+            p===100
+              ? "مكتمل"
+              : p>=70
+                ? "متابعة"
+                : "يحتاج متابعة";
+
+          return `
+            <tr>
+              <td>${index+1}</td>
+
+              <td>
+                <span class="exec-badge ${
+                  t.kind==="نشاط"
+                    ? "activity"
+                    : t.kind==="كويز"
+                      ? "quiz"
+                      : "homework"
+                }">
+                  ${esc(t.kind)}
+                </span>
+              </td>
+
+              <td class="exec-title-cell">
+                ${esc(t.title)}
+              </td>
+
+              <td>${esc(mode)}</td>
+
+              <td>${t.total}</td>
+
+              <td>${t.completed}</td>
+
+              <td>
+                ${Math.max(
+                  0,
+                  t.total-t.completed
+                )}
+              </td>
+
+              <td>
+                <div class="exec-progress-wrap">
+                  <div class="exec-progress-bar">
+                    <i style="width:${p}%"></i>
+                  </div>
+                  <b>${p}%</b>
+                </div>
+              </td>
+
+              <td>
+                <span class="exec-status ${statusClass}">
+                  ${statusText}
+                </span>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
       return `
-        <section class="pdf-course">
+        <section class="exec-course">
 
-          <div class="pdf-course-head">
+          <div class="exec-course-head">
 
-            <div class="pdf-course-name">
-              <h2>
-                ${esc(c.name)}
-              </h2>
+            <div class="exec-course-title">
+              <h2>${esc(c.name)}</h2>
               <p>
                 ${esc(c.branch)}
                 ·
                 ${esc(c.section)}
                 ·
-                ${esc(c.type)}
+                ${esc(c.trainer)}
+                ·
+                ${esc(c.period)}
               </p>
             </div>
 
-            <div class="pdf-course-metric">
-              <span>المدرب</span>
-              <b>${esc(c.trainer||"-")}</b>
+            <div class="exec-course-badges">
+              <span class="exec-badge light">
+                بداية: ${esc(c.start||"-")}
+              </span>
+
+              <span class="exec-badge activity">
+                أنشطة ${cActivities}
+              </span>
+
+              <span class="exec-badge quiz">
+                كويزات ${cQuizzes}
+              </span>
+
+              <span class="exec-badge homework">
+                واجبات ${cHomework}
+              </span>
             </div>
 
-            <div class="pdf-course-metric">
-              <span>الفترة</span>
-              <b>${esc(c.period||"-")}</b>
-            </div>
+          </div>
 
-            <div class="pdf-course-metric">
-              <span>تاريخ البدء</span>
-              <b>${esc(c.start||"-")}</b>
-            </div>
+          <div class="exec-kpis">
 
-            <div class="pdf-course-metric">
+            <div class="exec-kpi">
               <span>الطلاب</span>
               <b>${c.students}</b>
             </div>
 
-            <div class="pdf-course-metric">
-              <span>المحتوى</span>
-              <b>
-                ن ${courseActivities}
-                · ك ${courseQuizzes}
-                · و ${courseHomework}
-              </b>
+            <div class="exec-kpi">
+              <span>الإنجاز</span>
+              <b>${cCompletion}%</b>
+            </div>
+
+            <div class="exec-kpi">
+              <span>الحضور</span>
+              <b>${c.attendance}%</b>
+            </div>
+
+            <div class="exec-kpi">
+              <span>التعليقات</span>
+              <b>${c.comments}%</b>
+            </div>
+
+            <div class="exec-kpi">
+              <span>التنبيهات</span>
+              <b>${c.alerts||0}</b>
             </div>
 
           </div>
 
-          <div class="pdf-task-list">
-            ${
-              sorted.length
-                ? sorted.map(pdfTaskCard).join("")
-                : `
-                  <div class="pdf-no-items">
-                    لا توجد أنشطة أو كويزات أو واجبات مطابقة للعرض الحالي في هذه الدورة.
-                  </div>
-                `
-            }
-          </div>
+          ${
+            rows
+              ? `
+                <table class="exec-table">
+                  <thead>
+                    <tr>
+                      <th style="width:4%">#</th>
+                      <th style="width:8%">النوع</th>
+                      <th style="width:28%">العنوان</th>
+                      <th style="width:12%">النمط</th>
+                      <th style="width:8%">الطلاب</th>
+                      <th style="width:8%">أكملوا</th>
+                      <th style="width:9%">لم يكملوا</th>
+                      <th style="width:13%">الإنجاز</th>
+                      <th style="width:10%">الحالة</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    ${rows}
+                  </tbody>
+                </table>
+              `
+              : `
+                <div class="exec-no-items">
+                  لا توجد عناصر مطابقة للعرض الحالي في هذه الدورة.
+                </div>
+              `
+          }
 
         </section>
       `;
     }).join("");
 
+  const footerNote=`
+    <div class="exec-report-footer-note">
+      التقرير مخصص للمتابعة الإشرافية المختصرة.
+      لا يعرض أسماء الطلاب داخل التقرير،
+      ويعتمد على عدد المكتملين وغير المكتملين ونسب الإنجاز
+      لتسهيل القراءة واتخاذ القرار.
+    </div>
+  `;
+
   $("printTables").innerHTML=
-    reportHeader+
+    intro+
     (
-      courseSections ||
+      sections ||
       `
-        <div class="pdf-no-items">
-          لا توجد دورات مطابقة للفلاتر الحالية.
+        <div class="exec-no-items">
+          لا توجد بيانات مطابقة للفلاتر الحالية.
         </div>
       `
-    );
+    )+
+    footerNote;
 }
 
 loadAll();
