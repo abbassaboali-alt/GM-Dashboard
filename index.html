@@ -1730,7 +1730,28 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     });
     const commentDone=courseStudents.filter(s=>s.trainerComment),commentIds=commentDone.map(s=>s.id);
     const commentTask={id:`comments_${id}`,courseId:id,title:"تعليقات المدرب للطلاب",kind:"تعليقات",due:commentDone.length===courseStudents.length?"مكتمل":"مطلوب هذا الأسبوع",completed:commentDone.length,total:courseStudents.length,status:commentDone.length===courseStudents.length?"success":"warning",completedIds:commentIds,pendingIds:courseStudents.filter(s=>!commentIds.includes(s.id)).map(s=>s.id)};
-    const courseTasks=[...examTasks,...activityTasks,commentTask];tasks.push(...courseTasks);
+
+    /*
+      مهم:
+      إنجاز الطلاب يجب أن يعتمد فقط على المهام الأكاديمية:
+      الأنشطة + الكويزات + الواجبات.
+      تعليقات المدرب لا تدخل في نسبة إنجاز الطلاب.
+    */
+    const academicCourseTasks=[
+      ...examTasks,
+      ...activityTasks
+    ];
+
+    /*
+      نحتفظ بالتعليقات داخل DATA.tasks حتى تبقى شاشة
+      تعليقات المدربين والتنبيهات تعمل بشكل طبيعي.
+    */
+    const courseTasks=[
+      ...academicCourseTasks,
+      commentTask
+    ];
+
+    tasks.push(...courseTasks);
     const coursePlans=plans.filter(p=>clean(p.courseId)===id),planDates=[...new Set(coursePlans.filter(p=>clean(p.activity)).map(p=>planDate(start,p.week,p.day)).filter(date=>date&&date<today))],expected=planDates.length?planDates:defaultStudyDates(start,end);
     const recordedDates=new Set(courseStudents.flatMap(s=>s.records.filter(r=>r.status).map(r=>r.date))),attendanceMissing=expected.filter(date=>!recordedDates.has(date)).length;
     let present=0,recorded=0;courseStudents.forEach(s=>s.records.forEach(r=>{if(r.status){recorded++;if(r.status==="present")present++}}));
@@ -1740,12 +1761,12 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     if(midtermMissing)alerts.push({id:`mid_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Midterm غير مكتملة",text:`${midtermMissing} من ${courseStudents.length} طالبًا دون درجة`,time:midtermDue});
     if(finalMissing)alerts.push({id:`fin_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Final غير مكتملة",text:`${finalMissing} من ${courseStudents.length} طالبًا دون درجة`,time:finalDue});
     if(commentDone.length<courseStudents.length)alerts.push({id:`com_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"warning",title:"تعليقات الطلاب ناقصة",text:`${courseStudents.length-commentDone.length} طلاب دون تعليق`,time:"هذا الأسبوع"});
-    return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:courseTasks.length
+    return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:academicCourseTasks.length
       ? Math.round(
-          courseTasks.reduce(
+          academicCourseTasks.reduce(
             (sum,t)=>sum+pct(t.completed,t.total),
             0
-          )/courseTasks.length
+          )/academicCourseTasks.length
         )
       : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
