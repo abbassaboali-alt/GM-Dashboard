@@ -4631,6 +4631,14 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 
 
             <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="manager"?"active":""}"
+              onclick="setSessionRoleFilter('manager')"
+            >
+              المديرون
+              <span class="session-filter-count">${counts.manager}</span>
+            </button>
+
+            <button
               class="session-filter-btn ${SESSION_ROLE_FILTER==="student"?"active":""}"
               onclick="setSessionRoleFilter('student')"
             >
