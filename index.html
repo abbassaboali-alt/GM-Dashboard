@@ -1121,6 +1121,75 @@
   .pdf-score-low{color:#b83d47;font-weight:900}
 }
 
+
+/* ===== PDF selection inside task/student modal ===== */
+.modal-pdf-tools{
+  margin:0 17px 10px;
+  padding:10px 12px;
+  border:1px solid #dbe5ed;
+  border-radius:12px;
+  background:#f7fafc;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.modal-pdf-tools .modal-select-all{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#164478;
+  font-size:10px;
+  font-weight:900;
+  margin-left:auto;
+}
+.modal-pdf-tools input[type="checkbox"],
+.student-pdf-check{
+  width:18px;
+  height:18px;
+  accent-color:#164478;
+  cursor:pointer;
+}
+.modal-pdf-btn{
+  border:0;
+  border-radius:10px;
+  padding:8px 11px;
+  font-size:9px;
+  font-weight:900;
+}
+.modal-pdf-btn.selected{
+  background:#164478;
+  color:#fff;
+}
+.modal-pdf-btn.all{
+  background:#e7f7f1;
+  color:#107a58;
+}
+.student-row.selectable{
+  gap:8px;
+}
+.student-row .student-pdf-check{
+  flex:0 0 auto;
+  margin-left:4px;
+}
+.modal-selected-count{
+  color:#71839a;
+  font-size:9px;
+  font-weight:800;
+}
+@media(max-width:650px){
+  .modal-pdf-tools{
+    margin:0 10px 8px;
+  }
+  .modal-pdf-tools .modal-select-all{
+    width:100%;
+    margin-left:0;
+  }
+  .modal-pdf-btn{
+    flex:1;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1212,6 +1281,38 @@
     <div class="modal-head"><div><span class="kind" id="modalKind"></span><h2 id="modalTitle"></h2><p id="modalCourse"></p></div><button class="close" onclick="closeModal()">×</button></div>
     <div class="modal-stats"><article><span>إجمالي الطلاب</span><b id="modalTotal">0</b></article><article><span>أكملوا</span><b id="modalDone">0</b></article><article><span>لم يكملوا</span><b id="modalPending">0</b></article></div>
     <div class="modal-tabs"><button id="tabPending" onclick="renderStudentList('pending')">لم يكملوا</button><button id="tabDone" onclick="renderStudentList('done')">أكملوا</button></div>
+
+    <div class="modal-pdf-tools" id="modalPdfTools">
+      <label class="modal-select-all">
+        <input
+          type="checkbox"
+          id="modalSelectAll"
+          onchange="toggleModalSelectAll(this.checked)"
+        >
+        تحديد كل الطلاب في القائمة الحالية
+      </label>
+
+      <span class="modal-selected-count" id="modalSelectedCount">
+        المحدد: 0
+      </span>
+
+      <button
+        type="button"
+        class="modal-pdf-btn selected"
+        onclick="exportTaskStudentsPDF('selected')"
+      >
+        PDF للمحددين
+      </button>
+
+      <button
+        type="button"
+        class="modal-pdf-btn all"
+        onclick="exportTaskStudentsPDF('all')"
+      >
+        PDF لجميع الطلاب
+      </button>
+    </div>
+
     <div class="student-list" id="studentList"></div>
   </section>
 </div>
@@ -2847,8 +2948,64 @@ async function deleteTaskItem(event,id){
   }
 }
 
-function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
-function openGrade(courseId,type){const c=DATA.courses.find(x=>x.id===courseId),students=DATA.students.filter(s=>s.courseId===courseId),done=students.filter(s=>hasValue(type==="midterm"?s.midterm:s.finalExam)),ids=done.map(s=>s.id);ACTIVE_TASK={id:`grade_${type}_${courseId}`,courseId,title:type==="midterm"?"رصد درجات Midterm":"رصد درجات Final",kind:"درجات",due:type==="midterm"?c.midtermDue:c.finalDue,completed:done.length,total:students.length,status:done.length===students.length?"success":"danger",completedIds:ids,pendingIds:students.filter(s=>!ids.includes(s.id)).map(s=>s.id)};ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?"pending":"done";openModal()}
+
+let MODAL_PDF_SELECTED = new Set();
+
+function updateModalSelectedCount(){
+  const el=$("modalSelectedCount");
+  if(el){
+    el.textContent=
+      `المحدد: ${MODAL_PDF_SELECTED.size}`;
+  }
+
+  const all=$("modalSelectAll");
+  if(all && ACTIVE_TASK){
+    const ids=
+      ACTIVE_LIST==="done"
+        ? ACTIVE_TASK.completedIds
+        : ACTIVE_TASK.pendingIds;
+
+    all.checked=
+      ids.length>0 &&
+      ids.every(id=>
+        MODAL_PDF_SELECTED.has(id)
+      );
+  }
+}
+
+function toggleModalStudent(id,checked){
+  if(checked){
+    MODAL_PDF_SELECTED.add(id);
+  }else{
+    MODAL_PDF_SELECTED.delete(id);
+  }
+
+  updateModalSelectedCount();
+}
+
+function toggleModalSelectAll(checked){
+  if(!ACTIVE_TASK){
+    return;
+  }
+
+  const ids=
+    ACTIVE_LIST==="done"
+      ? ACTIVE_TASK.completedIds
+      : ACTIVE_TASK.pendingIds;
+
+  ids.forEach(id=>{
+    if(checked){
+      MODAL_PDF_SELECTED.add(id);
+    }else{
+      MODAL_PDF_SELECTED.delete(id);
+    }
+  });
+
+  renderStudentList(ACTIVE_LIST);
+}
+
+function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;MODAL_PDF_SELECTED.clear();ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
+function openGrade(courseId,type){const c=DATA.courses.find(x=>x.id===courseId),students=DATA.students.filter(s=>s.courseId===courseId),done=students.filter(s=>hasValue(type==="midterm"?s.midterm:s.finalExam)),ids=done.map(s=>s.id);ACTIVE_TASK={id:`grade_${type}_${courseId}`,courseId,title:type==="midterm"?"رصد درجات Midterm":"رصد درجات Final",kind:"درجات",due:type==="midterm"?c.midtermDue:c.finalDue,completed:done.length,total:students.length,status:done.length===students.length?"success":"danger",completedIds:ids,pendingIds:students.filter(s=>!ids.includes(s.id)).map(s=>s.id)};MODAL_PDF_SELECTED.clear();ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?"pending":"done";openModal()}
 function openModal(){const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);$("modalKind").textContent=ACTIVE_TASK.kind;$("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;$("modalTitle").textContent=ACTIVE_TASK.title;$("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;$("modalTotal").textContent=ACTIVE_TASK.total;$("modalDone").textContent=ACTIVE_TASK.completed;$("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;$("modalBg").classList.remove("hidden");renderStudentList(ACTIVE_LIST)}
 function renderStudentList(type){
   ACTIVE_LIST=type;
@@ -2920,7 +3077,14 @@ function renderStudentList(type){
       }
 
       return`
-        <div class="student-row">
+        <div class="student-row selectable">
+          <input
+            type="checkbox"
+            class="student-pdf-check"
+            ${MODAL_PDF_SELECTED.has(s.id)?"checked":""}
+            onchange="toggleModalStudent('${esc(s.id)}',this.checked)"
+            title="تحديد الطالب للطباعة PDF"
+          >
           <i>${esc(s.name.charAt(0)||"ط")}</i>
           <div>
             <b>${esc(s.name)}</b>
@@ -2934,7 +3098,559 @@ function renderStudentList(type){
       `;
     }).join("") ||
     '<div class="empty">لا يوجد طلاب في هذه القائمة</div>';
+
+  updateModalSelectedCount();
 }
+
+function taskPdfScoreData(student){
+  const result=
+    ACTIVE_TASK?.studentResults?.[
+      student.id
+    ];
+
+  if(!result){
+    return {
+      score:"—",
+      percentage:"—"
+    };
+  }
+
+  const score=
+    result.score!==""
+      ? `${result.score}${
+          result.total!==""
+            ? ` / ${result.total}`
+            : ""
+        }`
+      : "—";
+
+  const percentage=
+    result.percentage!==""
+      ? `${result.percentage}%`
+      : "—";
+
+  return {
+    score,
+    percentage
+  };
+}
+
+function exportTaskStudentsPDF(mode="selected"){
+
+  if(!ACTIVE_TASK){
+    alert("افتح نشاطًا أو كويزًا أولاً.");
+    return;
+  }
+
+  const course=
+    DATA.courses.find(
+      c=>c.id===ACTIVE_TASK.courseId
+    );
+
+  let ids=[];
+
+  if(mode==="all"){
+    ids=[
+      ...(ACTIVE_TASK.completedIds||[]),
+      ...(ACTIVE_TASK.pendingIds||[])
+    ];
+  }else{
+    ids=[...MODAL_PDF_SELECTED];
+  }
+
+  ids=[...new Set(ids)];
+
+  if(!ids.length){
+    alert(
+      "حدد طالبًا واحدًا على الأقل، أو استخدم PDF لجميع الطلاب."
+    );
+    return;
+  }
+
+  const students=
+    ids.map(id=>
+      DATA.students.find(
+        s=>s.id===id
+      )
+    ).filter(Boolean);
+
+  if(!students.length){
+    alert("لا توجد بيانات طلاب للطباعة.");
+    return;
+  }
+
+  const logoSrc=
+    document.querySelector(
+      "#printReport .print-logo-img"
+    )?.src || "";
+
+  const rows=
+    students.map((s,index)=>{
+
+      const completed=
+        (ACTIVE_TASK.completedIds||[])
+          .includes(s.id);
+
+      const info=
+        taskPdfScoreData(s);
+
+      const percentNumber=
+        Number(
+          String(info.percentage)
+            .replace("%","")
+        );
+
+      const percentageClass=
+        Number.isFinite(percentNumber)
+          ? percentNumber>=80
+            ? "good"
+            : percentNumber>=60
+              ? "mid"
+              : "low"
+          : "";
+
+      return `
+        <tr>
+          <td>${index+1}</td>
+          <td class="student-name">
+            ${esc(s.name)}
+          </td>
+          <td>${esc(s.iqama||s.id)}</td>
+          <td>
+            <span class="status ${
+              completed
+                ? "done"
+                : "pending"
+            }">
+              ${
+                completed
+                  ? "مكتمل"
+                  : "لم يكمل"
+              }
+            </span>
+          </td>
+          <td>${esc(info.score)}</td>
+          <td class="${percentageClass}">
+            ${esc(info.percentage)}
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+  const completedCount=
+    students.filter(s=>
+      (ACTIVE_TASK.completedIds||[])
+        .includes(s.id)
+    ).length;
+
+  const pendingCount=
+    students.length-completedCount;
+
+  const generatedAt=
+    new Date()
+      .toLocaleString("ar-SA");
+
+  const printWindow=
+    window.open(
+      "",
+      "_blank",
+      "width=1200,height=850"
+    );
+
+  if(!printWindow){
+    alert(
+      "تعذر فتح نافذة PDF. اسمح بالنوافذ المنبثقة لهذا الموقع."
+    );
+    return;
+  }
+
+  printWindow.document.open();
+
+  printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>${esc(ACTIVE_TASK.title)} - Prudle</title>
+
+<style>
+@page{
+  size:A4 landscape;
+  margin:10mm;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-print-color-adjust:exact!important;
+  print-color-adjust:exact!important;
+}
+
+body{
+  margin:0;
+  font-family:Tajawal,"Segoe UI",Arial,sans-serif;
+  color:#173650;
+  background:#fff;
+}
+
+.report{
+  width:100%;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:16px 18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#0d365d,#164478 60%,#2b78b2);
+  color:#fff;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.logo{
+  width:74px;
+  height:74px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:14px;
+  padding:5px;
+}
+
+.brand h1{
+  margin:0;
+  font-size:22px;
+}
+
+.brand p{
+  margin:4px 0 0;
+  font-size:11px;
+  color:#d7e7f3;
+}
+
+.meta{
+  min-width:205px;
+  padding:9px 12px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:11px;
+  background:rgba(255,255,255,.10);
+  font-size:10px;
+  line-height:1.8;
+}
+
+.task-info{
+  margin:12px 0;
+  display:grid;
+  grid-template-columns:2fr repeat(4,1fr);
+  border:1px solid #d8e3eb;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.info-main,
+.info-box{
+  padding:10px 12px;
+  background:#f8fbfd;
+  border-left:1px solid #dfe7ed;
+}
+
+.info-main{
+  background:#eef5fa;
+}
+
+.info-main span,
+.info-box span{
+  display:block;
+  color:#74879a;
+  font-size:9px;
+}
+
+.info-main b{
+  display:block;
+  margin-top:3px;
+  color:#123b60;
+  font-size:16px;
+}
+
+.info-box b{
+  display:block;
+  margin-top:4px;
+  color:#173650;
+  font-size:12px;
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.kpi{
+  padding:10px 12px;
+  border:1px solid #dce5ec;
+  border-radius:11px;
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+}
+
+.kpi:before{
+  content:"";
+  position:absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  width:5px;
+  background:#164478;
+}
+
+.kpi:nth-child(2):before{
+  background:#149b70;
+}
+
+.kpi:nth-child(3):before{
+  background:#dc4d57;
+}
+
+.kpi span{
+  display:block;
+  color:#76899a;
+  font-size:9px;
+}
+
+.kpi b{
+  display:block;
+  margin-top:3px;
+  font-size:19px;
+  color:#123b60;
+}
+
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout:fixed;
+  border:1px solid #d2dee7;
+  border-radius:11px;
+  overflow:hidden;
+}
+
+thead{
+  display:table-header-group;
+}
+
+th{
+  padding:8px 7px;
+  background:#164478;
+  color:#fff;
+  font-size:10px;
+  border-left:1px solid rgba(255,255,255,.17);
+}
+
+td{
+  padding:8px 7px;
+  border-bottom:1px solid #e2e9ef;
+  border-left:1px solid #e8edf2;
+  text-align:center;
+  font-size:10px;
+}
+
+tbody tr:nth-child(even){
+  background:#f8fbfd;
+}
+
+tr{
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.student-name{
+  text-align:right;
+  font-weight:800;
+}
+
+.status{
+  display:inline-block;
+  min-width:58px;
+  padding:4px 7px;
+  border-radius:12px;
+  font-size:9px;
+  font-weight:900;
+}
+
+.status.done{
+  background:#e6f7f0;
+  color:#0d7d58;
+}
+
+.status.pending{
+  background:#fff0f1;
+  color:#bd3d47;
+}
+
+.good{
+  color:#0d7d58;
+  font-weight:900;
+}
+
+.mid{
+  color:#ae7009;
+  font-weight:900;
+}
+
+.low{
+  color:#bd3d47;
+  font-weight:900;
+}
+
+.footer{
+  margin-top:10px;
+  padding-top:6px;
+  border-top:1px solid #d7e1e9;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#8191a1;
+  font-size:8px;
+}
+
+@media print{
+  body{
+    background:#fff;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="report">
+
+  <header class="header">
+
+    <div class="brand">
+      ${
+        logoSrc
+          ? `<img class="logo" src="${logoSrc}" alt="Prudle">`
+          : ""
+      }
+
+      <div>
+        <h1>PRUDLE Academic Report</h1>
+        <p>
+          تقرير الطلاب للنشاط أو الكويز
+        </p>
+      </div>
+    </div>
+
+    <div class="meta">
+      <b>تاريخ التقرير</b><br>
+      ${esc(generatedAt)}
+      <br>
+      <b>نوع التقرير</b><br>
+      ${
+        mode==="all"
+          ? "جميع الطلاب"
+          : "الطلاب المحددون"
+      }
+    </div>
+
+  </header>
+
+  <section class="task-info">
+
+    <div class="info-main">
+      <span>العنصر</span>
+      <b>${esc(ACTIVE_TASK.title)}</b>
+    </div>
+
+    <div class="info-box">
+      <span>النوع</span>
+      <b>${esc(ACTIVE_TASK.kind)}</b>
+    </div>
+
+    <div class="info-box">
+      <span>الدورة</span>
+      <b>${esc(course?.name||"—")}</b>
+    </div>
+
+    <div class="info-box">
+      <span>المدرب</span>
+      <b>${esc(course?.trainer||"—")}</b>
+    </div>
+
+    <div class="info-box">
+      <span>الفترة</span>
+      <b>${esc(course?.period||"—")}</b>
+    </div>
+
+  </section>
+
+  <section class="kpis">
+
+    <div class="kpi">
+      <span>الطلاب في التقرير</span>
+      <b>${students.length}</b>
+    </div>
+
+    <div class="kpi">
+      <span>أكملوا</span>
+      <b>${completedCount}</b>
+    </div>
+
+    <div class="kpi">
+      <span>لم يكملوا</span>
+      <b>${pendingCount}</b>
+    </div>
+
+  </section>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th style="width:6%">#</th>
+        <th style="width:32%">اسم الطالب</th>
+        <th style="width:19%">الهوية</th>
+        <th style="width:15%">الحالة</th>
+        <th style="width:14%">الدرجة</th>
+        <th style="width:14%">النسبة</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      ${rows}
+    </tbody>
+
+  </table>
+
+  <footer class="footer">
+    <span>Prudle Language Institute · Academic Supervision</span>
+    <span>${esc(course?.branch||"")} · ${esc(course?.section||"")}</span>
+  </footer>
+
+</div>
+
+<script>
+window.onload=function(){
+  setTimeout(function(){
+    window.print();
+  },250);
+};
+<\/script>
+
+</body>
+</html>
+  `);
+
+  printWindow.document.close();
+}
+
 function closeModal(event){if(event&&event.target!==$("modalBg"))return;$("modalBg").classList.add("hidden");ACTIVE_TASK=null}
 
 
