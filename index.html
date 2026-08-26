@@ -1481,21 +1481,301 @@ function isPresentAttendance(record){
   لا يتم افتراض الأحد-الأربعاء إذا لم توجد خطة، حتى لا تظهر
   أيام غياب وهمية للمدرب.
 */
-function getPlannedStudyDates(coursePlans,start,end){
+function getCourseDurationWeeks(course,coursePlans=[]){
+
+  const raw=first(course,[
+    "Duration","duration",
+    "Weeks","weeks",
+    "CourseDuration","courseDuration"
+  ],"");
+
+  const text=clean(raw).toLowerCase();
+
+  const numeric=Number(text);
+
+  if(
+    Number.isFinite(numeric) &&
+    numeric>0
+  ){
+    return numeric;
+  }
+
+  const match=text.match(/\d+/);
+
+  if(match){
+    const n=Number(match[0]);
+    if(Number.isFinite(n) && n>0){
+      return n;
+    }
+  }
+
+  /*
+    احتياط:
+    إذا لم توجد مدة محفوظة في Courses
+    نستخرج أكبر رقم أسبوع من StudyPlans.
+  */
+  const planWeeks=(coursePlans||[])
+    .map(p=>Number(p.week||0))
+    .filter(n=>Number.isFinite(n) && n>0);
+
+  if(planWeeks.length){
+    return Math.max(...planWeeks);
+  }
+
+  return 0;
+}
+
+function getCourseStudyWeekdays(course,coursePlans=[]){
+
+  const duration=
+    getCourseDurationWeeks(
+      course,
+      coursePlans
+    );
+
+  /*
+    نظام برودل حسب مدة الدورة:
+    4 أسابيع = الأحد إلى الأربعاء = 4 أيام أسبوعياً
+    3 أسابيع = الأحد إلى الخميس = 5 أيام أسبوعياً
+  */
+  if(duration===4){
+    return [0,1,2,3];
+  }
+
+  if(duration===3){
+    return [0,1,2,3,4];
+  }
+
+  /*
+    للدورات الأخرى:
+    نقرأ الأيام الموجودة فعلياً في الخطة الدراسية.
+  */
+  const dayMap={
+    "الأحد":0,"الاحد":0,"Sunday":0,"Sun":0,
+    "الاثنين":1,"Monday":1,"Mon":1,
+    "الثلاثاء":2,"Tuesday":2,"Tue":2,
+    "الأربعاء":3,"الاربعاء":3,"Wednesday":3,"Wed":3,
+    "الخميس":4,"Thursday":4,"Thu":4,
+    "الجمعة":5,"Friday":5,"Fri":5,
+    "السبت":6,"Saturday":6,"Sat":6
+  };
+
+  const plannedDays=[
+    ...new Set(
+      (coursePlans||[])
+        .map(p=>dayMap[clean(p.day)])
+        .filter(v=>v!==undefined)
+    )
+  ].sort((a,b)=>a-b);
+
+  if(plannedDays.length){
+    return plannedDays;
+  }
+
+  /*
+    احتياط نهائي للدورات غير المعرفة:
+    الأحد إلى الأربعاء.
+  */
+  return [0,1,2,3];
+}
+
+function parseCourseEndMinutes(period){
+
+  const value=clean(period);
+
+  if(!value){
+    return null;
+  }
+
+  /*
+    يدعم مثل:
+    8:00 PM - 10:00 PM
+    8:00 PM -10:00 PM
+    20:00 - 22:00
+  */
+  const matches=[
+    ...value.matchAll(
+      /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/gi
+    )
+  ];
+
+  if(matches.length<2){
+    return null;
+  }
+
+  const m=matches[matches.length-1];
+
+  let hour=Number(m[1]);
+  const minute=Number(m[2]||0);
+  const ampm=String(m[3]||"").toUpperCase();
+
+  if(ampm==="PM" && hour<12){
+    hour+=12;
+  }
+
+  if(ampm==="AM" && hour===12){
+    hour=0;
+  }
+
+  if(
+    !Number.isFinite(hour) ||
+    !Number.isFinite(minute)
+  ){
+    return null;
+  }
+
+  return hour*60+minute;
+}
+
+function shouldCountScheduledDate(dateIso,course){
+
   const today=todayIso();
 
-  const dates=[...new Set(
-    (coursePlans||[])
-      .map(p=>planDate(start,p.week,p.day))
-      .filter(Boolean)
-      .filter(d=>
-        (!start || d>=start) &&
-        (!end || d<=end) &&
-        d<today
-      )
-  )];
+  if(dateIso<today){
+    return true;
+  }
 
-  return dates.sort();
+  if(dateIso>today){
+    return false;
+  }
+
+  /*
+    اليوم الحالي لا يُحسب غياب تحضير
+    إلا بعد انتهاء وقت الحصة.
+  */
+  const period=first(course,[
+    "Period","period",
+    "Time","time"
+  ],"");
+
+  const endMinutes=
+    parseCourseEndMinutes(period);
+
+  if(endMinutes===null){
+    return false;
+  }
+
+  const now=new Date();
+
+  const currentMinutes=
+    now.getHours()*60+
+    now.getMinutes();
+
+  return currentMinutes>=endMinutes;
+}
+
+function getActualCourseStudyDates(
+  course,
+  coursePlans=[],
+  start="",
+  end=""
+){
+
+  if(!start){
+    return [];
+  }
+
+  const duration=
+    getCourseDurationWeeks(
+      course,
+      coursePlans
+    );
+
+  if(!duration){
+    return [];
+  }
+
+  const weekdays=
+    getCourseStudyWeekdays(
+      course,
+      coursePlans
+    );
+
+  const startDate=
+    new Date(`${start}T12:00:00`);
+
+  if(Number.isNaN(startDate.getTime())){
+    return [];
+  }
+
+  /*
+    نهاية الحساب مبنية على عدد أسابيع الدورة نفسه.
+    مثال:
+    4 أسابيع -> 28 يوماً من تاريخ البداية.
+    3 أسابيع -> 21 يوماً.
+  */
+  const scheduleEnd=
+    new Date(startDate);
+
+  scheduleEnd.setDate(
+    scheduleEnd.getDate()+
+    duration*7-1
+  );
+
+  /*
+    إذا كان EndingDate أقصر، نحترمه أيضاً.
+  */
+  if(end){
+    const savedEnd=
+      new Date(`${end}T12:00:00`);
+
+    if(
+      !Number.isNaN(savedEnd.getTime()) &&
+      savedEnd<scheduleEnd
+    ){
+      scheduleEnd.setTime(
+        savedEnd.getTime()
+      );
+    }
+  }
+
+  const dates=[];
+
+  const d=new Date(startDate);
+
+  while(d<=scheduleEnd){
+
+    const iso=isoDate(d);
+
+    if(
+      weekdays.includes(
+        d.getDay()
+      ) &&
+      shouldCountScheduledDate(
+        iso,
+        course
+      )
+    ){
+      dates.push(iso);
+    }
+
+    d.setDate(
+      d.getDate()+1
+    );
+  }
+
+  return [
+    ...new Set(dates)
+  ].sort();
+}
+
+/*
+  هذه هي الأيام التي يجب أن يكون المدرب قد حضّرها فعلياً.
+  لا نعتمد على وجود نص نشاط في StudyPlans،
+  بل على مدة الدورة + أيام الدراسة الرسمية.
+*/
+function getPlannedStudyDates(
+  course,
+  coursePlans,
+  start,
+  end
+){
+  return getActualCourseStudyDates(
+    course,
+    coursePlans,
+    start,
+    end
+  );
 }
 function sameStudent(result,student){return[result.studentId,result.studentDocId,result.participantId].map(clean).includes(student.id)||[result.studentIqama,result.rankingStudentIqama,result.iqama].map(clean).filter(Boolean).includes(student.iqama)}
 function kindClass(kind){return kind==="واجب"?"homework":kind==="كويز"?"quiz":kind==="نشاط"?"activity":kind==="درجات"?"grade":"comment"}
@@ -1959,6 +2239,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     const coursePlans=plans.filter(p=>clean(p.courseId)===id);
 
     const expected=getPlannedStudyDates(
+      c,
       coursePlans,
       start,
       end
@@ -2021,7 +2302,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             0
           )/academicCourseTasks.length
         )
-      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,missingAttendanceDates,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,expectedAttendanceDates:expected,missingAttendanceDates,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
@@ -3012,10 +3293,15 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
   if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي ولم يُرصد حضور أي طالب</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام دون تحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
   <b class="${c.attendanceMissing?"red":"green"}">${c.attendanceMissing}</b>
+  <small class="td-sub">
+    المطلوب حتى الآن:
+    ${(c.expectedAttendanceDates||[]).length}
+    يوم
+  </small>
   ${
     c.attendanceMissing
-      ? `<small class="td-sub">${esc((c.missingAttendanceDates||[]).join(" · "))}</small>`
-      : `<small class="td-sub">لا توجد أيام ناقصة</small>`
+      ? `<small class="td-sub">الناقص: ${esc((c.missingAttendanceDates||[]).join(" · "))}</small>`
+      : `<small class="td-sub">✓ جميع الأيام المطلوبة محضرة</small>`
   }
 </td><td>${c.attendanceMissing?'<span class="badge bad">! يحتاج متابعة</span>':'<span class="badge good">✓ تم التحضير</span>'}</td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>رصد درجات الاختبارات</h2><p>المواعيد تُقرأ من StudyPlans حسب الأسبوع واليوم</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>موعد Midterm</th><th>الناقص</th><th>موعد Final</th><th>الناقص</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.period)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.midtermDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.midtermMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','midterm')">${c.midtermMissing?c.midtermMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td><td>${esc(c.finalDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.finalMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','final')">${c.finalMissing?c.finalMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td></tr>`).join("")}</tbody></table></div></section>`;
