@@ -1456,26 +1456,53 @@
 @media(max-width:850px){.grades-panel .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.grades-table{min-width:1120px!important}.grades-table th{font-size:12px!important;padding:12px 10px!important}.grades-table td{font-size:13px!important;padding:12px 10px!important}.grades-table .badge{font-size:11px!important;min-width:76px}}
 
 
-/* ===== Skill cards are clickable ===== */
-.skill-item-btn{
+/* ===== Login / Logout supervision controls ===== */
+.session-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.session-filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.session-filter-btn{border:1px solid #d9e4ec;background:#f7fafc;color:#164478;border-radius:12px;padding:8px 11px;font-size:10px;font-weight:900;display:inline-flex;align-items:center;gap:6px}
+.session-filter-btn.active{background:#164478;color:#fff;border-color:#164478}
+.session-filter-count{min-width:24px;height:24px;padding:0 7px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#eaf3fa;color:#164478;font-size:9px;font-weight:900}
+.session-filter-btn.active .session-filter-count{background:rgba(255,255,255,.16);color:#fff}
+.session-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.session-delete-selected{border:1px solid #efc5c9;background:#fff0f1;color:#c83f49;border-radius:11px;padding:8px 11px;font-size:10px;font-weight:900}
+.session-delete-selected:disabled{opacity:.45;cursor:not-allowed}
+.session-pdf-btn{border:1px solid #bde7d7;background:#e7f7f1;color:#107a58;border-radius:11px;padding:8px 11px;font-size:10px;font-weight:900}
+.session-row-delete{border:1px solid #efc5c9;background:#fff0f1;color:#c83f49;border-radius:9px;padding:6px 9px;font-size:9px;font-weight:900}
+.session-check{width:18px;height:18px;accent-color:#164478;cursor:pointer}
+.session-role{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:13px;font-size:9px;font-weight:900}
+.session-role.student{background:#eaf3fa;color:#21669b}
+.session-role.trainer{background:#e8f8f2;color:#117c59}
+.session-role.supervisor{background:#f0edfb;color:#674ab4}
+.session-count{font-size:10px;color:#71839a;font-weight:800}
+@media(max-width:850px){
+  .session-toolbar{align-items:stretch}
+  .session-filters{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px;-webkit-overflow-scrolling:touch}
+  .session-filter-btn{flex:0 0 auto}
+  .session-actions{width:100%}
+  .session-actions .search{flex:1;width:auto!important;min-width:0}
+}
+
+
+/* ===== Searchable trainer filter ===== */
+.trainer-search-input{
   width:100%;
-  border:1px solid #e1e8ee;
-  background:#f8fbfd;
-  border-radius:12px;
-  padding:10px;
-  text-align:right;
-  color:inherit;
-  cursor:pointer;
-  transition:.18s ease;
+  height:39px;
+  border:1px solid #dbe4ec;
+  border-radius:10px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 10px;
+  font-size:9px;
+  font-weight:800;
+  outline:0;
 }
-.skill-item-btn:hover{
-  transform:translateY(-2px);
-  border-color:#b9d1e4;
-  box-shadow:0 8px 20px rgba(15,51,82,.08);
+.trainer-search-input:focus{
+  border-color:#3d82b7;
+  box-shadow:0 0 0 3px rgba(38,114,172,.1);
 }
-.skill-item-btn:focus{
-  outline:3px solid rgba(43,120,178,.12);
-  border-color:#2b78b2;
+.trainer-search-input::placeholder{
+  color:#8798a9;
+  font-weight:700;
 }
 
 </style>
@@ -1539,7 +1566,19 @@
         <div class="field"><label>الدورة</label><select id="fCourse" onchange="applyFilters()"><option value="">الكل</option></select></div>
         <div class="field"><label>تاريخ البدء</label><select id="fStart" onchange="applyFilters()"><option value="">الكل</option></select></div>
         <div class="field"><label>نوع الدورة</label><select id="fType" onchange="applyFilters()"><option value="">الكل</option></select></div>
-        <div class="field"><label>المدرب</label><select id="fTrainer" onchange="applyFilters()"><option value="">الكل</option></select></div>
+        <div class="field">
+  <label>المدرب</label>
+  <input
+    id="fTrainer"
+    class="trainer-search-input"
+    list="trainerOptions"
+    placeholder="الكل — اكتب اسم المدرب"
+    autocomplete="off"
+    oninput="applyFilters()"
+    onchange="applyFilters()"
+  >
+  <datalist id="trainerOptions"></datalist>
+</div>
         <div class="field"><label>الفترة</label><select id="fPeriod" onchange="applyFilters()"><option value="">الكل</option></select></div>
       </div>
       <div class="latest" id="latestDates"><span>أحدث 5 تواريخ بدء</span></div>
@@ -2794,13 +2833,114 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         )
     };
   }).sort((a,b)=>b.start.localeCompare(a.start));
-  const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
+  const sessions=logs.map(log=>{
+    const logout=first(log,["logoutAt","logoutClientTime"]);
+    const active=!logout&&clean(log.status).toLowerCase()!=="closed";
+
+    const rawRole=clean(first(log,[
+      "userType","role","Role","type"
+    ],"")).toLowerCase();
+
+    let roleGroup="trainer";
+    let roleLabel="مدرب";
+
+    if(rawRole==="student"||rawRole==="طالب"){
+      roleGroup="student";
+      roleLabel="طالب";
+    }else if(
+      rawRole.includes("supervisor")||
+      rawRole.includes("manager")||
+      rawRole.includes("admin")||
+      rawRole.includes("مشرف")||
+      rawRole.includes("إدارة")||
+      rawRole.includes("ادارة")
+    ){
+      roleGroup="supervisor";
+      roleLabel=rawRole.includes("admin")?"إدارة":"مشرف";
+    }else if(
+      rawRole.includes("trainer")||
+      rawRole.includes("teacher")||
+      rawRole.includes("مدرب")
+    ){
+      roleGroup="trainer";
+      roleLabel="مدرب";
+    }else if(rawRole){
+      roleLabel=clean(first(log,["role","userType"],"مدرب"));
+    }
+
+    return{
+      id:log.id,
+      displayName:clean(first(log,["displayName","name"],"—")),
+      userId:clean(first(log,["userId","username","studentId"],"—")),
+      role:roleLabel,
+      roleGroup,
+      device:[
+        first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),
+        first(log,["platform"]),
+        first(log,["browser"])
+      ].map(clean).filter(Boolean).join(" · ")||"—",
+      login:formatDateTime(first(log,["loginAt","loginClientTime"])),
+      logout:formatDateTime(logout),
+      active
+    };
+  });
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress,skillEvaluations:skillEvaluations||[]};
 }
 
 function unique(key){return[...new Set(DATA.courses.map(c=>c[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),"ar",{numeric:true}))}
 function fillSelect(id,key){const el=$(id),old=el.value;el.innerHTML='<option value="">الكل</option>'+unique(key).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old}
-function buildFilters(){fillSelect("fBranch","branch");fillSelect("fSection","section");fillSelect("fCourse","name");fillSelect("fType","type");fillSelect("fTrainer","trainer");fillSelect("fPeriod","period");const starts=[...new Set(DATA.courses.map(c=>c.start).filter(Boolean))].sort((a,b)=>b.localeCompare(a)),latest=starts.slice(0,5);$("fStart").innerHTML='<option value="">الكل</option>'+starts.map(d=>`<option value="${esc(d)}">${latest.includes(d)?"★ "+d+" · حديث":d}</option>`).join("");$("latestDates").innerHTML='<span>أحدث 5 تواريخ بدء</span>'+latest.map(d=>`<button data-date="${esc(d)}" onclick="quickDate('${esc(d)}')">★ ${esc(d)} <i>حديث</i></button>`).join("")}
+function buildFilters(){
+  fillSelect("fBranch","branch");
+  fillSelect("fSection","section");
+  fillSelect("fCourse","name");
+  fillSelect("fType","type");
+  fillSelect("fPeriod","period");
+
+  const trainerInput=$("fTrainer");
+  const oldTrainer=trainerInput?.value||"";
+  const trainers=unique("trainer");
+
+  $("trainerOptions").innerHTML=
+    trainers
+      .map(v=>`<option value="${esc(v)}"></option>`)
+      .join("");
+
+  if(trainerInput){
+    trainerInput.value=oldTrainer;
+  }
+
+  const starts=[
+    ...new Set(
+      DATA.courses
+        .map(c=>c.start)
+        .filter(Boolean)
+    )
+  ].sort((a,b)=>b.localeCompare(a));
+
+  const latest=starts.slice(0,5);
+
+  $("fStart").innerHTML=
+    '<option value="">الكل</option>'+
+    starts
+      .map(d=>
+        `<option value="${esc(d)}">${
+          latest.includes(d)
+            ? "★ "+d+" · حديث"
+            : d
+        }</option>`
+      )
+      .join("");
+
+  $("latestDates").innerHTML=
+    '<span>أحدث 5 تواريخ بدء</span>'+
+    latest
+      .map(d=>
+        `<button data-date="${esc(d)}" onclick="quickDate('${esc(d)}')">
+          ★ ${esc(d)} <i>حديث</i>
+        </button>`
+      )
+      .join("");
+}
 function quickDate(date){$("fStart").value=$("fStart").value===date?"":date;applyFilters()}
 function resetFilters(){["fBranch","fSection","fCourse","fStart","fType","fTrainer","fPeriod"].forEach(id=>$(id).value="");applyFilters()}
 function applyFilters(){
@@ -2834,7 +2974,15 @@ function applyFilters(){
       (!$("fCourse").value || c.name === $("fCourse").value) &&
       (!$("fStart").value || c.start === $("fStart").value) &&
       (!$("fType").value || c.type === $("fType").value) &&
-      (!$("fTrainer").value || c.trainer === $("fTrainer").value) &&
+      (
+        !$("fTrainer").value ||
+        clean(c.trainer)
+          .toLowerCase()
+          .includes(
+            clean($("fTrainer").value)
+              .toLowerCase()
+          )
+      ) &&
       (!$("fPeriod").value || c.period === $("fPeriod").value)
     );
 
@@ -3923,6 +4071,270 @@ function alertsBox(){
     '<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'
   }</div>`;
 }
+
+let SESSION_ROLE_FILTER="all";
+let SESSION_SELECTED=new Set();
+
+function baseSessionRows(){
+  const ids=visibleIds();
+  const students=DATA.students.filter(s=>ids.has(s.courseId));
+  const keys=new Set(
+    students.flatMap(s=>[s.id,s.iqama,s.name]).map(v=>clean(v).toLowerCase())
+  );
+  const trainers=new Set(
+    FILTERED.map(c=>clean(c.trainer).toLowerCase())
+  );
+
+  return DATA.sessions.filter(s=>
+    !FILTERED.length||
+    trainers.has(clean(s.displayName).toLowerCase())||
+    keys.has(clean(s.displayName).toLowerCase())||
+    keys.has(clean(s.userId).toLowerCase())
+  );
+}
+
+function getSessionRoleCounts(){
+  const list=baseSessionRows();
+  return{
+    all:list.length,
+    student:list.filter(s=>s.roleGroup==="student").length,
+    trainer:list.filter(s=>s.roleGroup==="trainer").length,
+    supervisor:list.filter(s=>s.roleGroup==="supervisor").length
+  };
+}
+
+function setSessionRoleFilter(role){
+  SESSION_ROLE_FILTER=
+    ["all","student","trainer","supervisor"].includes(role)
+      ? role
+      : "all";
+
+  SESSION_SELECTED.clear();
+  render();
+}
+
+function visibleSessionRows(){
+  let list=baseSessionRows();
+
+  if(SESSION_ROLE_FILTER!=="all"){
+    list=list.filter(s=>s.roleGroup===SESSION_ROLE_FILTER);
+  }
+
+  const q=clean(document.getElementById("sessionSearch")?.value||"").toLowerCase();
+
+  if(q){
+    list=list.filter(s=>
+      [s.displayName,s.userId,s.role,s.device,s.login,s.logout]
+        .join(" ").toLowerCase().includes(q)
+    );
+  }
+
+  return list;
+}
+
+function updateSessionSelectionUi(){
+  const count=SESSION_SELECTED.size;
+  const btn=document.getElementById("deleteSelectedSessionsBtn");
+
+  if(btn){
+    btn.disabled=count===0;
+    btn.textContent=count?`حذف المحدد (${count})`:"حذف المحدد";
+  }
+
+  const all=document.getElementById("sessionSelectAll");
+  if(all){
+    const rows=visibleSessionRows();
+    all.checked=rows.length>0&&rows.every(s=>SESSION_SELECTED.has(s.id));
+  }
+}
+
+function toggleSessionRow(id,checked){
+  if(checked)SESSION_SELECTED.add(id);
+  else SESSION_SELECTED.delete(id);
+  updateSessionSelectionUi();
+}
+
+function toggleAllVisibleSessions(checked){
+  visibleSessionRows().forEach(s=>{
+    if(checked)SESSION_SELECTED.add(s.id);
+    else SESSION_SELECTED.delete(s.id);
+  });
+  refreshSessionRows();
+}
+
+async function deleteSessionRecord(id){
+  const session=DATA.sessions.find(s=>s.id===id);
+  if(!session)return;
+
+  if(!confirm(`هل تريد حذف سجل الدخول والخروج؟\n\n${session.displayName}\n${session.login}`))return;
+
+  try{
+    await db.collection("DeviceLoginLogs").doc(id).delete();
+    SESSION_SELECTED.delete(id);
+    await loadAll();
+  }catch(error){
+    console.error("Delete login record error:",error);
+    alert("تعذر حذف السجل. تحقق من صلاحيات Firestore.");
+  }
+}
+
+async function deleteSelectedSessions(){
+  const ids=[...SESSION_SELECTED];
+
+  if(!ids.length){
+    alert("حدد سجلًا واحدًا على الأقل.");
+    return;
+  }
+
+  if(!confirm(`سيتم حذف ${ids.length} سجل دخول/خروج نهائيًا.\n\nهل تريد المتابعة؟`))return;
+
+  try{
+    for(let i=0;i<ids.length;i+=450){
+      const batch=db.batch();
+      ids.slice(i,i+450).forEach(id=>{
+        batch.delete(db.collection("DeviceLoginLogs").doc(id));
+      });
+      await batch.commit();
+    }
+
+    SESSION_SELECTED.clear();
+    await loadAll();
+
+  }catch(error){
+    console.error("Delete selected login records error:",error);
+    alert("تعذر حذف بعض السجلات. تحقق من صلاحيات Firestore.");
+  }
+}
+
+function refreshSessionRows(){
+  const rows=visibleSessionRows();
+  const body=document.getElementById("sessionsBody");
+  if(body)body.innerHTML=sessionRows(rows);
+
+  const count=document.getElementById("sessionResultCount");
+  if(count)count.textContent=`${rows.length} سجل`;
+
+  updateSessionSelectionUi();
+}
+
+function exportSessionsPDF(){
+  const rows=visibleSessionRows();
+
+  if(!rows.length){
+    alert("لا توجد سجلات مطابقة للفلاتر الحالية.");
+    return;
+  }
+
+  const counts={
+    all:rows.length,
+    student:rows.filter(s=>s.roleGroup==="student").length,
+    trainer:rows.filter(s=>s.roleGroup==="trainer").length,
+    supervisor:rows.filter(s=>s.roleGroup==="supervisor").length,
+    active:rows.filter(s=>s.active).length
+  };
+
+  const label={
+    all:"الكل",
+    student:"الطلاب",
+    trainer:"المدربين",
+    supervisor:"المشرفين / الإدارة"
+  }[SESSION_ROLE_FILTER]||"الكل";
+
+  const generatedAt=new Date().toLocaleString("ar-SA");
+
+  const tableRows=rows.map((s,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${esc(s.displayName)}</td>
+      <td>${esc(s.userId)}</td>
+      <td>${esc(s.role)}</td>
+      <td>${esc(s.device)}</td>
+      <td>${esc(s.login)}</td>
+      <td>${esc(s.logout||"—")}</td>
+      <td>${s.active?"نشط":"تم الخروج"}</td>
+    </tr>
+  `).join("");
+
+  const w=window.open("","_blank","width=1250,height=850");
+
+  if(!w){
+    alert("اسمح بالنوافذ المنبثقة لطباعة التقرير.");
+    return;
+  }
+
+  w.document.write(`
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Prudle Login Sessions Report</title>
+<style>
+@page{size:A4 landscape;margin:9mm}
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}
+body{font-family:Tajawal,Arial,sans-serif;margin:0;color:#173650}
+.header{background:linear-gradient(135deg,#123d66,#164478 60%,#2b78b2);color:#fff;padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center}
+.header h1{margin:0;font-size:22px}.header p{margin:4px 0 0;font-size:10px;color:#d8e8f4}
+.meta{font-size:9px;line-height:1.8;background:rgba(255,255,255,.1);padding:8px 11px;border-radius:10px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
+.kpi{border:1px solid #d8e3eb;border-radius:10px;padding:8px;background:#f8fbfd}
+.kpi span{display:block;color:#71839a;font-size:8px}.kpi b{display:block;font-size:17px;color:#164478;margin-top:2px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#164478;color:#fff;font-size:8px;padding:7px;border:1px solid #2f628b}
+td{font-size:7.5px;padding:6px;border:1px solid #dce5ec;text-align:center;word-break:break-word}
+tbody tr:nth-child(even){background:#f8fbfd}
+.footer{margin-top:8px;border-top:1px solid #d7e1e9;padding-top:5px;color:#7e8f9f;font-size:7px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>PRUDLE · تقرير سجل الدخول والخروج</h1>
+      <p>حسب الفلترة الحالية: ${esc(label)}</p>
+    </div>
+    <div class="meta">
+      تاريخ التقرير: ${esc(generatedAt)}<br>
+      عدد السجلات: ${counts.all}
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><span>إجمالي السجلات</span><b>${counts.all}</b></div>
+    <div class="kpi"><span>طلاب</span><b>${counts.student}</b></div>
+    <div class="kpi"><span>مدربون</span><b>${counts.trainer}</b></div>
+    <div class="kpi"><span>مشرفون / إدارة</span><b>${counts.supervisor}</b></div>
+    <div class="kpi"><span>جلسات نشطة</span><b>${counts.active}</b></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4%">#</th>
+        <th style="width:14%">الاسم</th>
+        <th style="width:11%">المستخدم / الهوية</th>
+        <th style="width:8%">الصفة</th>
+        <th style="width:25%">الجهاز</th>
+        <th style="width:12%">الدخول</th>
+        <th style="width:12%">الخروج</th>
+        <th style="width:8%">الحالة</th>
+      </tr>
+    </thead>
+    <tbody>${tableRows}</tbody>
+  </table>
+
+  <div class="footer">Prudle Academic Supervision · Login & Logout Report</div>
+
+<script>
+window.onload=function(){
+  setTimeout(function(){window.print()},250);
+};
+<\/script>
+</body>
+</html>
+  `);
+
+  w.document.close();
+}
+
 function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",skills:"رصد المهارات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
   if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
 <span>نوع النشاط:</span>
@@ -4099,10 +4511,186 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
   }
   if(ACTIVE_VIEW==="comments")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>اكتمال تعليقات المدربين</h2><p>يعتمد على trainerComment في سجل الطالب</p></div></div>${taskCards(visibleTasks().filter(t=>t.kind==="تعليقات"))}</section>`;
   if(ACTIVE_VIEW==="trainerProgress")$("viewBox").innerHTML=renderTrainerProgress();
-  if(ACTIVE_VIEW==="sessions"){const ids=visibleIds(),students=DATA.students.filter(s=>ids.has(s.courseId)),keys=new Set(students.flatMap(s=>[s.id,s.iqama,s.name]).map(v=>v.toLowerCase())),trainers=new Set(FILTERED.map(c=>c.trainer.toLowerCase()));const sessions=DATA.sessions.filter(s=>!FILTERED.length||trainers.has(s.displayName.toLowerCase())||keys.has(s.displayName.toLowerCase())||keys.has(s.userId.toLowerCase()));$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>سجل الدخول والخروج</h2><p>المدربون والطلاب والأجهزة ووقت الجلسة</p></div><input class="search" id="sessionSearch" oninput="filterSessions()" placeholder="بحث بالاسم أو الهوية أو الجهاز"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الاسم</th><th>المستخدم / الهوية</th><th>الصفة</th><th>الجهاز</th><th>الدخول</th><th>الخروج</th><th>الحالة</th></tr></thead><tbody id="sessionsBody">${sessionRows(sessions)}</tbody></table></div></section>`}
+  if(ACTIVE_VIEW==="sessions"){
+
+    const sessions=visibleSessionRows();
+    const counts=getSessionRoleCounts();
+
+    $("viewBox").innerHTML=`
+      <section class="panel full-panel">
+
+        <div class="panel-head">
+          <div>
+            <h2>سجل الدخول والخروج</h2>
+            <p>
+              فلترة حسب الطلاب أو المدربين أو المشرفين
+              مع بيان العدد والحذف وتقرير PDF
+            </p>
+          </div>
+
+          <span class="session-count" id="sessionResultCount">
+            ${sessions.length} سجل
+          </span>
+        </div>
+
+        <div class="session-toolbar">
+
+          <div class="session-filters">
+
+            <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="all"?"active":""}"
+              onclick="setSessionRoleFilter('all')"
+            >
+              الكل
+              <span class="session-filter-count">${counts.all}</span>
+            </button>
+
+            <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="student"?"active":""}"
+              onclick="setSessionRoleFilter('student')"
+            >
+              الطلاب
+              <span class="session-filter-count">${counts.student}</span>
+            </button>
+
+            <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="trainer"?"active":""}"
+              onclick="setSessionRoleFilter('trainer')"
+            >
+              المدربون
+              <span class="session-filter-count">${counts.trainer}</span>
+            </button>
+
+            <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="supervisor"?"active":""}"
+              onclick="setSessionRoleFilter('supervisor')"
+            >
+              المشرفون
+              <span class="session-filter-count">${counts.supervisor}</span>
+            </button>
+
+          </div>
+
+          <div class="session-actions">
+
+            <input
+              class="search"
+              id="sessionSearch"
+              oninput="refreshSessionRows()"
+              placeholder="بحث بالاسم أو الهوية أو الجهاز"
+            >
+
+            <button
+              class="session-pdf-btn"
+              onclick="exportSessionsPDF()"
+            >
+              PDF حسب الفلترة
+            </button>
+
+            <button
+              class="session-delete-selected"
+              id="deleteSelectedSessionsBtn"
+              onclick="deleteSelectedSessions()"
+              disabled
+            >
+              حذف المحدد
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" style="min-width:1180px">
+
+            <thead>
+              <tr>
+                <th style="width:4%">
+                  <input
+                    type="checkbox"
+                    class="session-check"
+                    id="sessionSelectAll"
+                    onchange="toggleAllVisibleSessions(this.checked)"
+                  >
+                </th>
+                <th>الاسم</th>
+                <th>المستخدم / الهوية</th>
+                <th>الصفة</th>
+                <th>الجهاز</th>
+                <th>الدخول</th>
+                <th>الخروج</th>
+                <th>الحالة</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+
+            <tbody id="sessionsBody">
+              ${sessionRows(sessions)}
+            </tbody>
+
+          </table>
+        </div>
+
+      </section>
+    `;
+
+    updateSessionSelectionUi();
+  }
 }
-function sessionRows(list){return list.map(s=>`<tr data-search="${esc(`${s.displayName} ${s.userId} ${s.role} ${s.device}`.toLowerCase())}"><td><b>${esc(s.displayName)}</b></td><td>${esc(s.userId)}</td><td>${esc(s.role)}</td><td>${esc(s.device)}</td><td>${esc(s.login)}</td><td>${esc(s.logout)}</td><td>${s.active?'<span class="badge good"><i class="active-dot"></i>نشط</span>':'<span class="badge">تم الخروج</span>'}</td></tr>`).join("")||'<tr><td colspan="7" class="empty">لا توجد سجلات مطابقة</td></tr>'}
-function filterSessions(){const q=clean($("sessionSearch")?.value).toLowerCase();document.querySelectorAll("#sessionsBody tr[data-search]").forEach(tr=>tr.style.display=tr.dataset.search.includes(q)?"":"none")}
+function sessionRows(list){
+  return list.map(s=>`
+    <tr>
+      <td>
+        <input
+          type="checkbox"
+          class="session-check"
+          ${SESSION_SELECTED.has(s.id)?"checked":""}
+          onchange="toggleSessionRow('${esc(s.id)}',this.checked)"
+        >
+      </td>
+
+      <td>
+        <b>${esc(s.displayName)}</b>
+      </td>
+
+      <td>${esc(s.userId)}</td>
+
+      <td>
+        <span class="session-role ${esc(s.roleGroup)}">
+          ${esc(s.role)}
+        </span>
+      </td>
+
+      <td>${esc(s.device)}</td>
+
+      <td>${esc(s.login)}</td>
+
+      <td>${esc(s.logout||"—")}</td>
+
+      <td>
+        ${
+          s.active
+            ? '<span class="badge good"><span class="active-dot"></span> نشط</span>'
+            : '<span class="badge">تم الخروج</span>'
+        }
+      </td>
+
+      <td>
+        <button
+          class="session-row-delete"
+          onclick="deleteSessionRecord('${esc(s.id)}')"
+        >
+          حذف
+        </button>
+      </td>
+    </tr>
+  `).join("") ||
+  '<tr><td colspan="9" class="empty">لا توجد سجلات مطابقة</td></tr>';
+}
+
+function filterSessions(){
+  refreshSessionRows();
+}
 function setView(view){ACTIVE_VIEW=view;render();window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll("[data-view]").forEach(button=>button.addEventListener("click",()=>setView(button.dataset.view)));
 
@@ -4266,16 +4854,7 @@ function openSkill(courseId,skill){
     completedIds:item.completedIds||[],pendingIds:item.pendingIds||[],studentResults
   };
   MODAL_PDF_SELECTED.clear();
-  /*
-    عند الضغط على المهارة:
-    نعرض الطلاب الذين تم رصد المهارة لهم أولاً.
-    إذا لم يوجد أي طالب مرصود، نعرض قائمة غير المرصودين.
-  */
-  ACTIVE_LIST=
-    ACTIVE_TASK.completedIds.length
-      ? "done"
-      : "pending";
-
+  ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?'pending':'done';
   openModal();
 }
 function openGrade(courseId,type){
@@ -4392,28 +4971,7 @@ function openGrade(courseId,type){
 
   openModal();
 }
-function openModal(){
-  const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);
-
-  $("modalKind").textContent=ACTIVE_TASK.kind;
-  $("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;
-  $("modalTitle").textContent=ACTIVE_TASK.title;
-  $("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;
-  $("modalTotal").textContent=ACTIVE_TASK.total;
-  $("modalDone").textContent=ACTIVE_TASK.completed;
-  $("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;
-
-  if(ACTIVE_TASK.kind==="مهارة"){
-    $("tabDone").textContent="تم الرصد";
-    $("tabPending").textContent="لم يتم الرصد";
-  }else{
-    $("tabDone").textContent="أكملوا";
-    $("tabPending").textContent="لم يكملوا";
-  }
-
-  $("modalBg").classList.remove("hidden");
-  renderStudentList(ACTIVE_LIST);
-}
+function openModal(){const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);$("modalKind").textContent=ACTIVE_TASK.kind;$("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;$("modalTitle").textContent=ACTIVE_TASK.title;$("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;$("modalTotal").textContent=ACTIVE_TASK.total;$("modalDone").textContent=ACTIVE_TASK.completed;$("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;$("modalBg").classList.remove("hidden");renderStudentList(ACTIVE_LIST)}
 function renderStudentList(type){
   ACTIVE_LIST=type;
 
