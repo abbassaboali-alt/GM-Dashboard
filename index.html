@@ -1400,8 +1400,78 @@ function daysFromToday(iso){
   return target-today;
 }
 function formatDateTime(value){if(!value)return"—";const d=value?.toDate?value.toDate():value?.seconds?new Date(value.seconds*1000):new Date(value);return Number.isNaN(d.getTime())?clean(value):d.toLocaleString("ar-SA")}
-function planDate(start,week,day){const map={"الأحد":0,"الاحد":0,"Sunday":0,"الاثنين":1,"Monday":1,"الثلاثاء":2,"Tuesday":2,"الأربعاء":3,"الاربعاء":3,"Wednesday":3,"الخميس":4,"Thursday":4};const base=new Date(`${start}T12:00:00`);if(Number.isNaN(base.getTime())||map[clean(day)]===undefined)return"";base.setDate(base.getDate()+(Number(week||1)-1)*7+((map[clean(day)]-base.getDay()+7)%7));return isoDate(base)}
-function defaultStudyDates(start,end){const out=[];if(!start)return out;let d=new Date(`${start}T12:00:00`);const stop=new Date(`${end&&end<todayIso()?end:todayIso()}T12:00:00`);while(d<stop){const iso=isoDate(d);if(d.getDay()>=0&&d.getDay()<=3)out.push(iso);d.setDate(d.getDate()+1)}return out}
+function planDate(start,week,day){
+  const map={
+    "الأحد":0,"الاحد":0,"Sunday":0,"Sun":0,
+    "الاثنين":1,"Monday":1,"Mon":1,
+    "الثلاثاء":2,"Tuesday":2,"Tue":2,
+    "الأربعاء":3,"الاربعاء":3,"Wednesday":3,"Wed":3,
+    "الخميس":4,"Thursday":4,"Thu":4,
+    "الجمعة":5,"Friday":5,"Fri":5,
+    "السبت":6,"Saturday":6,"Sat":6
+  };
+
+  const base=new Date(`${start}T12:00:00`);
+  const wanted=map[clean(day)];
+
+  if(Number.isNaN(base.getTime()) || wanted===undefined) return "";
+
+  base.setDate(
+    base.getDate()+
+    (Number(week||1)-1)*7+
+    ((wanted-base.getDay()+7)%7)
+  );
+
+  return isoDate(base);
+}
+
+/* توحيد تاريخ سجل الحضور مهما كانت طريقة حفظه في Firestore */
+function attendanceRecordDate(record){
+  if(!record) return "";
+
+  const raw=first(record,[
+    "date","Date","attendanceDate","AttendanceDate",
+    "dayDate","createdAt","timestamp"
+  ],"");
+
+  return isoDate(raw);
+}
+
+/* هل يوجد تحضير حقيقي في هذا السجل؟ */
+function hasAttendanceStatus(record){
+  if(!record) return false;
+
+  const status=clean(first(record,[
+    "status","Status","attendance","Attendance"
+  ],"")).toLowerCase();
+
+  return [
+    "present","absent","late","excused",
+    "حاضر","غائب","متأخر","بعذر"
+  ].includes(status);
+}
+
+/*
+  الأيام الدراسية الفعلية للدورة تؤخذ من StudyPlans فقط.
+  لا يتم افتراض الأحد-الأربعاء إذا لم توجد خطة، حتى لا تظهر
+  أيام غياب وهمية للمدرب.
+*/
+function getPlannedStudyDates(coursePlans,start,end){
+  const today=todayIso();
+
+  const dates=[...new Set(
+    (coursePlans||[])
+      .map(p=>planDate(start,p.week,p.day))
+      .filter(Boolean)
+      .filter(d=>
+        (!start || d>=start) &&
+        (!end || d<=end) &&
+        d<today
+      )
+  )];
+
+  return dates.sort();
+}
 function sameStudent(result,student){return[result.studentId,result.studentDocId,result.participantId].map(clean).includes(student.id)||[result.studentIqama,result.rankingStudentIqama,result.iqama].map(clean).filter(Boolean).includes(student.iqama)}
 function kindClass(kind){return kind==="واجب"?"homework":kind==="كويز"?"quiz":kind==="نشاط"?"activity":kind==="درجات"?"grade":"comment"}
 function progress(value,tone=""){return`<div class="progress"><i class="${tone}" style="width:${Math.max(0,Math.min(100,value))}%"></i></div>`}
@@ -1853,9 +1923,47 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     ];
 
     tasks.push(...courseTasks);
-    const coursePlans=plans.filter(p=>clean(p.courseId)===id),planDates=[...new Set(coursePlans.filter(p=>clean(p.activity)).map(p=>planDate(start,p.week,p.day)).filter(date=>date&&date<today))],expected=planDates.length?planDates:defaultStudyDates(start,end);
-    const recordedDates=new Set(courseStudents.flatMap(s=>s.records.filter(r=>r.status).map(r=>r.date))),attendanceMissing=expected.filter(date=>!recordedDates.has(date)).length;
-    let present=0,recorded=0;courseStudents.forEach(s=>s.records.forEach(r=>{if(r.status){recorded++;if(r.status==="present")present++}}));
+    /*
+      حساب أيام عدم التحضير:
+      1) نأخذ أيام الدورة الفعلية من StudyPlans.
+      2) نحسب الأيام السابقة فقط، وليس اليوم الحالي أو المستقبل.
+      3) نعتبر اليوم مُحضّراً إذا وُجدت حالة حضور واحدة صحيحة
+         على الأقل لأي طالب في الدورة في ذلك التاريخ.
+      4) نوحّد تاريخ الحضور إلى YYYY-MM-DD قبل المقارنة.
+    */
+    const coursePlans=plans.filter(p=>clean(p.courseId)===id);
+
+    const expected=getPlannedStudyDates(
+      coursePlans,
+      start,
+      end
+    );
+
+    const recordedDates=new Set(
+      courseStudents.flatMap(s=>
+        (Array.isArray(s.records)?s.records:[])
+          .filter(hasAttendanceStatus)
+          .map(attendanceRecordDate)
+          .filter(Boolean)
+      )
+    );
+
+    const missingAttendanceDates=
+      expected.filter(date=>!recordedDates.has(date));
+
+    const attendanceMissing=
+      missingAttendanceDates.length;
+
+    let present=0,recorded=0;
+    courseStudents.forEach(s=>
+      (Array.isArray(s.records)?s.records:[]).forEach(r=>{
+        if(hasAttendanceStatus(r)){
+          recorded++;
+          const status=clean(first(r,["status","Status","attendance","Attendance"],"")).toLowerCase();
+          if(status==="present" || status==="حاضر") present++;
+        }
+      })
+    );
     let midtermDue="",finalDue="";coursePlans.forEach(p=>{const text=clean(p.activity).toLowerCase(),date=planDate(start,p.week,p.day);if(text.includes("midterm")&&(!midtermDue||date<midtermDue))midtermDue=date;if(text.includes("final")&&(!finalDue||date<finalDue))finalDue=date});
     const midtermMissing=midtermDue&&midtermDue<today?courseStudents.filter(s=>!hasValue(s.midterm)).length:0,finalMissing=finalDue&&finalDue<today?courseStudents.filter(s=>!hasValue(s.finalExam)).length:0;
     if(attendanceMissing)alerts.push({id:`att_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"لم يُرصد حضور المدرب",text:`${attendanceMissing} يوم سابق دون تحضير · ${name}`,time:"متأخر"});
@@ -1869,7 +1977,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             0
           )/academicCourseTasks.length
         )
-      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,missingAttendanceDates,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
