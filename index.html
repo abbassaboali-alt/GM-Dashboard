@@ -816,6 +816,65 @@
   .trainer-progress-kpis{width:100%}
 }
 
+
+/* ===== Enhancements: trainer progress / scores / PDF course selector / alert course ===== */
+.pdf-course-picker{
+  height:36px;
+  min-width:185px;
+  max-width:260px;
+  border:1px solid #d8e4ed;
+  border-radius:10px;
+  background:#fff;
+  color:#164478;
+  padding:0 9px;
+  font-size:8px;
+  font-weight:900;
+  outline:0;
+}
+.alert-course-chip{
+  display:inline-block;
+  margin-top:4px;
+  padding:3px 7px;
+  border-radius:10px;
+  background:#eaf3fa;
+  color:#164478;
+  border:1px solid #cfe0ed;
+  font-size:6.5px;
+  font-weight:900;
+}
+.student-score-box{
+  min-width:95px;
+  text-align:center;
+  padding:5px 7px;
+  border-radius:10px;
+  background:#eef5fa;
+  color:#164478;
+  margin-left:8px;
+}
+.student-score-box b{display:block;font-size:9px}
+.student-score-box small{display:block;font-size:6.5px;color:#71839a;margin-top:2px}
+.student-score-box.empty{background:#f5f7fa;color:#8a99a7;padding:5px 7px}
+.tp-days-left{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:12px;
+  font-size:6.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.tp-days-left.future{background:#eaf3ff;color:#164478}
+.tp-days-left.today{background:#fff0d7;color:#a66a08}
+.tp-days-left.late{background:#fff0f1;color:#b83d47}
+.tp-days-left.done{background:#e7f7f1;color:#0f7b58}
+.tp-course-remaining{
+  background:#fff!important;
+  color:#164478!important;
+  border-color:rgba(255,255,255,.6)!important;
+}
+@media(max-width:850px){
+  .pdf-course-picker{min-width:130px;max-width:170px}
+}
+
 </style>
 </head>
 <body>
@@ -838,6 +897,9 @@
   <header class="topbar">
     <div class="page-title"><p>مرحبًا بك في مركز المتابعة</p><h1 id="pageTitle">نظرة عامة</h1></div>
     <div class="top-actions">
+      <select id="pdfCourseSelect" class="pdf-course-picker" title="حدد نطاق PDF">
+        <option value="all">PDF: كل الدورات المعروضة</option>
+      </select>
       <button class="pdf-btn" onclick="exportPDF()">↓ تصدير PDF</button>
       <button class="refresh-btn" onclick="loadAll()" title="تحديث">↻</button>
       <div class="user-chip"><div class="avatar">ع</div><div><b>الجهة الإشرافية</b><small>صلاحية كاملة</small></div></div>
@@ -1003,6 +1065,89 @@ async function loadAll(){
   }catch(error){console.error(error);$("notice").className="notice error";$("notice").textContent="تعذر تحميل البيانات. تحقق من صلاحيات القراءة في Firestore.";$("connection").classList.add("error");$("connectionTitle").textContent="تعذر الاتصال";$("connectionText").textContent="راجع صلاحيات Firestore ثم حدّث الصفحة"}
 }
 
+
+function getResultScoreInfo(result,totalFallback=0){
+  if(!result){
+    return null;
+  }
+
+  const rawScore=first(
+    result,
+    [
+      "score","Score","points","Points","correct",
+      "correctCount","correctAnswers","rightAnswers",
+      "earnedScore","studentScore"
+    ],
+    ""
+  );
+
+  const rawTotal=first(
+    result,
+    [
+      "total","Total","totalQuestions","questionCount",
+      "maxScore","maximumScore","totalScore"
+    ],
+    totalFallback
+  );
+
+  const rawPercent=first(
+    result,
+    [
+      "percentage","percent","Percentage","Percent",
+      "scorePercent","scorePercentage"
+    ],
+    ""
+  );
+
+  const scoreNum=Number(rawScore);
+  const totalNum=Number(rawTotal);
+  let percentNum=Number(rawPercent);
+
+  if(!Number.isFinite(percentNum)){
+    percentNum =
+      Number.isFinite(scoreNum) &&
+      Number.isFinite(totalNum) &&
+      totalNum>0
+        ? Math.round((scoreNum/totalNum)*100)
+        : NaN;
+  }
+
+  return {
+    score:
+      Number.isFinite(scoreNum)
+        ? scoreNum
+        : "",
+    total:
+      Number.isFinite(totalNum) && totalNum>0
+        ? totalNum
+        : "",
+    percentage:
+      Number.isFinite(percentNum)
+        ? Math.max(0,Math.min(100,Math.round(percentNum)))
+        : ""
+  };
+}
+
+function buildStudentResultMap(students,findResult,totalFallback=0){
+  const map={};
+
+  students.forEach(student=>{
+    const result=findResult(student);
+    if(!result)return;
+
+    const info=getResultScoreInfo(
+      result,
+      totalFallback
+    );
+
+    if(info){
+      map[student.id]=info;
+    }
+  });
+
+  return map;
+}
+
 function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,studyProgress,logs){
   const students=rawStudents.map(s=>({id:s.id,name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),courseId:clean(first(s,["courseId","CourseId"])),records:Array.isArray(s.records)?s.records:[],trainerComment:clean(s.trainerComment),midterm:s.midterm,finalExam:s.finalExam}));
   const tasks=[],alerts=[],today=todayIso();
@@ -1012,12 +1157,25 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     const examTasks=exams.filter(e=>Array.isArray(e.visibleQuestionsByCourse?.[id])&&e.visibleQuestionsByCourse[id].length).map(e=>{
       const title=clean(first(e,["title","examTitle"],"اختبار")),key=clean(first(e,["examCategory","examType","category","examSkill"])).toLowerCase();
       const kind=e.isHomework===true||key.includes("homework")||title.toLowerCase().includes("homework")?"واجب":"كويز";
-      const done=courseStudents.filter(s=>results.some(r=>clean(r.courseId)===id&&clean(r.examId)===e.id&&sameStudent(r,s))),doneIds=done.map(s=>s.id),pendingIds=courseStudents.filter(s=>!doneIds.includes(s.id)).map(s=>s.id),p=pct(done.length,courseStudents.length);
+      const examTotal=
+        Array.isArray(e.visibleQuestionsByCourse?.[id])
+          ? e.visibleQuestionsByCourse[id].length
+          : Array.isArray(e.questions)
+            ? e.questions.length
+            : 0;
+      const findExamResult=s=>results.find(r=>
+        clean(r.courseId)===id &&
+        clean(r.examId)===e.id &&
+        sameStudent(r,s)
+      );
+      const done=courseStudents.filter(s=>Boolean(findExamResult(s))),doneIds=done.map(s=>s.id),pendingIds=courseStudents.filter(s=>!doneIds.includes(s.id)).map(s=>s.id),p=pct(done.length,courseStudents.length);
+      const studentResults=buildStudentResultMap(courseStudents,findExamResult,examTotal);
       return{
         id:`exam_${e.id}_${id}`,
         courseId:id,
         sourceDocId:e.id,
         sourceCollection:"exams",
+        studentResults,
         title,
         kind,
         due:p===100?"مكتمل":"متاح للطلاب",
@@ -1101,18 +1259,33 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
 
     }).map(a=>{
 
+      const findActivityResult=s=>
+        activityResults.find(r=>
+          clean(r.activityId)===clean(a.id) &&
+          [
+            r.courseId,
+            r.participantCourseId,
+            r.rankingCourseId,
+            r.targetCourseId
+          ].map(clean).includes(id) &&
+          sameStudent(r,s)
+        );
+
       const done=
         courseStudents.filter(s=>
-          activityResults.some(r=>
-            clean(r.activityId)===clean(a.id) &&
-            [
-              r.courseId,
-              r.participantCourseId,
-              r.rankingCourseId,
-              r.targetCourseId
-            ].map(clean).includes(id) &&
-            sameStudent(r,s)
-          )
+          Boolean(findActivityResult(s))
+        );
+
+      const activityTotal=
+        Array.isArray(a.questions)
+          ? a.questions.length
+          : 0;
+
+      const studentResults=
+        buildStudentResultMap(
+          courseStudents,
+          findActivityResult,
+          activityTotal
         );
 
       const doneIds=done.map(s=>s.id);
@@ -1183,6 +1356,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         courseId:id,
         sourceDocId:a.id,
         sourceCollection:"FunActivities",
+        studentResults,
         activityMode,
         title:clean(
           first(
@@ -1228,10 +1402,10 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     let present=0,recorded=0;courseStudents.forEach(s=>s.records.forEach(r=>{if(r.status){recorded++;if(r.status==="present")present++}}));
     let midtermDue="",finalDue="";coursePlans.forEach(p=>{const text=clean(p.activity).toLowerCase(),date=planDate(start,p.week,p.day);if(text.includes("midterm")&&(!midtermDue||date<midtermDue))midtermDue=date;if(text.includes("final")&&(!finalDue||date<finalDue))finalDue=date});
     const midtermMissing=midtermDue&&midtermDue<today?courseStudents.filter(s=>!hasValue(s.midterm)).length:0,finalMissing=finalDue&&finalDue<today?courseStudents.filter(s=>!hasValue(s.finalExam)).length:0;
-    if(attendanceMissing)alerts.push({id:`att_${id}`,courseId:id,status:"danger",title:"لم يُرصد حضور المدرب",text:`${attendanceMissing} يوم سابق دون تحضير · ${name}`,time:"متأخر"});
-    if(midtermMissing)alerts.push({id:`mid_${id}`,courseId:id,status:"danger",title:"درجات Midterm غير مكتملة",text:`${midtermMissing} من ${courseStudents.length} طالبًا دون درجة`,time:midtermDue});
-    if(finalMissing)alerts.push({id:`fin_${id}`,courseId:id,status:"danger",title:"درجات Final غير مكتملة",text:`${finalMissing} من ${courseStudents.length} طالبًا دون درجة`,time:finalDue});
-    if(commentDone.length<courseStudents.length)alerts.push({id:`com_${id}`,courseId:id,status:"warning",title:"تعليقات الطلاب ناقصة",text:`${courseStudents.length-commentDone.length} طلاب دون تعليق`,time:"هذا الأسبوع"});
+    if(attendanceMissing)alerts.push({id:`att_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"لم يُرصد حضور المدرب",text:`${attendanceMissing} يوم سابق دون تحضير · ${name}`,time:"متأخر"});
+    if(midtermMissing)alerts.push({id:`mid_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Midterm غير مكتملة",text:`${midtermMissing} من ${courseStudents.length} طالبًا دون درجة`,time:midtermDue});
+    if(finalMissing)alerts.push({id:`fin_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Final غير مكتملة",text:`${finalMissing} من ${courseStudents.length} طالبًا دون درجة`,time:finalDue});
+    if(commentDone.length<courseStudents.length)alerts.push({id:`com_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"warning",title:"تعليقات الطلاب ناقصة",text:`${courseStudents.length-commentDone.length} طلاب دون تعليق`,time:"هذا الأسبوع"});
     return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:courseTasks.length?Math.round(courseTasks.reduce((sum,t)=>sum+pct(t.completed,t.total),0)/courseTasks.length):0,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
@@ -1263,6 +1437,7 @@ function applyFilters(){
       .forEach(b=>b.classList.remove("selected"));
 
     render();
+    buildPdfCourseOptions();
     return;
   }
 
@@ -1288,6 +1463,7 @@ function applyFilters(){
     );
 
   render();
+  buildPdfCourseOptions();
 }
 
 function visibleIds(){return new Set(FILTERED.map(c=>c.id))}
@@ -1817,6 +1993,23 @@ function renderTrainerProgress(){
                   )
                 : 0;
 
+            const todayDate=new Date();
+            todayDate.setHours(0,0,0,0);
+
+            const endDate=course.end
+              ? new Date(`${course.end}T12:00:00`)
+              : null;
+
+            const courseDaysRemaining=
+              endDate && !Number.isNaN(endDate.getTime())
+                ? Math.max(
+                    0,
+                    Math.ceil(
+                      (endDate-todayDate)/86400000
+                    )
+                  )
+                : "—";
+
             const body=
               rows.map(row=>{
 
@@ -1845,6 +2038,30 @@ function renderTrainerProgress(){
                     date<today &&
                     !completedRow
                   );
+
+                let daysRemainingText="—";
+                let daysRemainingClass="future";
+
+                if(completedRow){
+                  daysRemainingText="مكتمل";
+                  daysRemainingClass="done";
+                }else if(date){
+                  const d=new Date(`${date}T12:00:00`);
+                  const now=new Date();
+                  now.setHours(0,0,0,0);
+                  const diff=Math.ceil((d-now)/86400000);
+
+                  if(diff<0){
+                    daysRemainingText=`متأخر ${Math.abs(diff)} يوم`;
+                    daysRemainingClass="late";
+                  }else if(diff===0){
+                    daysRemainingText="اليوم";
+                    daysRemainingClass="today";
+                  }else{
+                    daysRemainingText=`متبقي ${diff} يوم`;
+                    daysRemainingClass="future";
+                  }
+                }
 
                 const rowClass=
                   completedRow
@@ -1910,6 +2127,12 @@ function renderTrainerProgress(){
                     </td>
 
                     <td>
+                      <span class="tp-days-left ${daysRemainingClass}">
+                        ${esc(daysRemainingText)}
+                      </span>
+                    </td>
+
+                    <td>
                       ${status}
                     </td>
 
@@ -1948,6 +2171,7 @@ function renderTrainerProgress(){
                     <span>المكتمل ${completed}</span>
                     <span>المتبقي ${Math.max(0,rows.length-completed)}</span>
                     <span>التقدم ${progressPercent}%</span>
+                    <span class="tp-course-remaining">متبقي للدورة ${courseDaysRemaining} يوم</span>
                   </div>
 
                 </div>
@@ -1960,9 +2184,10 @@ function renderTrainerProgress(){
                         <th style="width:13%">اليوم / التاريخ</th>
                         <th style="width:30%">المحتوى المخطط</th>
                         <th style="width:13%">ما كتبه المدرب: الوحدة</th>
-                        <th style="width:10%">الصفحة الحالية</th>
-                        <th style="width:13%">الحالة</th>
-                        <th style="width:13%">آخر تحديث</th>
+                        <th style="width:9%">الصفحة الحالية</th>
+                        <th style="width:12%">المتبقي لليوم</th>
+                        <th style="width:12%">الحالة</th>
+                        <th style="width:12%">آخر تحديث</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1990,7 +2215,44 @@ function renderTrainerProgress(){
   `;
 }
 
-function alertsBox(){const alerts=visibleAlerts();return`<div class="alerts-list">${alerts.slice(0,7).map(a=>`<button class="alert-item ${a.status}"><i>${a.status==="danger"?"!":"⌛"}</i><span><b>${esc(a.title)}</b><small>${esc(a.text)}</small></span><time>${esc(a.time)}</time></button>`).join("")||'<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'}</div>`}
+function alertsBox(){
+  const alerts=visibleAlerts();
+
+  return`<div class="alerts-list">${
+    alerts.slice(0,7).map(a=>{
+      const course=
+        DATA.courses.find(
+          c=>c.id===a.courseId
+        );
+
+      const courseName=
+        a.courseName ||
+        course?.name ||
+        "دورة غير محددة";
+
+      const period=
+        a.period ||
+        course?.period ||
+        "";
+
+      return`
+        <button class="alert-item ${a.status}">
+          <i>${a.status==="danger"?"!":"⌛"}</i>
+          <span>
+            <b>${esc(a.title)}</b>
+            <small>${esc(a.text)}</small>
+            <em class="alert-course-chip">
+              ${esc(courseName)}
+              ${period?` · ${esc(period)}`:""}
+            </em>
+          </span>
+          <time>${esc(a.time)}</time>
+        </button>
+      `;
+    }).join("") ||
+    '<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'
+  }</div>`;
+}
 function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
   if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
 <span>نوع النشاط:</span>
@@ -2095,10 +2357,151 @@ async function deleteTaskItem(event,id){
 function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
 function openGrade(courseId,type){const c=DATA.courses.find(x=>x.id===courseId),students=DATA.students.filter(s=>s.courseId===courseId),done=students.filter(s=>hasValue(type==="midterm"?s.midterm:s.finalExam)),ids=done.map(s=>s.id);ACTIVE_TASK={id:`grade_${type}_${courseId}`,courseId,title:type==="midterm"?"رصد درجات Midterm":"رصد درجات Final",kind:"درجات",due:type==="midterm"?c.midtermDue:c.finalDue,completed:done.length,total:students.length,status:done.length===students.length?"success":"danger",completedIds:ids,pendingIds:students.filter(s=>!ids.includes(s.id)).map(s=>s.id)};ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?"pending":"done";openModal()}
 function openModal(){const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);$("modalKind").textContent=ACTIVE_TASK.kind;$("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;$("modalTitle").textContent=ACTIVE_TASK.title;$("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;$("modalTotal").textContent=ACTIVE_TASK.total;$("modalDone").textContent=ACTIVE_TASK.completed;$("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;$("modalBg").classList.remove("hidden");renderStudentList(ACTIVE_LIST)}
-function renderStudentList(type){ACTIVE_LIST=type;$("tabPending").classList.toggle("active",type==="pending");$("tabDone").classList.toggle("active",type==="done");const ids=type==="done"?ACTIVE_TASK.completedIds:ACTIVE_TASK.pendingIds,students=ids.map(id=>DATA.students.find(s=>s.id===id)).filter(Boolean);$("studentList").innerHTML=students.map(s=>`<div class="student-row"><i>${esc(s.name.charAt(0)||"ط")}</i><div><b>${esc(s.name)}</b><small>الهوية · ${esc(s.iqama||s.id)}</small></div><span class="student-state ${type}">${type==="done"?"✓ مكتمل":"! لم يكمل"}</span></div>`).join("")||'<div class="empty">لا يوجد طلاب في هذه القائمة</div>'}
+function renderStudentList(type){
+  ACTIVE_LIST=type;
+
+  $("tabPending")
+    .classList.toggle(
+      "active",
+      type==="pending"
+    );
+
+  $("tabDone")
+    .classList.toggle(
+      "active",
+      type==="done"
+    );
+
+  const ids=
+    type==="done"
+      ? ACTIVE_TASK.completedIds
+      : ACTIVE_TASK.pendingIds;
+
+  const students=
+    ids.map(id=>
+      DATA.students.find(
+        s=>s.id===id
+      )
+    ).filter(Boolean);
+
+  $("studentList").innerHTML=
+    students.map(s=>{
+
+      const result=
+        ACTIVE_TASK.studentResults?.[s.id];
+
+      let scoreHtml="";
+
+      if(
+        type==="done" &&
+        (
+          ACTIVE_TASK.kind==="نشاط" ||
+          ACTIVE_TASK.kind==="كويز" ||
+          ACTIVE_TASK.kind==="واجب"
+        )
+      ){
+        if(result){
+          const scoreText=
+            result.score!==""
+              ? `${result.score}${result.total!==""?` / ${result.total}`:""}`
+              : "—";
+
+          const percentText=
+            result.percentage!==""
+              ? `${result.percentage}%`
+              : "—";
+
+          scoreHtml=`
+            <div class="student-score-box">
+              <b>${esc(scoreText)}</b>
+              <small>النسبة ${esc(percentText)}</small>
+            </div>
+          `;
+        }else{
+          scoreHtml=`
+            <div class="student-score-box empty">
+              الدرجة غير محفوظة
+            </div>
+          `;
+        }
+      }
+
+      return`
+        <div class="student-row">
+          <i>${esc(s.name.charAt(0)||"ط")}</i>
+          <div>
+            <b>${esc(s.name)}</b>
+            <small>الهوية · ${esc(s.iqama||s.id)}</small>
+          </div>
+          ${scoreHtml}
+          <span class="student-state ${type}">
+            ${type==="done"?"✓ مكتمل":"! لم يكمل"}
+          </span>
+        </div>
+      `;
+    }).join("") ||
+    '<div class="empty">لا يوجد طلاب في هذه القائمة</div>';
+}
 function closeModal(event){if(event&&event.target!==$("modalBg"))return;$("modalBg").classList.add("hidden");ACTIVE_TASK=null}
 
-function exportPDF(){preparePrintReport();setTimeout(()=>window.print(),100)}
+
+function buildPdfCourseOptions(){
+  const select=$("pdfCourseSelect");
+  if(!select)return;
+
+  const current=select.value;
+
+  select.innerHTML=`
+    <option value="all">
+      PDF: كل الدورات المعروضة
+    </option>
+    ${
+      FILTERED.map(c=>`
+        <option value="${esc(c.id)}">
+          PDF: ${esc(c.name)} · ${esc(c.period)}
+        </option>
+      `).join("")
+    }
+  `;
+
+  if(
+    current &&
+    [...select.options].some(
+      o=>o.value===current
+    )
+  ){
+    select.value=current;
+  }else{
+    select.value="all";
+  }
+}
+
+function getPdfCourses(){
+  const value=
+    $("pdfCourseSelect")?.value ||
+    "all";
+
+  if(value==="all"){
+    return [...FILTERED];
+  }
+
+  return FILTERED.filter(
+    c=>c.id===value
+  );
+}
+
+function exportPDF(){
+  const pdfCourses=getPdfCourses();
+
+  if(!pdfCourses.length){
+    alert("اختر دورة لطباعتها أو اختر كل الدورات المعروضة.");
+    return;
+  }
+
+  preparePrintReport(pdfCourses);
+  setTimeout(()=>window.print(),100);
+}
+
 function selectedFilterText(){
   const labels={
     fBranch:"الفرع",
@@ -2259,7 +2662,7 @@ function pdfTaskCard(task){
   `;
 }
 
-function preparePrintReport(){
+function preparePrintReport(pdfCourses=getPdfCourses()){
 
   const displayedTasks=
     filterTasksByActivityMode(
@@ -2267,7 +2670,7 @@ function preparePrintReport(){
     );
 
   const displayedCourses=
-    FILTERED.map(c=>({
+    pdfCourses.map(c=>({
       ...c,
       reportTasks:
         displayedTasks.filter(
@@ -2296,7 +2699,7 @@ function preparePrintReport(){
   });
 
   const students=
-    FILTERED.reduce(
+    pdfCourses.reduce(
       (sum,c)=>sum+c.students,
       0
     );
@@ -2358,7 +2761,7 @@ function preparePrintReport(){
   $("printStats").innerHTML=`
     <article class="print-stat">
       <span>الدورات</span>
-      <b>${FILTERED.length}</b>
+      <b>${pdfCourses.length}</b>
     </article>
 
     <article class="print-stat">
