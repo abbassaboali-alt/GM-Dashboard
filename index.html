@@ -2329,7 +2329,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     );
     let midtermDue="",finalDue="";coursePlans.forEach(p=>{const text=clean(p.activity).toLowerCase(),date=planDate(start,p.week,p.day);if(text.includes("midterm")&&(!midtermDue||date<midtermDue))midtermDue=date;if(text.includes("final")&&(!finalDue||date<finalDue))finalDue=date});
     const midtermMissing=midtermDue&&midtermDue<today?courseStudents.filter(s=>!hasValue(s.midterm)).length:0,finalMissing=finalDue&&finalDue<today?courseStudents.filter(s=>!hasValue(s.finalExam)).length:0;
-    if(attendanceMissing)alerts.push({
+    if(missingAttendanceStudentsTotal)alerts.push({
       id:`att_${id}`,
       courseId:id,
       courseName:name,
@@ -2337,8 +2337,8 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
       status:"danger",
       title:"تحضير المدرب غير مكتمل",
       text:
-        `${attendanceMissing} يوم دراسي بتحضير غير مكتمل` +
-        ` · ${missingAttendanceStudentsTotal} حالة طالب غير مرصودة` +
+        `${missingAttendanceStudentsTotal} حالة تحضير غير مرصودة` +
+        ` · في ${attendanceMissing} يوم دراسي` +
         ` · ${name}` +
         ` · ${
           incompleteAttendanceDetails
@@ -2360,6 +2360,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
           )/academicCourseTasks.length
         )
       : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,
+      attendanceMissingCases:missingAttendanceStudentsTotal,
       expectedAttendanceDates:expected,
       missingAttendanceDates,
       incompleteAttendanceDetails:
@@ -2372,7 +2373,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             item.missingStudents.map(s=>s.name)
         })),
       missingAttendanceStudentsTotal,
-      midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+      midtermMissing,finalMissing,midtermDue,finalDue,alerts:missingAttendanceStudentsTotal+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
@@ -3361,31 +3362,30 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 <button class="${TASK_SORT_MODE==="course"?"active":""}" onclick="setTaskSort('course')">حسب الدورة</button>
 </div></div>${groupedAcademicTasks()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
-  if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي وبقي طالب واحد أو أكثر دون رصد حضور</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام تحضير غير مكتملة</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
-  <b class="${c.attendanceMissing?"red":"green"}">${c.attendanceMissing}</b>
+  if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يحسب كل خانة طالب غير مرصودة في يوم دراسي فعلي كحالة عدم تحضير مستقلة</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>حالات عدم التحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
+  <b class="${c.missingAttendanceStudentsTotal?"red":"green"}">
+    ${c.missingAttendanceStudentsTotal||0}
+  </b>
 
   <small class="td-sub">
-    المطلوب حتى الآن:
+    الأيام المتأثرة:
+    ${c.attendanceMissing||0}
+    من
     ${(c.expectedAttendanceDates||[]).length}
-    يوم دراسي
+    يوم دراسي مطلوب حتى الآن
   </small>
 
   ${
-    c.attendanceMissing
+    c.missingAttendanceStudentsTotal
       ? `
         <small class="td-sub">
           ${
             (c.incompleteAttendanceDetails||[])
               .map(item=>
-                `${esc(item.date)}: ${item.missingCount} طالب دون رصد`
+                `${esc(item.date)}: ${item.missingCount} حالة ناقصة`
               )
               .join(" · ")
           }
-        </small>
-
-        <small class="td-sub">
-          إجمالي الحالات غير المرصودة:
-          ${c.missingAttendanceStudentsTotal||0}
         </small>
       `
       : `
@@ -3398,7 +3398,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 
 <td>
   ${
-    c.attendanceMissing
+    c.missingAttendanceStudentsTotal
       ? '<span class="badge bad">! تحضير غير مكتمل</span>'
       : '<span class="badge good">✓ التحضير مكتمل</span>'
   }
