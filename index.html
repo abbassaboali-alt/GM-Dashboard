@@ -875,6 +875,120 @@
   .pdf-course-picker{min-width:130px;max-width:170px}
 }
 
+
+/* ===== Larger, clearer on-screen typography ===== */
+@media screen{
+  .page-title h1{font-size:22px}
+  .page-title p{font-size:11px}
+  .side-nav b{font-size:13px}
+  .side-label{font-size:12px}
+  .filter-head h2,.panel-head h2{font-size:16px}
+  .filter-head p,.panel-head p{font-size:10.5px}
+  .field label{font-size:10px}
+  .field select{font-size:11px}
+  .latest>span,.latest button{font-size:9px}
+  .stat span{font-size:10.5px}
+  .stat small{font-size:9px}
+  .data-table th{font-size:9.5px}
+  .data-table td{font-size:10.5px}
+  .course-cell b{font-size:11px}
+  .course-cell small,.td-sub{font-size:8.5px}
+  .alert-item b{font-size:10px}
+  .alert-item small{font-size:8.5px}
+  .alert-item time{font-size:7.5px}
+  .task h3{font-size:11px}
+  .task p{font-size:8.5px}
+  .kind,.task-status,.task-foot,.task-actions{font-size:8px}
+  .trainer-progress-head h3{font-size:14px}
+  .trainer-progress-head p{font-size:9px}
+  .trainer-progress-kpis span{font-size:8.5px}
+  .trainer-progress-table th{font-size:9px}
+  .trainer-progress-table td{font-size:9.5px}
+  .tp-badge,.tp-days-left{font-size:8px}
+  .tp-note{font-size:8px}
+}
+
+
+/* ===== PDF multi-course checkbox picker ===== */
+.pdf-multi-wrap{position:relative}
+.pdf-multi-btn{
+  height:38px;
+  min-width:205px;
+  max-width:300px;
+  border:1px solid #d8e4ed!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#164478!important;
+  padding:0 11px!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.pdf-multi-menu{
+  position:absolute;
+  top:44px;
+  left:0;
+  width:330px;
+  max-height:360px;
+  overflow:auto;
+  background:#fff;
+  border:1px solid #d8e4ed;
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(15,51,82,.18);
+  padding:10px;
+  z-index:1000;
+}
+.pdf-multi-menu.hidden{display:none!important}
+.pdf-multi-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:4px 3px 9px;
+  border-bottom:1px solid #e5ebf1;
+  margin-bottom:7px;
+}
+.pdf-multi-head b{font-size:10px;color:#164478}
+.pdf-multi-head button{
+  border:0;
+  background:#edf4f9;
+  color:#164478;
+  border-radius:8px;
+  padding:6px 8px;
+  font-size:8px;
+}
+.pdf-check-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 7px;
+  border-radius:9px;
+  cursor:pointer;
+  color:#24445f;
+  font-size:9px;
+  font-weight:800;
+}
+.pdf-check-row:hover{background:#f3f7fa}
+.pdf-check-row input{
+  width:17px;
+  height:17px;
+  accent-color:#164478;
+  flex:0 0 auto;
+}
+.pdf-check-row.all{
+  background:#eef5fa;
+  color:#164478;
+  font-weight:900;
+  margin-bottom:5px;
+}
+@media(max-width:850px){
+  .pdf-multi-btn{min-width:150px;max-width:190px}
+  .pdf-multi-menu{width:min(320px,88vw)}
+}
+
 </style>
 </head>
 <body>
@@ -897,9 +1011,28 @@
   <header class="topbar">
     <div class="page-title"><p>مرحبًا بك في مركز المتابعة</p><h1 id="pageTitle">نظرة عامة</h1></div>
     <div class="top-actions">
-      <select id="pdfCourseSelect" class="pdf-course-picker" title="حدد نطاق PDF">
-        <option value="all">PDF: كل الدورات المعروضة</option>
-      </select>
+      <div class="pdf-multi-wrap" id="pdfMultiWrap">
+        <button
+          type="button"
+          class="pdf-multi-btn"
+          id="pdfMultiBtn"
+          onclick="togglePdfCourseMenu(event)"
+          title="حدد دورة أو أكثر للتقرير"
+        >
+          <span id="pdfMultiLabel">PDF: كل الدورات المعروضة</span>
+          <span>▾</span>
+        </button>
+
+        <div class="pdf-multi-menu hidden" id="pdfCourseMenu">
+          <div class="pdf-multi-head">
+            <b>حدد الدورات المراد طباعتها</b>
+            <button type="button" onclick="closePdfCourseMenu()">إغلاق</button>
+          </div>
+
+          <div id="pdfCourseChecks"></div>
+        </div>
+      </div>
+
       <button class="pdf-btn" onclick="exportPDF()">↓ تصدير PDF</button>
       <button class="refresh-btn" onclick="loadAll()" title="تحديث">↻</button>
       <div class="user-chip"><div class="avatar">ع</div><div><b>الجهة الإشرافية</b><small>صلاحية كاملة</small></div></div>
@@ -999,7 +1132,40 @@ const first=(object,fields,fallback="")=>{for(const field of fields){const value
 const hasValue=value=>value!==undefined&&value!==null&&String(value).trim()!=="";
 const pct=(done,total)=>total?Math.round(done/total*100):0;
 function isoDate(value){if(!value)return"";const d=value?.toDate?value.toDate():value?.seconds?new Date(value.seconds*1000):new Date(value);if(!Number.isNaN(d?.getTime?.()))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;return clean(value).slice(0,10)}
-function todayIso(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function todayIso(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+/*
+  Calendar-day difference with NO hour/timezone rounding.
+  Same date = 0 exactly.
+  Tomorrow = 1.
+  Yesterday = -1.
+*/
+function calendarDayNumber(iso){
+  const m=String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m)return null;
+
+  return Math.floor(
+    Date.UTC(
+      Number(m[1]),
+      Number(m[2])-1,
+      Number(m[3])
+    ) / 86400000
+  );
+}
+
+function daysFromToday(iso){
+  const target=calendarDayNumber(iso);
+  const today=calendarDayNumber(todayIso());
+
+  if(target===null || today===null){
+    return null;
+  }
+
+  return target-today;
+}
 function formatDateTime(value){if(!value)return"—";const d=value?.toDate?value.toDate():value?.seconds?new Date(value.seconds*1000):new Date(value);return Number.isNaN(d.getTime())?clean(value):d.toLocaleString("ar-SA")}
 function planDate(start,week,day){const map={"الأحد":0,"الاحد":0,"Sunday":0,"الاثنين":1,"Monday":1,"الثلاثاء":2,"Tuesday":2,"الأربعاء":3,"الاربعاء":3,"Wednesday":3,"الخميس":4,"Thursday":4};const base=new Date(`${start}T12:00:00`);if(Number.isNaN(base.getTime())||map[clean(day)]===undefined)return"";base.setDate(base.getDate()+(Number(week||1)-1)*7+((map[clean(day)]-base.getDay()+7)%7));return isoDate(base)}
 function defaultStudyDates(start,end){const out=[];if(!start)return out;let d=new Date(`${start}T12:00:00`);const stop=new Date(`${end&&end<todayIso()?end:todayIso()}T12:00:00`);while(d<stop){const iso=isoDate(d);if(d.getDay()>=0&&d.getDay()<=3)out.push(iso);d.setDate(d.getDate()+1)}return out}
@@ -1993,22 +2159,24 @@ function renderTrainerProgress(){
                   )
                 : 0;
 
-            const todayDate=new Date();
-            todayDate.setHours(0,0,0,0);
-
-            const endDate=course.end
-              ? new Date(`${course.end}T12:00:00`)
-              : null;
+            const endDiff=
+              course.end
+                ? daysFromToday(course.end)
+                : null;
 
             const courseDaysRemaining=
-              endDate && !Number.isNaN(endDate.getTime())
-                ? Math.max(
-                    0,
-                    Math.ceil(
-                      (endDate-todayDate)/86400000
-                    )
-                  )
-                : "—";
+              endDiff===null
+                ? "—"
+                : Math.max(0,endDiff);
+
+            const courseRemainingLabel=
+              endDiff===null
+                ? "موعد النهاية غير محدد"
+                : endDiff<0
+                  ? `انتهت الدورة منذ ${Math.abs(endDiff)} يوم`
+                  : endDiff===0
+                    ? "تنتهي الدورة اليوم"
+                    : `متبقي للدورة ${endDiff} يوم`;
 
             const body=
               rows.map(row=>{
@@ -2046,12 +2214,12 @@ function renderTrainerProgress(){
                   daysRemainingText="مكتمل";
                   daysRemainingClass="done";
                 }else if(date){
-                  const d=new Date(`${date}T12:00:00`);
-                  const now=new Date();
-                  now.setHours(0,0,0,0);
-                  const diff=Math.ceil((d-now)/86400000);
+                  const diff=daysFromToday(date);
 
-                  if(diff<0){
+                  if(diff===null){
+                    daysRemainingText="—";
+                    daysRemainingClass="future";
+                  }else if(diff<0){
                     daysRemainingText=`متأخر ${Math.abs(diff)} يوم`;
                     daysRemainingClass="late";
                   }else if(diff===0){
@@ -2171,7 +2339,7 @@ function renderTrainerProgress(){
                     <span>المكتمل ${completed}</span>
                     <span>المتبقي ${Math.max(0,rows.length-completed)}</span>
                     <span>التقدم ${progressPercent}%</span>
-                    <span class="tp-course-remaining">متبقي للدورة ${courseDaysRemaining} يوم</span>
+                    <span class="tp-course-remaining">${esc(courseRemainingLabel)}</span>
                   </div>
 
                 </div>
@@ -2445,62 +2613,192 @@ function renderStudentList(type){
 function closeModal(event){if(event&&event.target!==$("modalBg"))return;$("modalBg").classList.add("hidden");ACTIVE_TASK=null}
 
 
+let PDF_SELECTED_COURSES=new Set();
+let PDF_ALL_SELECTED=true;
+
 function buildPdfCourseOptions(){
-  const select=$("pdfCourseSelect");
-  if(!select)return;
 
-  const current=select.value;
+  const box=$("pdfCourseChecks");
+  if(!box)return;
 
-  select.innerHTML=`
-    <option value="all">
-      PDF: كل الدورات المعروضة
-    </option>
+  const visibleIds=
+    new Set(
+      FILTERED.map(c=>c.id)
+    );
+
+  PDF_SELECTED_COURSES=
+    new Set(
+      [...PDF_SELECTED_COURSES]
+        .filter(id=>visibleIds.has(id))
+    );
+
+  if(PDF_ALL_SELECTED){
+    PDF_SELECTED_COURSES.clear();
+  }
+
+  box.innerHTML=`
+    <label class="pdf-check-row all">
+      <input
+        type="checkbox"
+        id="pdfAllCourses"
+        ${PDF_ALL_SELECTED?"checked":""}
+        onchange="setPdfAllCourses(this.checked)"
+      >
+      <span>
+        كل الدورات المعروضة (${FILTERED.length})
+      </span>
+    </label>
+
     ${
       FILTERED.map(c=>`
-        <option value="${esc(c.id)}">
-          PDF: ${esc(c.name)} · ${esc(c.period)}
-        </option>
+        <label class="pdf-check-row">
+          <input
+            type="checkbox"
+            class="pdf-course-check"
+            value="${esc(c.id)}"
+            ${
+              !PDF_ALL_SELECTED &&
+              PDF_SELECTED_COURSES.has(c.id)
+                ? "checked"
+                : ""
+            }
+            onchange="togglePdfCourseCheck('${esc(c.id)}',this.checked)"
+          >
+          <span>
+            ${esc(c.name)}
+            ·
+            ${esc(c.trainer)}
+            ·
+            ${esc(c.period)}
+            ·
+            ${esc(c.start)}
+          </span>
+        </label>
       `).join("")
     }
   `;
 
-  if(
-    current &&
-    [...select.options].some(
-      o=>o.value===current
-    )
-  ){
-    select.value=current;
-  }else{
-    select.value="all";
+  updatePdfMultiLabel();
+}
+
+function togglePdfCourseMenu(event){
+  event?.stopPropagation();
+  $("pdfCourseMenu")
+    ?.classList
+    .toggle("hidden");
+}
+
+function closePdfCourseMenu(){
+  $("pdfCourseMenu")
+    ?.classList
+    .add("hidden");
+}
+
+function setPdfAllCourses(checked){
+
+  PDF_ALL_SELECTED=
+    checked===true;
+
+  if(PDF_ALL_SELECTED){
+    PDF_SELECTED_COURSES.clear();
   }
+
+  buildPdfCourseOptions();
+}
+
+function togglePdfCourseCheck(courseId,checked){
+
+  PDF_ALL_SELECTED=false;
+
+  if(checked){
+    PDF_SELECTED_COURSES.add(courseId);
+  }else{
+    PDF_SELECTED_COURSES.delete(courseId);
+  }
+
+  const all=$("pdfAllCourses");
+  if(all){
+    all.checked=false;
+  }
+
+  updatePdfMultiLabel();
+}
+
+function updatePdfMultiLabel(){
+
+  const label=$("pdfMultiLabel");
+  if(!label)return;
+
+  if(PDF_ALL_SELECTED){
+    label.textContent=
+      `PDF: كل الدورات (${FILTERED.length})`;
+    return;
+  }
+
+  const count=
+    [...PDF_SELECTED_COURSES]
+      .filter(id=>
+        FILTERED.some(c=>c.id===id)
+      )
+      .length;
+
+  label.textContent=
+    count
+      ? `PDF: ${count} دورة محددة`
+      : "PDF: اختر الدورات";
 }
 
 function getPdfCourses(){
-  const value=
-    $("pdfCourseSelect")?.value ||
-    "all";
 
-  if(value==="all"){
+  if(PDF_ALL_SELECTED){
     return [...FILTERED];
   }
 
   return FILTERED.filter(
-    c=>c.id===value
+    c=>
+      PDF_SELECTED_COURSES.has(c.id)
   );
 }
 
 function exportPDF(){
-  const pdfCourses=getPdfCourses();
+
+  const pdfCourses=
+    getPdfCourses();
 
   if(!pdfCourses.length){
-    alert("اختر دورة لطباعتها أو اختر كل الدورات المعروضة.");
+    alert(
+      "حدد دورة واحدة على الأقل أو اختر كل الدورات المعروضة."
+    );
     return;
   }
 
-  preparePrintReport(pdfCourses);
-  setTimeout(()=>window.print(),100);
+  closePdfCourseMenu();
+
+  preparePrintReport(
+    pdfCourses
+  );
+
+  setTimeout(
+    ()=>window.print(),
+    100
+  );
 }
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    const wrap=$("pdfMultiWrap");
+
+    if(
+      wrap &&
+      !wrap.contains(event.target)
+    ){
+      closePdfCourseMenu();
+    }
+
+  }
+);
 
 function selectedFilterText(){
   const labels={
@@ -2664,9 +2962,16 @@ function pdfTaskCard(task){
 
 function preparePrintReport(pdfCourses=getPdfCourses()){
 
+  const pdfCourseIds=
+    new Set(
+      pdfCourses.map(c=>c.id)
+    );
+
   const displayedTasks=
     filterTasksByActivityMode(
       academicTasks()
+    ).filter(
+      t=>pdfCourseIds.has(t.courseId)
     );
 
   const displayedCourses=
