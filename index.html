@@ -1455,6 +1455,29 @@
 .grades-table .td-sub{font-size:10.5px!important}
 @media(max-width:850px){.grades-panel .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.grades-table{min-width:1120px!important}.grades-table th{font-size:12px!important;padding:12px 10px!important}.grades-table td{font-size:13px!important;padding:12px 10px!important}.grades-table .badge{font-size:11px!important;min-width:76px}}
 
+
+/* ===== Skill cards are clickable ===== */
+.skill-item-btn{
+  width:100%;
+  border:1px solid #e1e8ee;
+  background:#f8fbfd;
+  border-radius:12px;
+  padding:10px;
+  text-align:right;
+  color:inherit;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.skill-item-btn:hover{
+  transform:translateY(-2px);
+  border-color:#b9d1e4;
+  box-shadow:0 8px 20px rgba(15,51,82,.08);
+}
+.skill-item-btn:focus{
+  outline:3px solid rgba(43,120,178,.12);
+  border-color:#2b78b2;
+}
+
 </style>
 </head>
 <body>
@@ -4243,7 +4266,16 @@ function openSkill(courseId,skill){
     completedIds:item.completedIds||[],pendingIds:item.pendingIds||[],studentResults
   };
   MODAL_PDF_SELECTED.clear();
-  ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?'pending':'done';
+  /*
+    عند الضغط على المهارة:
+    نعرض الطلاب الذين تم رصد المهارة لهم أولاً.
+    إذا لم يوجد أي طالب مرصود، نعرض قائمة غير المرصودين.
+  */
+  ACTIVE_LIST=
+    ACTIVE_TASK.completedIds.length
+      ? "done"
+      : "pending";
+
   openModal();
 }
 function openGrade(courseId,type){
@@ -4360,7 +4392,28 @@ function openGrade(courseId,type){
 
   openModal();
 }
-function openModal(){const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);$("modalKind").textContent=ACTIVE_TASK.kind;$("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;$("modalTitle").textContent=ACTIVE_TASK.title;$("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;$("modalTotal").textContent=ACTIVE_TASK.total;$("modalDone").textContent=ACTIVE_TASK.completed;$("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;$("modalBg").classList.remove("hidden");renderStudentList(ACTIVE_LIST)}
+function openModal(){
+  const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);
+
+  $("modalKind").textContent=ACTIVE_TASK.kind;
+  $("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;
+  $("modalTitle").textContent=ACTIVE_TASK.title;
+  $("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;
+  $("modalTotal").textContent=ACTIVE_TASK.total;
+  $("modalDone").textContent=ACTIVE_TASK.completed;
+  $("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;
+
+  if(ACTIVE_TASK.kind==="مهارة"){
+    $("tabDone").textContent="تم الرصد";
+    $("tabPending").textContent="لم يتم الرصد";
+  }else{
+    $("tabDone").textContent="أكملوا";
+    $("tabPending").textContent="لم يكملوا";
+  }
+
+  $("modalBg").classList.remove("hidden");
+  renderStudentList(ACTIVE_LIST);
+}
 function renderStudentList(type){
   ACTIVE_LIST=type;
 
