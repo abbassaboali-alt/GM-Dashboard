@@ -279,6 +279,236 @@
   }
 }
 
+
+/* ===== Detailed course/activity PDF ===== */
+@media print{
+  .print-report{direction:rtl}
+  .pdf-view-note{
+    margin:8px 0 10px;
+    padding:8px 11px;
+    border-radius:9px;
+    background:#f6f9fc;
+    border:1px solid #d9e4ed;
+    color:#48647b;
+    font-size:7px;
+    line-height:1.8;
+  }
+
+  .pdf-course{
+    margin:0 0 12px;
+    border:1px solid #cad8e4;
+    border-radius:12px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .pdf-course + .pdf-course{
+    margin-top:12px;
+  }
+
+  .pdf-course-head{
+    display:grid;
+    grid-template-columns:1.5fr repeat(5,.7fr);
+    gap:0;
+    background:linear-gradient(135deg,#123d66,#164478 65%,#2b78b2);
+    color:#fff;
+    align-items:stretch;
+  }
+
+  .pdf-course-name{
+    padding:10px 12px;
+    border-left:1px solid rgba(255,255,255,.18);
+  }
+
+  .pdf-course-name h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    font-size:11px!important;
+    color:#fff!important;
+    border-radius:0!important;
+  }
+
+  .pdf-course-name p{
+    margin:3px 0 0;
+    color:#d8e8f4;
+    font-size:6.5px;
+  }
+
+  .pdf-course-metric{
+    padding:8px 6px;
+    text-align:center;
+    border-left:1px solid rgba(255,255,255,.16);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  .pdf-course-metric span{
+    font-size:5.8px;
+    color:#d9e8f4;
+  }
+
+  .pdf-course-metric b{
+    font-size:9px;
+    margin-top:2px;
+    color:#fff;
+  }
+
+  .pdf-task-list{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    padding:9px;
+    background:#f7fafc;
+  }
+
+  .pdf-task-card{
+    border:1px solid #d6e1ea;
+    border-radius:10px;
+    background:#fff;
+    padding:8px;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .pdf-task-card.activity{border-right:5px solid #149b70}
+  .pdf-task-card.quiz{border-right:5px solid #7357c5}
+  .pdf-task-card.homework{border-right:5px solid #2b78b2}
+
+  .pdf-task-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:7px;
+    margin-bottom:6px;
+  }
+
+  .pdf-task-kind{
+    padding:3px 7px;
+    border-radius:12px;
+    font-size:5.8px;
+    font-weight:900;
+  }
+
+  .pdf-task-kind.activity{background:#e7f7f1;color:#0e7b57}
+  .pdf-task-kind.quiz{background:#f0edfb;color:#6748b6}
+  .pdf-task-kind.homework{background:#e9f3fa;color:#21669b}
+
+  .pdf-task-state{
+    font-size:5.8px;
+    font-weight:900;
+    color:#6d8192;
+  }
+
+  .pdf-task-card h3{
+    margin:0 0 4px;
+    color:#123a5e;
+    font-size:8px;
+    line-height:1.5;
+  }
+
+  .pdf-task-sub{
+    font-size:5.8px;
+    color:#75889a;
+    margin-bottom:6px;
+    line-height:1.6;
+  }
+
+  .pdf-task-numbers{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    margin:6px 0;
+  }
+
+  .pdf-mini-stat{
+    padding:5px 4px;
+    text-align:center;
+    border-radius:7px;
+    background:#f3f7fa;
+    border:1px solid #e0e8ef;
+  }
+
+  .pdf-mini-stat span{
+    display:block;
+    font-size:5px;
+    color:#7e8f9f;
+  }
+
+  .pdf-mini-stat b{
+    display:block;
+    margin-top:2px;
+    font-size:8px;
+    color:#153d60;
+  }
+
+  .pdf-progress{
+    height:6px;
+    border-radius:8px;
+    overflow:hidden;
+    background:#e7edf2;
+    margin:5px 0 7px;
+  }
+
+  .pdf-progress i{
+    display:block;
+    height:100%;
+    background:linear-gradient(90deg,#2b78b2,#149b70);
+    border-radius:8px;
+  }
+
+  .pdf-student-groups{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:6px;
+  }
+
+  .pdf-students{
+    border-radius:7px;
+    padding:6px;
+    border:1px solid #e0e7ee;
+    min-height:38px;
+  }
+
+  .pdf-students.done{background:#effaf6}
+  .pdf-students.pending{background:#fff4f5}
+
+  .pdf-students strong{
+    display:block;
+    font-size:5.7px;
+    margin-bottom:3px;
+  }
+
+  .pdf-students.done strong{color:#0d7c57}
+  .pdf-students.pending strong{color:#b83f48}
+
+  .pdf-students p{
+    margin:0;
+    font-size:5.3px;
+    color:#526b7f;
+    line-height:1.65;
+  }
+
+  .pdf-no-items{
+    grid-column:1/-1;
+    padding:18px;
+    text-align:center;
+    border:1px dashed #cbd8e3;
+    border-radius:9px;
+    color:#8293a3;
+    background:#fff;
+    font-size:7px;
+  }
+
+  @media print and (max-width:1000px){
+    .pdf-task-list{grid-template-columns:1fr 1fr}
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1156,16 +1386,415 @@ function renderStudentList(type){ACTIVE_LIST=type;$("tabPending").classList.togg
 function closeModal(event){if(event&&event.target!==$("modalBg"))return;$("modalBg").classList.add("hidden");ACTIVE_TASK=null}
 
 function exportPDF(){preparePrintReport();setTimeout(()=>window.print(),100)}
-function selectedFilterText(){const labels={fBranch:"الفرع",fSection:"القسم",fCourse:"الدورة",fStart:"تاريخ البدء",fType:"نوع الدورة",fTrainer:"المدرب",fPeriod:"الفترة"};const parts=Object.entries(labels).map(([id,label])=>$(id).value?`<b>${label}:</b> ${esc($(id).value)}`:"").filter(Boolean);return parts.length?parts.join(" &nbsp; | &nbsp; "):"<b>نطاق التقرير:</b> جميع الدورات"}
+function selectedFilterText(){
+  const labels={
+    fBranch:"الفرع",
+    fSection:"القسم",
+    fCourse:"الدورة",
+    fStart:"تاريخ البدء",
+    fType:"نوع الدورة",
+    fTrainer:"المدرب",
+    fPeriod:"الفترة"
+  };
+
+  const parts=
+    Object.entries(labels)
+      .map(([id,label])=>
+        $(id).value
+          ? `<b>${label}:</b> ${esc($(id).value)}`
+          : ""
+      )
+      .filter(Boolean);
+
+  const modeLabel=
+    ACTIVITY_MODE_FILTER==="individual"
+      ? "Individual"
+      : ACTIVITY_MODE_FILTER==="teams"
+        ? "Teams"
+        : "الكل";
+
+  const sortLabel=
+    TASK_SORT_MODE==="course"
+      ? "حسب الدورة"
+      : "حسب الفترة";
+
+  parts.push(
+    `<b>عرض الأنشطة:</b> ${modeLabel}`
+  );
+
+  parts.push(
+    `<b>الترتيب:</b> ${sortLabel}`
+  );
+
+  return parts.join(
+    " &nbsp; | &nbsp; "
+  );
+}
+
+function pdfStudentNames(ids){
+  const names=
+    (ids||[])
+      .map(id=>
+        DATA.students.find(
+          s=>s.id===id
+        )
+      )
+      .filter(Boolean)
+      .map(s=>
+        `${esc(s.name)}${s.iqama?` (${esc(s.iqama)})`:""}`
+      );
+
+  return names.length
+    ? names.join("، ")
+    : "لا يوجد";
+}
+
+function pdfTaskCard(task){
+
+  const p=
+    pct(
+      task.completed,
+      task.total
+    );
+
+  const cssClass=
+    task.kind==="نشاط"
+      ? "activity"
+      : task.kind==="كويز"
+        ? "quiz"
+        : "homework";
+
+  const mode=
+    task.kind==="نشاط"
+      ? (
+          task.activityMode==="individual"
+            ? "Individual"
+            : task.activityMode==="teams"
+              ? "Teams"
+              : task.activityMode==="both"
+                ? "Individual + Teams"
+                : "غير محدد"
+        )
+      : "—";
+
+  return `
+    <article class="pdf-task-card ${cssClass}">
+
+      <div class="pdf-task-top">
+        <span class="pdf-task-kind ${cssClass}">
+          ${esc(task.kind)}
+        </span>
+
+        <span class="pdf-task-state">
+          ${esc(task.due||"متابعة")}
+        </span>
+      </div>
+
+      <h3>${esc(task.title)}</h3>
+
+      <div class="pdf-task-sub">
+        ${
+          task.kind==="نشاط"
+            ? `طريقة التنفيذ: <b>${esc(mode)}</b>`
+            : `نوع العنصر: <b>${esc(task.kind)}</b>`
+        }
+      </div>
+
+      <div class="pdf-task-numbers">
+
+        <div class="pdf-mini-stat">
+          <span>إجمالي الطلاب</span>
+          <b>${task.total}</b>
+        </div>
+
+        <div class="pdf-mini-stat">
+          <span>أكملوا</span>
+          <b>${task.completed}</b>
+        </div>
+
+        <div class="pdf-mini-stat">
+          <span>لم يكملوا</span>
+          <b>${Math.max(0,task.total-task.completed)}</b>
+        </div>
+
+        <div class="pdf-mini-stat">
+          <span>الإنجاز</span>
+          <b>${p}%</b>
+        </div>
+
+      </div>
+
+      <div class="pdf-progress">
+        <i style="width:${p}%"></i>
+      </div>
+
+      <div class="pdf-student-groups">
+
+        <div class="pdf-students done">
+          <strong>✓ الطلاب المكتملون</strong>
+          <p>${pdfStudentNames(task.completedIds)}</p>
+        </div>
+
+        <div class="pdf-students pending">
+          <strong>! الطلاب غير المكتملين</strong>
+          <p>${pdfStudentNames(task.pendingIds)}</p>
+        </div>
+
+      </div>
+
+    </article>
+  `;
+}
+
 function preparePrintReport(){
-  const tasks=visibleTasks(),alerts=visibleAlerts(),students=FILTERED.reduce((s,c)=>s+c.students,0),completion=FILTERED.length?Math.round(FILTERED.reduce((s,c)=>s+c.completion,0)/FILTERED.length):0;
-  $("printMeta").innerHTML=`تاريخ التقرير: ${new Date().toLocaleString("ar-SA")}<br>أُصدر بواسطة: ${esc(localStorage.getItem("username")||"الجهة الإشرافية")}`;
-  $("printFilters").innerHTML=selectedFilterText();
-  $("printStats").innerHTML=`<article class="print-stat"><span>الدورات</span><b>${FILTERED.length}</b></article><article class="print-stat"><span>الطلاب</span><b>${students}</b></article><article class="print-stat"><span>التنبيهات</span><b>${alerts.length}</b></article><article class="print-stat"><span>متوسط الإنجاز</span><b>${completion}%</b></article>`;
-  const courseTable=`<div class="print-section"><h2>أولًا: ملخص الدورات</h2><table class="print-table"><thead><tr><th>الفرع</th><th>القسم</th><th>الدورة</th><th>تاريخ البدء</th><th>نوع الدورة</th><th>المدرب</th><th>الفترة</th><th>الطلاب</th><th>الإنجاز</th><th>الحضور</th><th>التعليقات</th><th>التنبيهات</th></tr></thead><tbody>${FILTERED.map(c=>`<tr class="${c.alerts?"danger-row":""}"><td>${esc(c.branch)}</td><td>${esc(c.section)}</td><td>${esc(c.name)}</td><td>${esc(c.start)}</td><td>${esc(c.type)}</td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td>${c.students}</td><td>${c.completion}%</td><td>${c.attendance}%</td><td>${c.comments}%</td><td><span class="print-badge ${c.alerts?"bad":"good"}">${c.alerts||"مكتمل"}</span></td></tr>`).join("")}</tbody></table></div>`;
-  const alertsTable=`<div class="print-section"><h2>ثانيًا: التنبيهات والمتابعة</h2><table class="print-table"><thead><tr><th style="width:13%">الأولوية</th><th style="width:22%">التنبيه</th><th>التفاصيل</th><th style="width:16%">التاريخ / الحالة</th></tr></thead><tbody>${alerts.map(a=>`<tr class="danger-row"><td><span class="print-badge bad">${a.status==="danger"?"عاجل":"متابعة"}</span></td><td>${esc(a.title)}</td><td>${esc(a.text)}</td><td>${esc(a.time)}</td></tr>`).join("")||'<tr><td colspan="4">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</td></tr>'}</tbody></table></div>`;
-  const taskTable=`<div class="print-section"><h2>ثالثًا: إنجاز الواجبات والكويزات والأنشطة والتعليقات</h2><table class="print-table"><thead><tr><th>النوع</th><th style="width:25%">العنوان</th><th>الدورة</th><th>المدرب</th><th>أكملوا</th><th>لم يكملوا</th><th>نسبة الإنجاز</th><th>الحالة</th></tr></thead><tbody>${tasks.map(t=>{const c=DATA.courses.find(x=>x.id===t.courseId),p=pct(t.completed,t.total);return`<tr class="${t.status==="danger"?"danger-row":""}"><td>${esc(t.kind)}</td><td>${esc(t.title)}</td><td>${esc(c?.name||"")}</td><td>${esc(c?.trainer||"")}</td><td>${t.completed}</td><td>${t.total-t.completed}</td><td>${p}%</td><td><span class="print-badge ${p===100?"good":"bad"}">${p===100?"مكتمل":"يحتاج متابعة"}</span></td></tr>`}).join("")||'<tr><td colspan="8">لا توجد عناصر</td></tr>'}</tbody></table></div>`;
-  $("printTables").innerHTML=courseTable+alertsTable+taskTable;
+
+  const displayedTasks=
+    filterTasksByActivityMode(
+      academicTasks()
+    );
+
+  const displayedCourses=
+    FILTERED
+      .map(c=>({
+        ...c,
+        reportTasks:
+          displayedTasks.filter(
+            t=>t.courseId===c.id
+          )
+      }));
+
+  displayedCourses.sort((a,b)=>{
+
+    if(TASK_SORT_MODE==="period"){
+      const byPeriod=
+        periodSortValue(a.period)-
+        periodSortValue(b.period);
+
+      if(byPeriod!==0){
+        return byPeriod;
+      }
+    }
+
+    return String(a.name)
+      .localeCompare(
+        String(b.name),
+        "ar",
+        {numeric:true}
+      );
+  });
+
+  const students=
+    FILTERED.reduce(
+      (sum,c)=>sum+c.students,
+      0
+    );
+
+  const completion=
+    displayedTasks.length
+      ? Math.round(
+          displayedTasks.reduce(
+            (sum,t)=>
+              sum+pct(
+                t.completed,
+                t.total
+              ),
+            0
+          ) /
+          displayedTasks.length
+        )
+      : 0;
+
+  const activities=
+    displayedTasks.filter(
+      t=>t.kind==="نشاط"
+    ).length;
+
+  const quizzes=
+    displayedTasks.filter(
+      t=>t.kind==="كويز"
+    ).length;
+
+  const homework=
+    displayedTasks.filter(
+      t=>t.kind==="واجب"
+    ).length;
+
+  const modeText=
+    ACTIVITY_MODE_FILTER==="individual"
+      ? "Individual"
+      : ACTIVITY_MODE_FILTER==="teams"
+        ? "Teams"
+        : "الكل";
+
+  $("printMeta").innerHTML=`
+    <b>تاريخ التقرير</b><br>
+    ${new Date().toLocaleString("ar-SA")}
+    <br>
+    <b>نوع عرض الأنشطة</b><br>
+    ${modeText}
+  `;
+
+  $("printFilters").innerHTML=
+    selectedFilterText();
+
+  $("printStats").innerHTML=`
+    <article class="print-stat">
+      <span>الدورات المعروضة</span>
+      <b>${FILTERED.length}</b>
+    </article>
+
+    <article class="print-stat">
+      <span>العناصر المعروضة</span>
+      <b>${displayedTasks.length}</b>
+    </article>
+
+    <article class="print-stat">
+      <span>الطلاب</span>
+      <b>${students}</b>
+    </article>
+
+    <article class="print-stat">
+      <span>متوسط الإنجاز</span>
+      <b>${completion}%</b>
+    </article>
+  `;
+
+  const reportHeader=`
+    <div class="pdf-view-note">
+      <b>محتوى التقرير الحالي:</b>
+      أنشطة ${activities}
+      &nbsp; · &nbsp;
+      كويزات ${quizzes}
+      &nbsp; · &nbsp;
+      واجبات ${homework}
+      &nbsp; · &nbsp;
+      عرض الأنشطة: <b>${modeText}</b>
+      &nbsp; · &nbsp;
+      الترتيب:
+      <b>${
+        TASK_SORT_MODE==="period"
+          ? "حسب الفترة"
+          : "حسب الدورة"
+      }</b>
+      <br>
+      يعكس هذا التقرير نفس الفلاتر والعرض المختار في لوحة الإشراف وقت التصدير.
+    </div>
+  `;
+
+  const courseSections=
+    displayedCourses.map(c=>{
+
+      const sorted=
+        [...c.reportTasks]
+          .sort((a,b)=>{
+            const order={
+              "نشاط":0,
+              "كويز":1,
+              "واجب":2
+            };
+
+            return (
+              (order[a.kind]??9)-
+              (order[b.kind]??9)
+            ) ||
+            String(a.title)
+              .localeCompare(
+                String(b.title),
+                "ar",
+                {numeric:true}
+              );
+          });
+
+      const courseActivities=
+        sorted.filter(
+          t=>t.kind==="نشاط"
+        ).length;
+
+      const courseQuizzes=
+        sorted.filter(
+          t=>t.kind==="كويز"
+        ).length;
+
+      const courseHomework=
+        sorted.filter(
+          t=>t.kind==="واجب"
+        ).length;
+
+      return `
+        <section class="pdf-course">
+
+          <div class="pdf-course-head">
+
+            <div class="pdf-course-name">
+              <h2>
+                ${esc(c.name)}
+              </h2>
+              <p>
+                ${esc(c.branch)}
+                ·
+                ${esc(c.section)}
+                ·
+                ${esc(c.type)}
+              </p>
+            </div>
+
+            <div class="pdf-course-metric">
+              <span>المدرب</span>
+              <b>${esc(c.trainer||"-")}</b>
+            </div>
+
+            <div class="pdf-course-metric">
+              <span>الفترة</span>
+              <b>${esc(c.period||"-")}</b>
+            </div>
+
+            <div class="pdf-course-metric">
+              <span>تاريخ البدء</span>
+              <b>${esc(c.start||"-")}</b>
+            </div>
+
+            <div class="pdf-course-metric">
+              <span>الطلاب</span>
+              <b>${c.students}</b>
+            </div>
+
+            <div class="pdf-course-metric">
+              <span>المحتوى</span>
+              <b>
+                ن ${courseActivities}
+                · ك ${courseQuizzes}
+                · و ${courseHomework}
+              </b>
+            </div>
+
+          </div>
+
+          <div class="pdf-task-list">
+            ${
+              sorted.length
+                ? sorted.map(pdfTaskCard).join("")
+                : `
+                  <div class="pdf-no-items">
+                    لا توجد أنشطة أو كويزات أو واجبات مطابقة للعرض الحالي في هذه الدورة.
+                  </div>
+                `
+            }
+          </div>
+
+        </section>
+      `;
+    }).join("");
+
+  $("printTables").innerHTML=
+    reportHeader+
+    (
+      courseSections ||
+      `
+        <div class="pdf-no-items">
+          لا توجد دورات مطابقة للفلاتر الحالية.
+        </div>
+      `
+    );
 }
 
 loadAll();
