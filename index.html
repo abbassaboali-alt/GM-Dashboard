@@ -2246,28 +2246,75 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     );
 
     /*
-      اليوم يعتبر "تم تحضيره" إذا وُجد أي سجل حضور محفوظ
-      لأي طالب في نفس الدورة في ذلك التاريخ.
+      =========================================================
+      حساب اكتمال تحضير المدرب لكل يوم دراسي فعلي
+      =========================================================
 
-      لا نشترط أن تكون قيمة status = present/absent فقط،
-      لأن صفحة الحضور قد تحفظ بعض الحالات بصيغ مختلفة.
-      وجود سجل بتاريخ صحيح يعني أن المدرب فتح اليوم ورصد الحضور.
+      اليوم لا يعتبر مكتمل التحضير لمجرد أن المدرب حضّر طالباً واحداً.
+
+      بل يجب أن يكون لكل طالب في الدورة سجل حضور في ذلك اليوم
+      (حاضر / غائب / متأخر / بعذر أو أي حالة محفوظة بتاريخ صحيح).
+
+      مثال:
+      إذا كان يوم الأحد من أيام الدورة،
+      وتم تحضير 12 طالباً من أصل 14 وبقي طالبان بدون أي حالة،
+      فإن يوم الأحد يُحسب "تحضير غير مكتمل".
+
+      هذا يطابق جدول Student Attendance:
+      الخانة الرمادية/الفارغة لطالب في يوم دراسي فعلي
+      تعني أن المدرب لم يرصد حالة هذا الطالب لذلك اليوم.
     */
-    const recordedDates=new Set(
-      courseStudents.flatMap(s=>
-        (Array.isArray(s.records)?s.records:[])
+
+    const attendanceDateSetByStudent = new Map();
+
+    courseStudents.forEach(student=>{
+      const dates = new Set(
+        (Array.isArray(student.records)?student.records:[])
           .map(attendanceRecordDate)
           .filter(Boolean)
-      )
-    );
-
-    const missingAttendanceDates=
-      expected.filter(
-        date=>!recordedDates.has(date)
       );
 
-    const attendanceMissing=
-      missingAttendanceDates.length;
+      attendanceDateSetByStudent.set(
+        student.id,
+        dates
+      );
+    });
+
+    const incompleteAttendanceDetails =
+      expected.map(date=>{
+
+        const missingStudents =
+          courseStudents.filter(student=>{
+            const dates =
+              attendanceDateSetByStudent.get(student.id) ||
+              new Set();
+
+            return !dates.has(date);
+          });
+
+        return {
+          date,
+          missingStudents,
+          missingCount:missingStudents.length
+        };
+
+      }).filter(item=>
+        item.missingCount>0
+      );
+
+    const missingAttendanceDates =
+      incompleteAttendanceDetails.map(
+        item=>item.date
+      );
+
+    const attendanceMissing =
+      incompleteAttendanceDetails.length;
+
+    const missingAttendanceStudentsTotal =
+      incompleteAttendanceDetails.reduce(
+        (sum,item)=>sum+item.missingCount,
+        0
+      );
 
     let present=0,recorded=0;
     courseStudents.forEach(s=>
@@ -2288,8 +2335,18 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
       courseName:name,
       period:clean(first(c,["Period","period","Time","time"],"")),
       status:"danger",
-      title:"لم يُرصد حضور المدرب",
-      text:`${attendanceMissing} يوم سابق دون تحضير · ${name} · ${missingAttendanceDates.join("، ")}`,
+      title:"تحضير المدرب غير مكتمل",
+      text:
+        `${attendanceMissing} يوم دراسي بتحضير غير مكتمل` +
+        ` · ${missingAttendanceStudentsTotal} حالة طالب غير مرصودة` +
+        ` · ${name}` +
+        ` · ${
+          incompleteAttendanceDetails
+            .map(item=>
+              `${item.date} (${item.missingCount} طالب)`
+            )
+            .join("، ")
+        }`,
       time:"متأخر"
     });
     if(midtermMissing)alerts.push({id:`mid_${id}`,courseId:id,courseName:name,period:clean(first(c,["Period","period","Time","time"],"")),status:"danger",title:"درجات Midterm غير مكتملة",text:`${midtermMissing} من ${courseStudents.length} طالبًا دون درجة`,time:midtermDue});
@@ -2302,7 +2359,20 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             0
           )/academicCourseTasks.length
         )
-      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,expectedAttendanceDates:expected,missingAttendanceDates,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+      : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,
+      expectedAttendanceDates:expected,
+      missingAttendanceDates,
+      incompleteAttendanceDetails:
+        incompleteAttendanceDetails.map(item=>({
+          date:item.date,
+          missingCount:item.missingCount,
+          missingStudentIds:
+            item.missingStudents.map(s=>s.id),
+          missingStudentNames:
+            item.missingStudents.map(s=>s.name)
+        })),
+      missingAttendanceStudentsTotal,
+      midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
   return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
@@ -3291,19 +3361,48 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 <button class="${TASK_SORT_MODE==="course"?"active":""}" onclick="setTaskSort('course')">حسب الدورة</button>
 </div></div>${groupedAcademicTasks()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
-  if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي ولم يُرصد حضور أي طالب</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام دون تحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
+  if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي وبقي طالب واحد أو أكثر دون رصد حضور</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام تحضير غير مكتملة</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
   <b class="${c.attendanceMissing?"red":"green"}">${c.attendanceMissing}</b>
+
   <small class="td-sub">
     المطلوب حتى الآن:
     ${(c.expectedAttendanceDates||[]).length}
-    يوم
+    يوم دراسي
   </small>
+
   ${
     c.attendanceMissing
-      ? `<small class="td-sub">الناقص: ${esc((c.missingAttendanceDates||[]).join(" · "))}</small>`
-      : `<small class="td-sub">✓ جميع الأيام المطلوبة محضرة</small>`
+      ? `
+        <small class="td-sub">
+          ${
+            (c.incompleteAttendanceDetails||[])
+              .map(item=>
+                `${esc(item.date)}: ${item.missingCount} طالب دون رصد`
+              )
+              .join(" · ")
+          }
+        </small>
+
+        <small class="td-sub">
+          إجمالي الحالات غير المرصودة:
+          ${c.missingAttendanceStudentsTotal||0}
+        </small>
+      `
+      : `
+        <small class="td-sub">
+          ✓ تم رصد جميع الطلاب في كل الأيام المطلوبة
+        </small>
+      `
   }
-</td><td>${c.attendanceMissing?'<span class="badge bad">! يحتاج متابعة</span>':'<span class="badge good">✓ تم التحضير</span>'}</td></tr>`).join("")}</tbody></table></div></section>`;
+</td>
+
+<td>
+  ${
+    c.attendanceMissing
+      ? '<span class="badge bad">! تحضير غير مكتمل</span>'
+      : '<span class="badge good">✓ التحضير مكتمل</span>'
+  }
+</td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>رصد درجات الاختبارات</h2><p>المواعيد تُقرأ من StudyPlans حسب الأسبوع واليوم</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>موعد Midterm</th><th>الناقص</th><th>موعد Final</th><th>الناقص</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.period)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.midtermDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.midtermMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','midterm')">${c.midtermMissing?c.midtermMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td><td>${esc(c.finalDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.finalMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','final')">${c.finalMissing?c.finalMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="comments")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>اكتمال تعليقات المدربين</h2><p>يعتمد على trainerComment في سجل الطالب</p></div></div>${taskCards(visibleTasks().filter(t=>t.kind==="تعليقات"))}</section>`;
   if(ACTIVE_VIEW==="trainerProgress")$("viewBox").innerHTML=renderTrainerProgress();
