@@ -619,7 +619,7 @@
 
   .exec-kpis{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(6,1fr);
     gap:0;
     background:#f7fafc;
     border-bottom:1px solid #dce5ec;
@@ -1472,7 +1472,8 @@
 .session-role{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:13px;font-size:9px;font-weight:900}
 .session-role.student{background:#eaf3fa;color:#21669b}
 .session-role.trainer{background:#e8f8f2;color:#117c59}
-.session-role.supervisor{background:#f0edfb;color:#674ab4}
+.session-role.employee{background:#fff6e4;color:#a86a08}
+.session-role.manager{background:#f0edfb;color:#674ab4}
 .session-count{font-size:10px;color:#71839a;font-weight:800}
 @media(max-width:850px){
   .session-toolbar{align-items:stretch}
@@ -1503,6 +1504,32 @@
 .trainer-search-input::placeholder{
   color:#8798a9;
   font-weight:700;
+}
+
+
+.session-table th,
+.session-table td{
+  white-space:nowrap;
+}
+.session-filters{
+  row-gap:8px;
+}
+.session-filter-btn{
+  min-height:38px;
+  font-size:11px;
+}
+.session-filter-count{
+  min-width:28px;
+  height:26px;
+  font-size:10px;
+}
+@media(max-width:850px){
+  .session-table{
+    min-width:1050px!important;
+  }
+  .session-filter-btn{
+    min-width:max-content;
+  }
 }
 
 </style>
@@ -2838,42 +2865,86 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     const active=!logout&&clean(log.status).toLowerCase()!=="closed";
 
     const rawRole=clean(first(log,[
-      "userType","role","Role","type"
+      "userType","role","Role","type","userRole"
     ],"")).toLowerCase();
 
-    let roleGroup="trainer";
-    let roleLabel="مدرب";
+    const displayName=
+      clean(first(log,["displayName","name"],"—"));
 
-    if(rawRole==="student"||rawRole==="طالب"){
+    const userId=
+      clean(first(log,["userId","username","studentId"],"—"));
+
+    const identityText=
+      `${rawRole} ${displayName} ${userId}`.toLowerCase();
+
+    let roleGroup="employee";
+    let roleLabel="موظف";
+
+    /* طالب */
+    if(
+      rawRole==="student" ||
+      rawRole==="طالب" ||
+      rawRole.includes("student")
+    ){
       roleGroup="student";
       roleLabel="طالب";
-    }else if(
-      rawRole.includes("supervisor")||
-      rawRole.includes("manager")||
-      rawRole.includes("admin")||
-      rawRole.includes("مشرف")||
-      rawRole.includes("إدارة")||
-      rawRole.includes("ادارة")
-    ){
-      roleGroup="supervisor";
-      roleLabel=rawRole.includes("admin")?"إدارة":"مشرف";
-    }else if(
-      rawRole.includes("trainer")||
-      rawRole.includes("teacher")||
-      rawRole.includes("مدرب")
+    }
+
+    /* مدرب */
+    else if(
+      rawRole.includes("trainer") ||
+      rawRole.includes("teacher") ||
+      rawRole.includes("instructor") ||
+      rawRole.includes("مدرب") ||
+      rawRole.includes("معلم")
     ){
       roleGroup="trainer";
       roleLabel="مدرب";
-    }else if(rawRole){
-      roleLabel=clean(first(log,["role","userType"],"مدرب"));
+    }
+
+    /*
+      مدير:
+      يدعم manager / general manager / GM.
+      كما يعتبر الحساب الذي اسمه أو معرفه GM مديراً.
+    */
+    else if(
+      rawRole.includes("manager") ||
+      rawRole.includes("general manager") ||
+      rawRole==="gm" ||
+      displayName.trim().toLowerCase()==="gm" ||
+      userId.trim().toLowerCase()==="gm"
+    ){
+      roleGroup="manager";
+      roleLabel="مدير";
+    }
+
+    /*
+      موظف / مشرف / إدارة:
+      admin و supervisor و staff و employee تظهر كموظف
+      ما لم تكن حالة المدير أعلاه.
+    */
+    else if(
+      rawRole.includes("admin") ||
+      rawRole.includes("supervisor") ||
+      rawRole.includes("staff") ||
+      rawRole.includes("employee") ||
+      rawRole.includes("office") ||
+      rawRole.includes("مشرف") ||
+      rawRole.includes("موظف") ||
+      rawRole.includes("إدارة") ||
+      rawRole.includes("ادارة")
+    ){
+      roleGroup="employee";
+      roleLabel="موظف";
     }
 
     return{
       id:log.id,
-      displayName:clean(first(log,["displayName","name"],"—")),
-      userId:clean(first(log,["userId","username","studentId"],"—")),
+      displayName,
+      userId,
       role:roleLabel,
       roleGroup,
+      rawRole,
       device:[
         first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),
         first(log,["platform"]),
@@ -4095,17 +4166,19 @@ function baseSessionRows(){
 
 function getSessionRoleCounts(){
   const list=baseSessionRows();
+
   return{
     all:list.length,
-    student:list.filter(s=>s.roleGroup==="student").length,
+    employee:list.filter(s=>s.roleGroup==="employee").length,
     trainer:list.filter(s=>s.roleGroup==="trainer").length,
-    supervisor:list.filter(s=>s.roleGroup==="supervisor").length
+    manager:list.filter(s=>s.roleGroup==="manager").length,
+    student:list.filter(s=>s.roleGroup==="student").length
   };
 }
 
 function setSessionRoleFilter(role){
   SESSION_ROLE_FILTER=
-    ["all","student","trainer","supervisor"].includes(role)
+    ["all","employee","trainer","manager","student"].includes(role)
       ? role
       : "all";
 
@@ -4227,17 +4300,19 @@ function exportSessionsPDF(){
 
   const counts={
     all:rows.length,
-    student:rows.filter(s=>s.roleGroup==="student").length,
+    employee:rows.filter(s=>s.roleGroup==="employee").length,
     trainer:rows.filter(s=>s.roleGroup==="trainer").length,
-    supervisor:rows.filter(s=>s.roleGroup==="supervisor").length,
+    manager:rows.filter(s=>s.roleGroup==="manager").length,
+    student:rows.filter(s=>s.roleGroup==="student").length,
     active:rows.filter(s=>s.active).length
   };
 
   const label={
     all:"الكل",
-    student:"الطلاب",
+    employee:"الموظفين",
     trainer:"المدربين",
-    supervisor:"المشرفين / الإدارة"
+    manager:"المديرين",
+    student:"الطلاب"
   }[SESSION_ROLE_FILTER]||"الكل";
 
   const generatedAt=new Date().toLocaleString("ar-SA");
@@ -4299,9 +4374,10 @@ tbody tr:nth-child(even){background:#f8fbfd}
 
   <div class="kpis">
     <div class="kpi"><span>إجمالي السجلات</span><b>${counts.all}</b></div>
-    <div class="kpi"><span>طلاب</span><b>${counts.student}</b></div>
+    <div class="kpi"><span>موظفون</span><b>${counts.employee}</b></div>
     <div class="kpi"><span>مدربون</span><b>${counts.trainer}</b></div>
-    <div class="kpi"><span>مشرفون / إدارة</span><b>${counts.supervisor}</b></div>
+    <div class="kpi"><span>مديرون</span><b>${counts.manager}</b></div>
+    <div class="kpi"><span>طلاب</span><b>${counts.student}</b></div>
     <div class="kpi"><span>جلسات نشطة</span><b>${counts.active}</b></div>
   </div>
 
@@ -4523,13 +4599,13 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
           <div>
             <h2>سجل الدخول والخروج</h2>
             <p>
-              فلترة حسب الطلاب أو المدربين أو المشرفين
-              مع بيان العدد والحذف وتقرير PDF
+              فلترة سجلات الدخول حسب الموظف أو المدرب أو المدير
+              مع بيان العدد وإمكانية حذف السجلات
             </p>
           </div>
 
           <span class="session-count" id="sessionResultCount">
-            ${sessions.length} سجل
+            ${sessions.length} سجل معروض
           </span>
         </div>
 
@@ -4546,11 +4622,11 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
             </button>
 
             <button
-              class="session-filter-btn ${SESSION_ROLE_FILTER==="student"?"active":""}"
-              onclick="setSessionRoleFilter('student')"
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="employee"?"active":""}"
+              onclick="setSessionRoleFilter('employee')"
             >
-              الطلاب
-              <span class="session-filter-count">${counts.student}</span>
+              الموظفون
+              <span class="session-filter-count">${counts.employee}</span>
             </button>
 
             <button
@@ -4562,11 +4638,19 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
             </button>
 
             <button
-              class="session-filter-btn ${SESSION_ROLE_FILTER==="supervisor"?"active":""}"
-              onclick="setSessionRoleFilter('supervisor')"
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="manager"?"active":""}"
+              onclick="setSessionRoleFilter('manager')"
             >
-              المشرفون
-              <span class="session-filter-count">${counts.supervisor}</span>
+              المديرون
+              <span class="session-filter-count">${counts.manager}</span>
+            </button>
+
+            <button
+              class="session-filter-btn ${SESSION_ROLE_FILTER==="student"?"active":""}"
+              onclick="setSessionRoleFilter('student')"
+            >
+              الطلاب
+              <span class="session-filter-count">${counts.student}</span>
             </button>
 
           </div>
@@ -4577,14 +4661,14 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
               class="search"
               id="sessionSearch"
               oninput="refreshSessionRows()"
-              placeholder="بحث بالاسم أو الهوية أو الجهاز"
+              placeholder="بحث بالاسم أو المستخدم أو الجهاز"
             >
 
             <button
               class="session-pdf-btn"
               onclick="exportSessionsPDF()"
             >
-              PDF حسب الفلترة
+              PDF حسب العرض
             </button>
 
             <button
@@ -4601,7 +4685,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
         </div>
 
         <div class="table-wrap">
-          <table class="data-table" style="min-width:1180px">
+          <table class="data-table session-table" style="min-width:1180px">
 
             <thead>
               <tr>
@@ -4611,6 +4695,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
                     class="session-check"
                     id="sessionSelectAll"
                     onchange="toggleAllVisibleSessions(this.checked)"
+                    title="تحديد الكل"
                   >
                 </th>
                 <th>الاسم</th>
@@ -4635,8 +4720,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
     `;
 
     updateSessionSelectionUi();
-  }
-}
+  }}
 function sessionRows(list){
   return list.map(s=>`
     <tr>
