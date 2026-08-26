@@ -1437,6 +1437,24 @@
   }
 }
 
+
+/* ===== Clickable skill cards ===== */
+.skill-item-btn{width:100%;text-align:right;cursor:pointer;transition:.18s ease;font:inherit;color:inherit}
+.skill-item-btn:hover{transform:translateY(-2px);border-color:#b9d1e4;box-shadow:0 8px 20px rgba(15,51,82,.08)}
+.skill-item-btn:focus{outline:3px solid rgba(43,120,178,.12);border-color:#2b78b2}
+
+/* ===== Bigger grades interface ===== */
+.grades-panel .panel-head h2{font-size:22px!important}
+.grades-panel .panel-head p{font-size:13px!important}
+.grades-table{min-width:1260px!important}
+.grades-table th{font-size:14px!important;padding:14px 12px!important}
+.grades-table td{font-size:15px!important;padding:14px 12px!important}
+.grades-table td>b{font-size:16px!important}
+.grades-table .badge{font-size:12px!important;padding:7px 10px!important;min-width:82px}
+.grades-table .grade-mini{font-size:10.5px!important;margin-top:5px}
+.grades-table .td-sub{font-size:10.5px!important}
+@media(max-width:850px){.grades-panel .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.grades-table{min-width:1120px!important}.grades-table th{font-size:12px!important;padding:12px 10px!important}.grades-table td{font-size:13px!important;padding:12px 10px!important}.grades-table .badge{font-size:11px!important;min-width:76px}}
+
 </style>
 </head>
 <body>
@@ -2028,7 +2046,7 @@ function getPlannedStudyDates(
   );
 }
 function sameStudent(result,student){return[result.studentId,result.studentDocId,result.participantId].map(clean).includes(student.id)||[result.studentIqama,result.rankingStudentIqama,result.iqama].map(clean).filter(Boolean).includes(student.iqama)}
-function kindClass(kind){return kind==="واجب"?"homework":kind==="كويز"?"quiz":kind==="نشاط"?"activity":kind==="درجات"?"grade":"comment"}
+function kindClass(kind){return kind==="واجب"?"homework":kind==="كويز"?"quiz":kind==="نشاط"?"activity":kind==="درجات"?"grade":kind==="مهارة"?"activity":"comment"}
 function progress(value,tone=""){return`<div class="progress"><i class="${tone}" style="width:${Math.max(0,Math.min(100,value))}%"></i></div>`}
 
 async function readCollection(name,limit=5000){const snap=await db.collection(name).limit(limit).get();return snap.docs.map(doc=>({id:doc.id,...doc.data()}))}
@@ -3793,7 +3811,12 @@ function renderSkillsView(){
                             : `${item.missing} ناقص`;
 
                       return `
-                        <div class="skill-item">
+                        <button
+                          type="button"
+                          class="skill-item skill-item-btn"
+                          onclick="openSkill('${esc(c.id)}','${esc(skill)}')"
+                          title="عرض الطلاب الذين تم رصدهم والذين لم يتم رصدهم"
+                        >
 
                           <div class="skill-item-top">
                             <b>${esc(skill)}</b>
@@ -3822,7 +3845,7 @@ function renderSkillsView(){
                                 : "amber"
                           )}
 
-                        </div>
+                        </button>
                       `;
                     }).join("")
                   }
@@ -3930,7 +3953,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
   }
 </td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`
-    <section class="panel full-panel">
+    <section class="panel full-panel grades-panel">
 
       <div class="panel-head">
         <div>
@@ -3942,7 +3965,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
       </div>
 
       <div class="table-wrap">
-        <table class="data-table" style="min-width:1180px">
+        <table class="data-table grades-table">
           <thead>
             <tr>
               <th>الدورة</th>
@@ -4196,6 +4219,33 @@ function toggleModalSelectAll(checked){
 }
 
 function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;MODAL_PDF_SELECTED.clear();ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
+
+function openSkill(courseId,skill){
+  const c=DATA.courses.find(x=>x.id===courseId);
+  if(!c)return;
+  const students=DATA.students.filter(s=>s.courseId===courseId);
+  const item=c.skillSummary?.[skill]||{done:0,total:students.length,completedIds:[],pendingIds:students.map(s=>s.id)};
+  const studentResults={};
+  (DATA.skillEvaluations||[])
+    .filter(r=>clean(r.courseId)===courseId && clean(r.skill).toLowerCase()===clean(skill).toLowerCase() && hasValue(r.score))
+    .forEach(r=>{
+      const matched=students.find(s=>s.id===clean(r.studentId)||(s.iqama&&clean(r.studentIqama)===s.iqama));
+      if(!matched)return;
+      const score=Number(r.score);
+      let total=[r.total,r.maxScore,r.totalScore,r.outOf].map(Number).find(v=>Number.isFinite(v)&&v>0);
+      if(!Number.isFinite(total))total=10;
+      studentResults[matched.id]={score:Number.isFinite(score)?score:'',total,percentage:Number.isFinite(score)?Math.round(Math.max(0,Math.min(100,score/total*100))):''};
+    });
+  ACTIVE_TASK={
+    id:`skill_${courseId}_${skill}`,courseId,title:`رصد مهارة ${skill}`,kind:'مهارة',due:'متابعة المهارة',
+    completed:item.completedIds?.length||item.done||0,total:item.total||students.length,
+    status:(item.pendingIds?.length||0)===0?'success':(item.completedIds?.length||0)===0?'danger':'warning',
+    completedIds:item.completedIds||[],pendingIds:item.pendingIds||[],studentResults
+  };
+  MODAL_PDF_SELECTED.clear();
+  ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?'pending':'done';
+  openModal();
+}
 function openGrade(courseId,type){
 
   const c=
@@ -4352,7 +4402,8 @@ function renderStudentList(type){
           ACTIVE_TASK.kind==="نشاط" ||
           ACTIVE_TASK.kind==="كويز" ||
           ACTIVE_TASK.kind==="واجب" ||
-          ACTIVE_TASK.kind==="درجات"
+          ACTIVE_TASK.kind==="درجات" ||
+          ACTIVE_TASK.kind==="مهارة"
         )
       ){
         if(result){
