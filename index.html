@@ -1190,6 +1190,253 @@
   }
 }
 
+
+/* ===== Skills Supervision ===== */
+.skill-course-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.skill-course-card{
+  border:1px solid #dce6ef;
+  border-radius:16px;
+  background:#fff;
+  overflow:hidden;
+  box-shadow:0 7px 18px rgba(15,51,82,.055);
+}
+.skill-course-head{
+  padding:13px 15px;
+  background:linear-gradient(135deg,#164478,#2b78b2);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.skill-course-head h3{
+  margin:0;
+  font-size:14px;
+  color:#fff;
+}
+.skill-course-head p{
+  margin:3px 0 0;
+  color:#d9e9f5;
+  font-size:9px;
+}
+.skill-summary-badge{
+  white-space:nowrap;
+  padding:5px 8px;
+  border-radius:13px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-size:9px;
+  font-weight:900;
+}
+.skill-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:12px;
+}
+.skill-item{
+  border:1px solid #e1e8ee;
+  background:#f8fbfd;
+  border-radius:12px;
+  padding:10px;
+  min-width:0;
+}
+.skill-item-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.skill-item b{
+  font-size:11px;
+  color:#164478;
+}
+.skill-item small{
+  display:block;
+  margin-top:4px;
+  font-size:9px;
+  color:#71839a;
+}
+.skill-item .progress{
+  margin-top:7px;
+}
+.skill-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 7px;
+  border-radius:12px;
+  font-size:8px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.skill-status.done{background:#e7f7f1;color:#0f7b58}
+.skill-status.warn{background:#fff6e4;color:#a86a08}
+.skill-status.bad{background:#fff0f1;color:#b83d47}
+.grade-mini{
+  display:block;
+  margin-top:4px;
+  font-size:8px;
+  color:#71839a;
+}
+
+/* ===== Strong phone/tablet compatibility ===== */
+@media(max-width:850px){
+  html,body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+  .workspace{
+    width:100%;
+    margin-right:0!important;
+  }
+  .topbar{
+    min-height:70px;
+    height:auto!important;
+    padding:9px 10px!important;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .page-title{
+    min-width:0;
+    flex:1 1 160px;
+  }
+  .top-actions{
+    max-width:100%;
+    flex:1 1 100%;
+    overflow-x:auto;
+    padding-bottom:2px;
+  }
+  .content{
+    width:100%;
+    max-width:100%;
+    padding:10px 8px 86px!important;
+    overflow:hidden;
+  }
+  .filters-card,.panel{
+    border-radius:14px;
+    padding:11px!important;
+  }
+  .filters{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  .field select{
+    min-width:0;
+    width:100%;
+    font-size:12px!important;
+  }
+  .stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .grid-main{
+    grid-template-columns:1fr!important;
+  }
+  .table-wrap{
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .data-table{
+    min-width:900px;
+  }
+  .course-task-items{
+    display:flex!important;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:5px;
+  }
+  .course-task-items .task{
+    min-width:250px!important;
+    flex:0 0 250px;
+  }
+  .trainer-progress-table{
+    min-width:1050px!important;
+  }
+  .modal-bg{
+    padding:7px!important;
+    align-items:end;
+  }
+  .modal{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:92vh!important;
+    border-radius:18px 18px 0 0!important;
+  }
+  .modal-head{
+    border-radius:18px 18px 0 0!important;
+    padding:14px!important;
+  }
+  .modal-stats{
+    grid-template-columns:repeat(3,1fr);
+    padding:9px!important;
+  }
+  .student-row{
+    gap:6px;
+    padding:9px 4px!important;
+  }
+  .student-score-box{
+    min-width:100px!important;
+    margin-left:3px!important;
+  }
+  .pdf-multi-menu{
+    position:fixed!important;
+    top:auto!important;
+    bottom:76px!important;
+    left:8px!important;
+    right:8px!important;
+    width:auto!important;
+    max-height:55vh!important;
+  }
+  .mobile-nav{
+    overflow-x:auto!important;
+    justify-content:flex-start!important;
+    gap:2px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .mobile-nav button{
+    flex:0 0 66px;
+    min-width:66px!important;
+  }
+  .skill-course-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+@media(max-width:520px){
+  .filters{
+    grid-template-columns:1fr!important;
+  }
+  .stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .stat{
+    padding:10px 8px!important;
+  }
+  .skill-list{
+    grid-template-columns:1fr;
+    padding:8px;
+  }
+  .skill-course-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .modal-pdf-tools{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+  }
+  .modal-pdf-tools .modal-select-all,
+  .modal-selected-count{
+    grid-column:1/-1;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1201,6 +1448,7 @@
     <button data-view="courses"><i>▤</i><b>متابعة الدورات</b></button>
     <button data-view="attendance"><i>✓</i><b>الحضور</b></button>
     <button data-view="grades"><i>◎</i><b>رصد الدرجات</b></button>
+    <button data-view="skills"><i>◉</i><b>رصد المهارات</b></button>
     <button data-view="comments"><i>✎</i><b>تعليقات المدربين</b></button>
     <button data-view="trainerProgress"><i>◫</i><b>متابعة تقدم المدرب</b></button>
     <button data-view="sessions"><i>⇄</i><b>الدخول والخروج</b></button>
@@ -1272,6 +1520,7 @@
   <button data-view="courses"><i>▤</i><b>الدورات</b></button>
   <button data-view="attendance"><i>✓</i><b>الحضور</b></button>
   <button data-view="grades"><i>◎</i><b>الدرجات</b></button>
+  <button data-view="skills"><i>◉</i><b>المهارات</b></button>
   <button data-view="comments"><i>✎</i><b>التعليقات</b></button>
   <button data-view="trainerProgress"><i>◫</i><b>التقدم</b></button>
 </nav>
@@ -1350,7 +1599,8 @@
 firebase.initializeApp({apiKey:"AIzaSyCCFBvZosI8dwShZjxvZzI-SU5igEbcOKk",authDomain:"prudle-system.firebaseapp.com",projectId:"prudle-system"});
 const db=firebase.firestore();
 
-let DATA={courses:[],students:[],tasks:[],alerts:[],sessions:[],plans:[],progress:[]};
+let DATA={courses:[],students:[],tasks:[],alerts:[],sessions:[],plans:[],progress:[],skillEvaluations:[]};
+const SUPERVISION_SKILLS=["Listening","Speaking","Reading","Writing","Grammar","Vocabulary"];
 let FILTERED=[];
 let ACTIVE_VIEW="overview";
 let ACTIVE_TASK=null;
@@ -1806,6 +2056,7 @@ async function loadAll(){
       activityLiveSessions,
       plans,
       studyProgress,
+      skillEvaluations,
       logs
     ]=await Promise.all([
       readCollection("Courses"),
@@ -1818,6 +2069,7 @@ async function loadAll(){
       safeReadCollection("FunActivityLiveSessions"),
       readCollection("StudyPlans"),
       safeReadCollection("StudyPlanProgress"),
+      safeReadCollection("EnglishActivities"),
       readCollection("DeviceLoginLogs",1000)
     ]);
 
@@ -1832,6 +2084,7 @@ async function loadAll(){
       activityLiveSessions,
       plans,
       studyProgress,
+      skillEvaluations,
       logs
     );
     buildFilters();applyFilters();
@@ -1958,8 +2211,21 @@ function buildStudentResultMap(students,findResult,totalFallback=0){
   return map;
 }
 
-function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,studyProgress,logs){
-  const students=rawStudents.map(s=>({id:s.id,name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),courseId:clean(first(s,["courseId","CourseId"])),records:Array.isArray(s.records)?s.records:[],trainerComment:clean(s.trainerComment),midterm:s.midterm,finalExam:s.finalExam}));
+function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,studyProgress,skillEvaluations,logs){
+  const students=rawStudents.map(s=>({
+    id:s.id,
+    name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),
+    iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),
+    courseId:clean(first(s,["courseId","CourseId"])),
+    records:Array.isArray(s.records)?s.records:[],
+    trainerComment:clean(s.trainerComment),
+    midterm:s.midterm,
+    finalExam:s.finalExam,
+    listening:s.listening,
+    speaking:s.speaking,
+    hwCompleted:s.hwCompleted,
+    hwScore:s.hwScore
+  }));
   const tasks=[],alerts=[],today=todayIso();
   const courses=rawCourses.map(c=>{
     const id=c.id,courseStudents=students.filter(s=>s.courseId===id),start=isoDate(first(c,["StartingDate","startingDate","startDate"])),end=isoDate(first(c,["EndingDate","endingDate","endDate"]));
@@ -2329,6 +2595,103 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     );
     let midtermDue="",finalDue="";coursePlans.forEach(p=>{const text=clean(p.activity).toLowerCase(),date=planDate(start,p.week,p.day);if(text.includes("midterm")&&(!midtermDue||date<midtermDue))midtermDue=date;if(text.includes("final")&&(!finalDue||date<finalDue))finalDue=date});
     const midtermMissing=midtermDue&&midtermDue<today?courseStudents.filter(s=>!hasValue(s.midterm)).length:0,finalMissing=finalDue&&finalDue<today?courseStudents.filter(s=>!hasValue(s.finalExam)).length:0;
+    /* ===== Grade Entry completeness ===== */
+    const gradeFields={
+      midterm:"midterm",
+      final:"finalExam",
+      listening:"listening",
+      speaking:"speaking",
+      homework:"hwScore"
+    };
+
+    const gradeSummary={};
+
+    Object.entries(gradeFields).forEach(([key,field])=>{
+      const doneStudents=
+        courseStudents.filter(s=>
+          hasValue(s[field])
+        );
+
+      gradeSummary[key]={
+        field,
+        done:doneStudents.length,
+        missing:
+          Math.max(
+            0,
+            courseStudents.length-doneStudents.length
+          ),
+        doneIds:doneStudents.map(s=>s.id)
+      };
+    });
+
+    /* ===== English skill evaluation completeness ===== */
+    const skillSummary={};
+
+    SUPERVISION_SKILLS.forEach(skill=>{
+
+      const records=(skillEvaluations||[]).filter(r=>
+        clean(r.courseId)===id &&
+        clean(r.skill).toLowerCase()===
+          skill.toLowerCase() &&
+        hasValue(r.score)
+      );
+
+      const scoredStudentIds=new Set();
+
+      records.forEach(r=>{
+        const recordStudentId=
+          clean(r.studentId);
+
+        const matched=
+          courseStudents.find(s=>
+            s.id===recordStudentId ||
+            (
+              s.iqama &&
+              clean(r.studentIqama)===s.iqama
+            )
+          );
+
+        if(matched){
+          scoredStudentIds.add(matched.id);
+        }
+      });
+
+      const missingStudents=
+        courseStudents.filter(
+          s=>!scoredStudentIds.has(s.id)
+        );
+
+      skillSummary[skill]={
+        done:scoredStudentIds.size,
+        total:courseStudents.length,
+        missing:missingStudents.length,
+        completedIds:[...scoredStudentIds],
+        pendingIds:missingStudents.map(s=>s.id)
+      };
+
+      if(
+        courseStudents.length &&
+        missingStudents.length
+      ){
+        alerts.push({
+          id:`skill_${id}_${skill}`,
+          courseId:id,
+          courseName:name,
+          period:clean(first(c,["Period","period","Time","time"],"")),
+          status:
+            scoredStudentIds.size===0
+              ? "danger"
+              : "warning",
+          title:`مهارة ${skill} غير مكتملة`,
+          text:
+            scoredStudentIds.size===0
+              ? `لم تُرصد مهارة ${skill} لأي طالب`
+              : `${missingStudents.length} من ${courseStudents.length} طالبًا لم تُرصد لهم مهارة ${skill}`,
+          time:"متابعة"
+        });
+      }
+    });
+
     if(missingAttendanceStudentsTotal)alerts.push({
       id:`att_${id}`,
       courseId:id,
@@ -2373,10 +2736,25 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             item.missingStudents.map(s=>s.name)
         })),
       missingAttendanceStudentsTotal,
-      midtermMissing,finalMissing,midtermDue,finalDue,alerts:missingAttendanceStudentsTotal+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
+      midtermMissing,
+      finalMissing,
+      midtermDue,
+      finalDue,
+      gradeSummary,
+      skillSummary,
+      alerts:
+        missingAttendanceStudentsTotal+
+        (midtermMissing?1:0)+
+        (finalMissing?1:0)+
+        (commentDone.length<courseStudents.length?1:0)+
+        Object.values(skillSummary).reduce(
+          (sum,x)=>sum+(x.missing||0),
+          0
+        )
+    };
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
-  return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
+  return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress,skillEvaluations:skillEvaluations||[]};
 }
 
 function unique(key){return[...new Set(DATA.courses.map(c=>c[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),"ar",{numeric:true}))}
@@ -3313,6 +3691,154 @@ function renderTrainerProgress(){
   `;
 }
 
+
+function renderSkillsView(){
+
+  if(!FILTERED.length){
+    return `
+      <section class="panel full-panel">
+        <div class="empty">
+          اختر فلترًا واحدًا على الأقل لعرض رصد المهارات.
+        </div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="panel full-panel">
+
+      <div class="panel-head">
+        <div>
+          <h2>رصد مهارات اللغة الإنجليزية</h2>
+          <p>
+            البيانات من EnglishActivities:
+            Listening · Speaking · Reading · Writing · Grammar · Vocabulary
+          </p>
+        </div>
+      </div>
+
+      <div class="skill-course-grid">
+
+        ${
+          FILTERED.map(c=>{
+
+            const summary=
+              c.skillSummary || {};
+
+            const totalMissing=
+              SUPERVISION_SKILLS.reduce(
+                (sum,skill)=>
+                  sum+
+                  Number(
+                    summary[skill]?.missing || 0
+                  ),
+                0
+              );
+
+            return `
+              <article class="skill-course-card">
+
+                <div class="skill-course-head">
+                  <div>
+                    <h3>
+                      ${esc(c.name)}
+                      — ${esc(c.trainer)}
+                    </h3>
+                    <p>
+                      ${esc(c.branch)}
+                      · ${esc(c.section)}
+                      · ${esc(c.period)}
+                    </p>
+                  </div>
+
+                  <span class="skill-summary-badge">
+                    ${
+                      totalMissing
+                        ? `${totalMissing} رصد ناقص`
+                        : "✓ المهارات مكتملة"
+                    }
+                  </span>
+                </div>
+
+                <div class="skill-list">
+
+                  ${
+                    SUPERVISION_SKILLS.map(skill=>{
+
+                      const item=
+                        summary[skill] || {
+                          done:0,
+                          total:c.students,
+                          missing:c.students
+                        };
+
+                      const p=
+                        pct(
+                          item.done,
+                          item.total
+                        );
+
+                      const statusClass=
+                        item.missing===0
+                          ? "done"
+                          : item.done===0
+                            ? "bad"
+                            : "warn";
+
+                      const statusText=
+                        item.missing===0
+                          ? "✓ مكتمل"
+                          : item.done===0
+                            ? "لم يُرصد"
+                            : `${item.missing} ناقص`;
+
+                      return `
+                        <div class="skill-item">
+
+                          <div class="skill-item-top">
+                            <b>${esc(skill)}</b>
+
+                            <span class="skill-status ${statusClass}">
+                              ${statusText}
+                            </span>
+                          </div>
+
+                          <small>
+                            تم الرصد:
+                            ${item.done}
+                            من
+                            ${item.total}
+                            طالب
+                            ·
+                            ${p}%
+                          </small>
+
+                          ${progress(
+                            p,
+                            p===100
+                              ? "green"
+                              : p===0
+                                ? "red"
+                                : "amber"
+                          )}
+
+                        </div>
+                      `;
+                    }).join("")
+                  }
+
+                </div>
+
+              </article>
+            `;
+          }).join("")
+        }
+
+      </div>
+    </section>
+  `;
+}
+
 function alertsBox(){
   const alerts=visibleAlerts();
 
@@ -3351,7 +3877,7 @@ function alertsBox(){
     '<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'
   }</div>`;
 }
-function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
+function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",skills:"رصد المهارات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
   if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
 <span>نوع النشاط:</span>
 <button class="${ACTIVITY_MODE_FILTER==="all"?"active":""}" onclick="setActivityModeFilter('all')">الكل</button>
@@ -3403,7 +3929,128 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
       : '<span class="badge good">✓ التحضير مكتمل</span>'
   }
 </td></tr>`).join("")}</tbody></table></div></section>`;
-  if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>رصد درجات الاختبارات</h2><p>المواعيد تُقرأ من StudyPlans حسب الأسبوع واليوم</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>موعد Midterm</th><th>الناقص</th><th>موعد Final</th><th>الناقص</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.period)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.midtermDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.midtermMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','midterm')">${c.midtermMissing?c.midtermMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td><td>${esc(c.finalDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.finalMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','final')">${c.finalMissing?c.finalMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td></tr>`).join("")}</tbody></table></div></section>`;
+  if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`
+    <section class="panel full-panel">
+
+      <div class="panel-head">
+        <div>
+          <h2>متابعة رصد جميع الدرجات</h2>
+          <p>
+            Midterm · Final · Listening · Speaking · Homework
+          </p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" style="min-width:1180px">
+          <thead>
+            <tr>
+              <th>الدورة</th>
+              <th>المدرب</th>
+
+              <th>Midterm</th>
+              <th>Final</th>
+
+              <th>Listening</th>
+              <th>Speaking</th>
+              <th>Homework</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${
+              FILTERED.map(c=>{
+
+                const g=
+                  c.gradeSummary || {};
+
+                const gradeButton=(
+                  key,
+                  label
+                )=>{
+
+                  const item=
+                    g[key] || {
+                      done:0,
+                      missing:c.students
+                    };
+
+                  return `
+                    <button
+                      class="badge ${
+                        item.missing
+                          ? "bad"
+                          : "good"
+                      }"
+                      onclick="openGrade('${esc(c.id)}','${key}')"
+                    >
+                      ${
+                        item.missing
+                          ? `${item.missing} ناقص`
+                          : `✓ ${item.done}/${c.students}`
+                      }
+                    </button>
+                    <span class="grade-mini">
+                      مرصود ${item.done||0} من ${c.students}
+                    </span>
+                  `;
+                };
+
+                return `
+                  <tr>
+                    <td>
+                      <b>${esc(c.name)}</b>
+                      <small class="td-sub">
+                        ${esc(c.branch)}
+                        ·
+                        ${esc(c.period)}
+                      </small>
+                    </td>
+
+                    <td>${esc(c.trainer)}</td>
+
+                    <td>
+                      ${esc(c.midtermDue||"")}
+                      ${gradeButton("midterm","Midterm")}
+                    </td>
+
+                    <td>
+                      ${esc(c.finalDue||"")}
+                      ${gradeButton("final","Final")}
+                    </td>
+
+                    <td>
+                      ${gradeButton("listening","Listening")}
+                    </td>
+
+                    <td>
+                      ${gradeButton("speaking","Speaking")}
+                    </td>
+
+                    <td>
+                      ${gradeButton("homework","Homework")}
+                    </td>
+                  </tr>
+                `;
+              }).join("") ||
+              `
+                <tr>
+                  <td colspan="7" class="empty">
+                    اختر فلترًا لعرض الدرجات
+                  </td>
+                </tr>
+              `
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `;
+
+  if(ACTIVE_VIEW==="skills"){
+    $("viewBox").innerHTML=
+      renderSkillsView();
+  }
   if(ACTIVE_VIEW==="comments")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>اكتمال تعليقات المدربين</h2><p>يعتمد على trainerComment في سجل الطالب</p></div></div>${taskCards(visibleTasks().filter(t=>t.kind==="تعليقات"))}</section>`;
   if(ACTIVE_VIEW==="trainerProgress")$("viewBox").innerHTML=renderTrainerProgress();
   if(ACTIVE_VIEW==="sessions"){const ids=visibleIds(),students=DATA.students.filter(s=>ids.has(s.courseId)),keys=new Set(students.flatMap(s=>[s.id,s.iqama,s.name]).map(v=>v.toLowerCase())),trainers=new Set(FILTERED.map(c=>c.trainer.toLowerCase()));const sessions=DATA.sessions.filter(s=>!FILTERED.length||trainers.has(s.displayName.toLowerCase())||keys.has(s.displayName.toLowerCase())||keys.has(s.userId.toLowerCase()));$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>سجل الدخول والخروج</h2><p>المدربون والطلاب والأجهزة ووقت الجلسة</p></div><input class="search" id="sessionSearch" oninput="filterSessions()" placeholder="بحث بالاسم أو الهوية أو الجهاز"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الاسم</th><th>المستخدم / الهوية</th><th>الصفة</th><th>الجهاز</th><th>الدخول</th><th>الخروج</th><th>الحالة</th></tr></thead><tbody id="sessionsBody">${sessionRows(sessions)}</tbody></table></div></section>`}
@@ -3549,7 +4196,120 @@ function toggleModalSelectAll(checked){
 }
 
 function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;MODAL_PDF_SELECTED.clear();ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
-function openGrade(courseId,type){const c=DATA.courses.find(x=>x.id===courseId),students=DATA.students.filter(s=>s.courseId===courseId),done=students.filter(s=>hasValue(type==="midterm"?s.midterm:s.finalExam)),ids=done.map(s=>s.id);ACTIVE_TASK={id:`grade_${type}_${courseId}`,courseId,title:type==="midterm"?"رصد درجات Midterm":"رصد درجات Final",kind:"درجات",due:type==="midterm"?c.midtermDue:c.finalDue,completed:done.length,total:students.length,status:done.length===students.length?"success":"danger",completedIds:ids,pendingIds:students.filter(s=>!ids.includes(s.id)).map(s=>s.id)};MODAL_PDF_SELECTED.clear();ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?"pending":"done";openModal()}
+function openGrade(courseId,type){
+
+  const c=
+    DATA.courses.find(
+      x=>x.id===courseId
+    );
+
+  const students=
+    DATA.students.filter(
+      s=>s.courseId===courseId
+    );
+
+  const config={
+    midterm:{
+      field:"midterm",
+      title:"رصد درجات Midterm",
+      total:40,
+      due:c?.midtermDue || ""
+    },
+    final:{
+      field:"finalExam",
+      title:"رصد درجات Final",
+      total:100,
+      due:c?.finalDue || ""
+    },
+    listening:{
+      field:"listening",
+      title:"رصد درجة Listening",
+      total:10,
+      due:""
+    },
+    speaking:{
+      field:"speaking",
+      title:"رصد درجة Speaking",
+      total:10,
+      due:""
+    },
+    homework:{
+      field:"hwScore",
+      title:"رصد درجة Homework",
+      total:10,
+      due:""
+    }
+  };
+
+  const cfg=
+    config[type] ||
+    config.midterm;
+
+  const done=
+    students.filter(
+      s=>hasValue(s[cfg.field])
+    );
+
+  const ids=
+    done.map(s=>s.id);
+
+  const studentResults={};
+
+  done.forEach(s=>{
+
+    const score=
+      Number(s[cfg.field]);
+
+    const valid=
+      Number.isFinite(score);
+
+    studentResults[s.id]={
+      score:
+        valid
+          ? score
+          : "",
+      total:
+        cfg.total,
+      percentage:
+        valid && cfg.total
+          ? Math.round(
+              score/cfg.total*100
+            )
+          : ""
+    };
+  });
+
+  ACTIVE_TASK={
+    id:`grade_${type}_${courseId}`,
+    courseId,
+    title:cfg.title,
+    kind:"درجات",
+    due:cfg.due,
+    completed:done.length,
+    total:students.length,
+    status:
+      done.length===students.length
+        ? "success"
+        : "danger",
+    completedIds:ids,
+    pendingIds:
+      students
+        .filter(
+          s=>!ids.includes(s.id)
+        )
+        .map(s=>s.id),
+    studentResults
+  };
+
+  MODAL_PDF_SELECTED.clear();
+
+  ACTIVE_LIST=
+    ACTIVE_TASK.pendingIds.length
+      ? "pending"
+      : "done";
+
+  openModal();
+}
 function openModal(){const c=DATA.courses.find(x=>x.id===ACTIVE_TASK.courseId);$("modalKind").textContent=ACTIVE_TASK.kind;$("modalKind").className=`kind ${kindClass(ACTIVE_TASK.kind)}`;$("modalTitle").textContent=ACTIVE_TASK.title;$("modalCourse").textContent=`${c?.name||""} · ${c?.trainer||""} · ${c?.period||""}`;$("modalTotal").textContent=ACTIVE_TASK.total;$("modalDone").textContent=ACTIVE_TASK.completed;$("modalPending").textContent=ACTIVE_TASK.total-ACTIVE_TASK.completed;$("modalBg").classList.remove("hidden");renderStudentList(ACTIVE_LIST)}
 function renderStudentList(type){
   ACTIVE_LIST=type;
@@ -3591,7 +4351,8 @@ function renderStudentList(type){
         (
           ACTIVE_TASK.kind==="نشاط" ||
           ACTIVE_TASK.kind==="كويز" ||
-          ACTIVE_TASK.kind==="واجب"
+          ACTIVE_TASK.kind==="واجب" ||
+          ACTIVE_TASK.kind==="درجات"
         )
       ){
         if(result){
