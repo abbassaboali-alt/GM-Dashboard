@@ -738,6 +738,84 @@
   }
 }
 
+
+/* ===== Trainer Study Progress View ===== */
+.trainer-progress-wrap{display:flex;flex-direction:column;gap:14px}
+.trainer-progress-course{
+  border:1px solid #dce6ef;
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 7px 18px rgba(15,51,82,.055)
+}
+.trainer-progress-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:13px 15px;
+  background:linear-gradient(135deg,#164478,#2b78b2);
+  color:#fff
+}
+.trainer-progress-head h3{margin:0;font-size:12px;color:#fff}
+.trainer-progress-head p{margin:3px 0 0;font-size:7.5px;color:#d9e9f5}
+.trainer-progress-kpis{display:flex;gap:6px;flex-wrap:wrap}
+.trainer-progress-kpis span{
+  padding:5px 8px;
+  border-radius:14px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.17);
+  color:#fff;
+  font-size:7px;
+  font-weight:900
+}
+.trainer-progress-table{width:100%;border-collapse:collapse;min-width:980px}
+.trainer-progress-table th{
+  background:#eef4f8;
+  color:#164478;
+  padding:8px 7px;
+  border:1px solid #dce5ec;
+  font-size:7.5px;
+  text-align:center
+}
+.trainer-progress-table td{
+  padding:8px 7px;
+  border:1px solid #e5ebf0;
+  font-size:8px;
+  text-align:center;
+  vertical-align:middle
+}
+.trainer-progress-table tbody tr:nth-child(even){background:#fbfdfe}
+.trainer-progress-table tr.today-row{background:#fff8e5!important}
+.trainer-progress-table tr.done-row{background:#effaf5!important}
+.trainer-progress-table tr.overdue-row{background:#fff1f2!important}
+.trainer-progress-table .plan-cell{text-align:right;min-width:210px;line-height:1.6}
+.tp-badge{
+  display:inline-block;
+  border-radius:13px;
+  padding:4px 7px;
+  font-size:6.5px;
+  font-weight:900;
+  white-space:nowrap
+}
+.tp-badge.done{background:#e5f7ef;color:#0e7d58}
+.tp-badge.pending{background:#fff5df;color:#a66a08}
+.tp-badge.today{background:#ffe8e8;color:#b73641}
+.tp-badge.overdue{background:#dc4d57;color:#fff}
+.tp-note{
+  display:block;
+  margin-top:3px;
+  font-size:6.5px;
+  color:#71839a;
+  line-height:1.5
+}
+.tp-empty-value{color:#9aa8b5}
+@media(max-width:850px){
+  .trainer-progress-head{align-items:flex-start}
+  .trainer-progress-kpis{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -750,6 +828,7 @@
     <button data-view="attendance"><i>✓</i><b>الحضور</b></button>
     <button data-view="grades"><i>◎</i><b>رصد الدرجات</b></button>
     <button data-view="comments"><i>✎</i><b>تعليقات المدربين</b></button>
+    <button data-view="trainerProgress"><i>◫</i><b>متابعة تقدم المدرب</b></button>
     <button data-view="sessions"><i>⇄</i><b>الدخول والخروج</b></button>
   </nav>
   <div class="connection" id="connection"><i></i><div><b id="connectionTitle">جاري الاتصال</b><small id="connectionText">يتم تحميل بيانات برودل...</small></div></div>
@@ -798,6 +877,7 @@
   <button data-view="attendance"><i>✓</i><b>الحضور</b></button>
   <button data-view="grades"><i>◎</i><b>الدرجات</b></button>
   <button data-view="comments"><i>✎</i><b>التعليقات</b></button>
+  <button data-view="trainerProgress"><i>◫</i><b>التقدم</b></button>
 </nav>
 
 <div class="modal-bg hidden" id="modalBg" onclick="closeModal(event)">
@@ -842,7 +922,7 @@
 firebase.initializeApp({apiKey:"AIzaSyCCFBvZosI8dwShZjxvZzI-SU5igEbcOKk",authDomain:"prudle-system.firebaseapp.com",projectId:"prudle-system"});
 const db=firebase.firestore();
 
-let DATA={courses:[],students:[],tasks:[],alerts:[],sessions:[]};
+let DATA={courses:[],students:[],tasks:[],alerts:[],sessions:[],plans:[],progress:[]};
 let FILTERED=[];
 let ACTIVE_VIEW="overview";
 let ACTIVE_TASK=null;
@@ -889,6 +969,7 @@ async function loadAll(){
       activityUsage,
       activityLiveSessions,
       plans,
+      studyProgress,
       logs
     ]=await Promise.all([
       readCollection("Courses"),
@@ -900,6 +981,7 @@ async function loadAll(){
       safeReadCollection("FunActivityUsage"),
       safeReadCollection("FunActivityLiveSessions"),
       readCollection("StudyPlans"),
+      safeReadCollection("StudyPlanProgress"),
       readCollection("DeviceLoginLogs",1000)
     ]);
 
@@ -913,6 +995,7 @@ async function loadAll(){
       activityUsage,
       activityLiveSessions,
       plans,
+      studyProgress,
       logs
     );
     buildFilters();applyFilters();
@@ -920,7 +1003,7 @@ async function loadAll(){
   }catch(error){console.error(error);$("notice").className="notice error";$("notice").textContent="تعذر تحميل البيانات. تحقق من صلاحيات القراءة في Firestore.";$("connection").classList.add("error");$("connectionTitle").textContent="تعذر الاتصال";$("connectionText").textContent="راجع صلاحيات Firestore ثم حدّث الصفحة"}
 }
 
-function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,logs){
+function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,studyProgress,logs){
   const students=rawStudents.map(s=>({id:s.id,name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),courseId:clean(first(s,["courseId","CourseId"])),records:Array.isArray(s.records)?s.records:[],trainerComment:clean(s.trainerComment),midterm:s.midterm,finalExam:s.finalExam}));
   const tasks=[],alerts=[],today=todayIso();
   const courses=rawCourses.map(c=>{
@@ -1152,7 +1235,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     return{id,branch:clean(first(c,["Branch","branch"],"غير محدد")),section:clean(first(c,["Section","section","Department","department"],"غير محدد")),name,start,end,type:clean(first(c,["courseType","CourseType","type","Type","Program","program"],"غير محدد")),trainer:clean(first(c,["Trainer","trainer","trainerName"],"غير محدد")),period:clean(first(c,["Period","period","Time","time"],"غير محدد")),students:courseStudents.length,completion:courseTasks.length?Math.round(courseTasks.reduce((sum,t)=>sum+pct(t.completed,t.total),0)/courseTasks.length):0,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,midtermMissing,finalMissing,midtermDue,finalDue,alerts:attendanceMissing+(midtermMissing?1:0)+(finalMissing?1:0)+(commentDone.length<courseStudents.length?1:0)};
   }).sort((a,b)=>b.start.localeCompare(a.start));
   const sessions=logs.map(log=>{const logout=first(log,["logoutAt","logoutClientTime"]),active=!logout&&clean(log.status)!=="closed";return{id:log.id,displayName:clean(first(log,["displayName","name"],"—")),userId:clean(first(log,["userId","username","studentId"],"—")),role:clean(log.userType)==="student"||clean(log.role).toLowerCase()==="student"?"طالب":clean(log.role).toLowerCase()==="admin"?"إدارة":clean(log.role)||"مدرب",device:[first(log,["deviceName","automaticDeviceName","deviceModel","deviceType"]),first(log,["platform"]),first(log,["browser"])].map(clean).filter(Boolean).join(" · ")||"—",login:formatDateTime(first(log,["loginAt","loginClientTime"])),logout:formatDateTime(logout),active}});
-  return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions};
+  return{courses,students,tasks:tasks.sort((a,b)=>({danger:0,warning:1,success:2}[a.status]-{danger:0,warning:1,success:2}[b.status])),alerts,sessions,plans,progress:studyProgress};
 }
 
 function unique(key){return[...new Set(DATA.courses.map(c=>c[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),"ar",{numeric:true}))}
@@ -1507,8 +1590,408 @@ function groupedAcademicTasks(){
   }</div>`;
 }
 
+
+function normalizePlanDay(day){
+  const map={
+    "الأحد":"Sunday","الاحد":"Sunday","Sunday":"Sunday",
+    "الاثنين":"Monday","Monday":"Monday",
+    "الثلاثاء":"Tuesday","Tuesday":"Tuesday",
+    "الأربعاء":"Wednesday","الاربعاء":"Wednesday","Wednesday":"Wednesday",
+    "الخميس":"Thursday","Thursday":"Thursday",
+    "الجمعة":"Friday","Friday":"Friday",
+    "السبت":"Saturday","Saturday":"Saturday"
+  };
+  return map[clean(day)] || clean(day);
+}
+
+function trainerProgressKey(courseId,week,day){
+  return `${clean(courseId)}__${Number(week||0)}__${normalizePlanDay(day)}`;
+}
+
+function dayNameFromDate(date){
+  return [
+    "Sunday","Monday","Tuesday","Wednesday",
+    "Thursday","Friday","Saturday"
+  ][date.getDay()];
+}
+
+function buildAllCourseDays(course){
+  const coursePlans=
+    DATA.plans
+      .filter(p=>clean(p.courseId)===course.id)
+      .map(p=>({
+        planId:p.id,
+        courseId:course.id,
+        week:Number(p.week||0),
+        day:normalizePlanDay(p.day),
+        activity:clean(p.activity)
+      }))
+      .filter(p=>p.week>0 && p.day);
+
+  const byKey=new Map();
+  coursePlans.forEach(p=>{
+    byKey.set(
+      trainerProgressKey(
+        p.courseId,
+        p.week,
+        p.day
+      ),
+      p
+    );
+  });
+
+  /*
+    إذا كانت الخطة تحتوي على كل أيام الدورة نستخدمها مباشرة.
+    وإذا كان يوم دراسي غير موجود في StudyPlans، ننشئه من
+    تاريخ بداية ونهاية الدورة حتى تظهر جميع أيام الدورة.
+    أيام الدراسة الافتراضية: الأحد إلى الأربعاء.
+  */
+  const start=course.start;
+  const end=course.end;
+
+  if(start && end){
+    const startDate=new Date(`${start}T12:00:00`);
+    const endDate=new Date(`${end}T12:00:00`);
+
+    if(
+      !Number.isNaN(startDate.getTime()) &&
+      !Number.isNaN(endDate.getTime())
+    ){
+      let d=new Date(startDate);
+
+      while(d<=endDate){
+        const jsDay=d.getDay();
+
+        if(jsDay>=0 && jsDay<=3){
+          const diffDays=
+            Math.floor(
+              (d-startDate)/86400000
+            );
+
+          const week=
+            Math.floor(diffDays/7)+1;
+
+          const day=
+            dayNameFromDate(d);
+
+          const key=
+            trainerProgressKey(
+              course.id,
+              week,
+              day
+            );
+
+          if(!byKey.has(key)){
+            byKey.set(key,{
+              planId:"",
+              courseId:course.id,
+              week,
+              day,
+              activity:""
+            });
+          }
+        }
+
+        d.setDate(d.getDate()+1);
+      }
+    }
+  }
+
+  const order={
+    Sunday:0,
+    Monday:1,
+    Tuesday:2,
+    Wednesday:3,
+    Thursday:4,
+    Friday:5,
+    Saturday:6
+  };
+
+  return [...byKey.values()]
+    .sort((a,b)=>
+      Number(a.week)-Number(b.week) ||
+      (order[a.day]??99)-(order[b.day]??99)
+    );
+}
+
+function getProgressRecord(courseId,week,day){
+  const key=
+    trainerProgressKey(
+      courseId,
+      week,
+      day
+    );
+
+  return DATA.progress.find(p=>
+    trainerProgressKey(
+      p.courseId,
+      p.week,
+      p.day
+    )===key
+  ) || null;
+}
+
+function trainerPlanDate(course,row){
+  const start=course.start;
+  if(!start)return "";
+
+  const date=
+    planDate(
+      start,
+      row.week,
+      row.day
+    );
+
+  return date || "";
+}
+
+function renderTrainerProgress(){
+
+  if(!FILTERED.length){
+    return `
+      <section class="panel full-panel">
+        <div class="empty">
+          اختر فلترًا واحدًا على الأقل لعرض تقدم المدربين.
+        </div>
+      </section>
+    `;
+  }
+
+  const today=todayIso();
+
+  const courses=[...FILTERED].sort((a,b)=>{
+    const p=
+      periodSortValue(a.period)-
+      periodSortValue(b.period);
+
+    if(p!==0)return p;
+
+    return String(a.name)
+      .localeCompare(
+        String(b.name),
+        "ar",
+        {numeric:true}
+      );
+  });
+
+  return `
+    <section class="panel full-panel">
+
+      <div class="panel-head">
+        <div>
+          <h2>متابعة تقدم المدرب</h2>
+          <p>
+            يعرض جميع أيام الدورة وما أدخله المدرب في StudyPlanProgress:
+            الوحدة الحالية، الصفحة، وحالة الإنجاز.
+          </p>
+        </div>
+
+        <span class="count-chip">
+          ${courses.length} دورة
+        </span>
+      </div>
+
+      <div class="trainer-progress-wrap">
+
+        ${
+          courses.map(course=>{
+
+            const rows=
+              buildAllCourseDays(course);
+
+            const completed=
+              rows.filter(row=>
+                getProgressRecord(
+                  course.id,
+                  row.week,
+                  row.day
+                )?.completed===true
+              ).length;
+
+            const progressPercent=
+              rows.length
+                ? Math.round(
+                    completed/
+                    rows.length*
+                    100
+                  )
+                : 0;
+
+            const body=
+              rows.map(row=>{
+
+                const record=
+                  getProgressRecord(
+                    course.id,
+                    row.week,
+                    row.day
+                  ) || {};
+
+                const date=
+                  trainerPlanDate(
+                    course,
+                    row
+                  );
+
+                const completedRow=
+                  record.completed===true;
+
+                const isToday=
+                  date===today;
+
+                const overdue=
+                  Boolean(
+                    date &&
+                    date<today &&
+                    !completedRow
+                  );
+
+                const rowClass=
+                  completedRow
+                    ? "done-row"
+                    : isToday
+                      ? "today-row"
+                      : overdue
+                        ? "overdue-row"
+                        : "";
+
+                const status=
+                  completedRow
+                    ? `<span class="tp-badge done">✓ مكتمل</span>`
+                    : isToday
+                      ? `<span class="tp-badge today">اليوم - لم يكتمل</span>`
+                      : overdue
+                        ? `<span class="tp-badge overdue">متأخر</span>`
+                        : `<span class="tp-badge pending">قادم / معلق</span>`;
+
+                const updated=
+                  record.updatedAt
+                    ? formatDateTime(
+                        record.updatedAt
+                      )
+                    : "—";
+
+                return `
+                  <tr class="${rowClass}">
+                    <td>
+                      <b>Week ${row.week}</b>
+                    </td>
+
+                    <td>
+                      <b>${esc(row.day)}</b>
+                      <span class="tp-note">
+                        ${esc(date||"—")}
+                      </span>
+                    </td>
+
+                    <td class="plan-cell">
+                      ${
+                        row.activity
+                          ? esc(row.activity)
+                          : `<span class="tp-empty-value">لا يوجد نص مخطط في الخطة</span>`
+                      }
+                    </td>
+
+                    <td>
+                      ${
+                        clean(record.unit)
+                          ? `<b>${esc(record.unit)}</b>`
+                          : `<span class="tp-empty-value">—</span>`
+                      }
+                    </td>
+
+                    <td>
+                      ${
+                        hasValue(record.page) &&
+                        Number(record.page)!==0
+                          ? `<b>${esc(record.page)}</b>`
+                          : `<span class="tp-empty-value">—</span>`
+                      }
+                    </td>
+
+                    <td>
+                      ${status}
+                    </td>
+
+                    <td>
+                      ${esc(updated)}
+                    </td>
+                  </tr>
+                `;
+              }).join("");
+
+            return `
+              <section class="trainer-progress-course">
+
+                <div class="trainer-progress-head">
+
+                  <div>
+                    <h3>
+                      ${esc(course.name)}
+                      —
+                      ${esc(course.trainer)}
+                    </h3>
+
+                    <p>
+                      ${esc(course.branch)}
+                      ·
+                      ${esc(course.section)}
+                      ·
+                      ${esc(course.period)}
+                      ·
+                      البداية ${esc(course.start||"—")}
+                    </p>
+                  </div>
+
+                  <div class="trainer-progress-kpis">
+                    <span>أيام الدورة ${rows.length}</span>
+                    <span>المكتمل ${completed}</span>
+                    <span>المتبقي ${Math.max(0,rows.length-completed)}</span>
+                    <span>التقدم ${progressPercent}%</span>
+                  </div>
+
+                </div>
+
+                <div class="table-wrap">
+                  <table class="trainer-progress-table">
+                    <thead>
+                      <tr>
+                        <th style="width:8%">الأسبوع</th>
+                        <th style="width:13%">اليوم / التاريخ</th>
+                        <th style="width:30%">المحتوى المخطط</th>
+                        <th style="width:13%">ما كتبه المدرب: الوحدة</th>
+                        <th style="width:10%">الصفحة الحالية</th>
+                        <th style="width:13%">الحالة</th>
+                        <th style="width:13%">آخر تحديث</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${
+                        body ||
+                        `
+                          <tr>
+                            <td colspan="7" class="empty">
+                              لا توجد أيام دراسية لهذه الدورة.
+                            </td>
+                          </tr>
+                        `
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+              </section>
+            `;
+          }).join("")
+        }
+
+      </div>
+    </section>
+  `;
+}
+
 function alertsBox(){const alerts=visibleAlerts();return`<div class="alerts-list">${alerts.slice(0,7).map(a=>`<button class="alert-item ${a.status}"><i>${a.status==="danger"?"!":"⌛"}</i><span><b>${esc(a.title)}</b><small>${esc(a.text)}</small></span><time>${esc(a.time)}</time></button>`).join("")||'<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'}</div>`}
-function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
+function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
   if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
 <span>نوع النشاط:</span>
 <button class="${ACTIVITY_MODE_FILTER==="all"?"active":""}" onclick="setActivityModeFilter('all')">الكل</button>
@@ -1522,6 +2005,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
   if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي ولم يُرصد حضور أي طالب</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام دون تحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td><b class="${c.attendanceMissing?"red":"green"}">${c.attendanceMissing}</b></td><td>${c.attendanceMissing?'<span class="badge bad">! يحتاج متابعة</span>':'<span class="badge good">✓ تم التحضير</span>'}</td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>رصد درجات الاختبارات</h2><p>المواعيد تُقرأ من StudyPlans حسب الأسبوع واليوم</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>موعد Midterm</th><th>الناقص</th><th>موعد Final</th><th>الناقص</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.period)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.midtermDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.midtermMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','midterm')">${c.midtermMissing?c.midtermMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td><td>${esc(c.finalDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.finalMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','final')">${c.finalMissing?c.finalMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="comments")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>اكتمال تعليقات المدربين</h2><p>يعتمد على trainerComment في سجل الطالب</p></div></div>${taskCards(visibleTasks().filter(t=>t.kind==="تعليقات"))}</section>`;
+  if(ACTIVE_VIEW==="trainerProgress")$("viewBox").innerHTML=renderTrainerProgress();
   if(ACTIVE_VIEW==="sessions"){const ids=visibleIds(),students=DATA.students.filter(s=>ids.has(s.courseId)),keys=new Set(students.flatMap(s=>[s.id,s.iqama,s.name]).map(v=>v.toLowerCase())),trainers=new Set(FILTERED.map(c=>c.trainer.toLowerCase()));const sessions=DATA.sessions.filter(s=>!FILTERED.length||trainers.has(s.displayName.toLowerCase())||keys.has(s.displayName.toLowerCase())||keys.has(s.userId.toLowerCase()));$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>سجل الدخول والخروج</h2><p>المدربون والطلاب والأجهزة ووقت الجلسة</p></div><input class="search" id="sessionSearch" oninput="filterSessions()" placeholder="بحث بالاسم أو الهوية أو الجهاز"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الاسم</th><th>المستخدم / الهوية</th><th>الصفة</th><th>الجهاز</th><th>الدخول</th><th>الخروج</th><th>الحالة</th></tr></thead><tbody id="sessionsBody">${sessionRows(sessions)}</tbody></table></div></section>`}
 }
 function sessionRows(list){return list.map(s=>`<tr data-search="${esc(`${s.displayName} ${s.userId} ${s.role} ${s.device}`.toLowerCase())}"><td><b>${esc(s.displayName)}</b></td><td>${esc(s.userId)}</td><td>${esc(s.role)}</td><td>${esc(s.device)}</td><td>${esc(s.login)}</td><td>${esc(s.logout)}</td><td>${s.active?'<span class="badge good"><i class="active-dot"></i>نشط</span>':'<span class="badge">تم الخروج</span>'}</td></tr>`).join("")||'<tr><td colspan="7" class="empty">لا توجد سجلات مطابقة</td></tr>'}
