@@ -35,7 +35,20 @@
 .course-task-items .task{min-width:0}
 @media(max-width:1250px){.course-task-items{grid-template-columns:repeat(3,minmax(180px,1fr))}}
 @media(max-width:850px){.course-task-items{display:flex;overflow:auto}.course-task-items .task{min-width:225px}}
-.task{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;text-align:right;transition:.2s;min-width:0}.task:hover{transform:translateY(-2px);box-shadow:0 11px 23px rgba(15,51,82,.09);border-color:#bed2e3}.task-top,.task-num,.task-foot{display:flex;align-items:center;justify-content:space-between}.kind{padding:4px 7px;border-radius:7px;font-size:7px;font-weight:900}.kind.homework{background:#e9f3fa;color:#21669b}.kind.quiz{background:#f0edfb;color:#6f50bd}.kind.activity{background:#e8f8f2;color:#14815d}.kind.comment{background:#fff3e2;color:#bf750b}.kind.grade{background:#fff0f1;color:#c9404a}.task-status{font-size:6.5px;font-weight:900}.task-status.danger{color:var(--red)}.task-status.warning{color:var(--amber)}.task-status.success{color:var(--green)}.task h3{margin:9px 0 4px;font-size:9.5px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.task p{margin:0 0 11px;font-size:7px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.task-num{font-size:8px;margin-bottom:5px}.task-foot{border-top:1px solid #edf1f5;margin-top:9px;padding-top:7px;color:var(--muted);font-size:7px}.task-foot b{color:var(--blue);font-size:15px}.full-panel{min-height:410px}.search{width:min(290px,45vw);border:1px solid #dbe4ec;border-radius:10px;padding:8px 10px;font-size:8px;outline:0}.red{color:var(--red)}.green{color:var(--green)}.active-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-left:4px}
+.task{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;text-align:right;transition:.2s;min-width:0}.task:hover{transform:translateY(-2px);box-shadow:0 11px 23px rgba(15,51,82,.09);border-color:#bed2e3}.task-top,.task-num,.task-foot{display:flex;align-items:center;justify-content:space-between}.kind{padding:4px 7px;border-radius:7px;font-size:7px;font-weight:900}.kind.homework{background:#e9f3fa;color:#21669b}.kind.quiz{background:#f0edfb;color:#6f50bd}.kind.activity{background:#e8f8f2;color:#14815d}.kind.comment{background:#fff3e2;color:#bf750b}.kind.grade{background:#fff0f1;color:#c9404a}.task-status{font-size:6.5px;font-weight:900}.task-status.danger{color:var(--red)}.task-status.warning{color:var(--amber)}.task-status.success{color:var(--green)}.task h3{margin:9px 0 4px;font-size:9.5px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.task p{margin:0 0 11px;font-size:7px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.task-num{font-size:8px;margin-bottom:5px}.task-foot{border-top:1px solid #edf1f5;margin-top:9px;padding-top:7px;color:var(--muted);font-size:7px}
+.task-actions{display:flex;align-items:center;gap:6px;margin-top:9px;padding-top:8px;border-top:1px solid #edf1f5}
+.task-delete{
+  margin-right:auto;
+  border:1px solid #f2c5c9;
+  background:#fff0f1;
+  color:#c83f49;
+  border-radius:9px;
+  padding:5px 8px;
+  font-size:7px;
+  font-weight:900;
+}
+.task-delete:hover{background:#c83f49;color:#fff;border-color:#c83f49}
+.task-foot b{color:var(--blue);font-size:15px}.full-panel{min-height:410px}.search{width:min(290px,45vw);border:1px solid #dbe4ec;border-radius:10px;padding:8px 10px;font-size:8px;outline:0}.red{color:var(--red)}.green{color:var(--green)}.active-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-left:4px}
 .modal-bg{position:fixed;inset:0;background:rgba(5,27,46,.56);backdrop-filter:blur(3px);z-index:100;display:grid;place-items:center;padding:15px}.modal{width:min(650px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:19px;box-shadow:0 30px 80px rgba(0,0,0,.25)}.modal-head{padding:18px 20px;background:linear-gradient(120deg,#10395f,#1c5b8c);color:#fff;display:flex;justify-content:space-between;border-radius:19px 19px 0 0}.modal-head h2{font-size:15px;margin:7px 0 3px}.modal-head p{margin:0;color:#bed2e2;font-size:8px}.close{width:33px;height:33px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;font-size:19px}.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:13px 17px}.modal-stats article{padding:9px 11px;border-radius:10px;background:#f4f7fa}.modal-stats article:nth-child(2){background:#e8f8f2}.modal-stats article:nth-child(3){background:#fff0f1}.modal-stats span,.modal-stats b{display:block}.modal-stats span{font-size:7px;color:var(--muted)}.modal-stats b{font-size:18px;margin-top:2px}.modal-tabs{display:flex;gap:5px;padding:0 17px;border-bottom:1px solid var(--line)}.modal-tabs button{border:0;background:transparent;padding:10px;font-size:8px;font-weight:900;color:var(--muted);border-bottom:2px solid transparent}.modal-tabs button.active{color:var(--blue);border-bottom-color:var(--blue)}.student-list{padding:8px 17px 17px}.student-row{display:flex;align-items:center;padding:8px;border-bottom:1px solid #edf1f5}.student-row>i{width:33px;height:33px;border-radius:10px;background:#e9f3fa;color:var(--blue);display:grid;place-items:center;font-style:normal;font-weight:900;margin-left:8px}.student-row>div{flex:1}.student-row b,.student-row small{display:block}.student-row b{font-size:9px}.student-row small{font-size:7px;color:var(--muted)}.student-state{padding:5px 8px;border-radius:14px;font-size:7px;font-weight:900}.student-state.done{background:#e8f8f2;color:#12815d}.student-state.pending{background:#fff0f1;color:#cd434d}
 .mobile-nav,.print-report{display:none}
 @media(max-width:1250px){.filters{grid-template-columns:repeat(4,1fr)}.tasks{grid-template-columns:repeat(3,1fr)}.grid-main{grid-template-columns:1fr}}
@@ -376,6 +389,7 @@ let ACTIVE_VIEW="overview";
 let ACTIVE_TASK=null;
 let ACTIVE_LIST="pending";
 let TASK_SORT_MODE="period";
+let ACTIVITY_MODE_FILTER="all";
 
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -457,7 +471,20 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
       const title=clean(first(e,["title","examTitle"],"اختبار")),key=clean(first(e,["examCategory","examType","category","examSkill"])).toLowerCase();
       const kind=e.isHomework===true||key.includes("homework")||title.toLowerCase().includes("homework")?"واجب":"كويز";
       const done=courseStudents.filter(s=>results.some(r=>clean(r.courseId)===id&&clean(r.examId)===e.id&&sameStudent(r,s))),doneIds=done.map(s=>s.id),pendingIds=courseStudents.filter(s=>!doneIds.includes(s.id)).map(s=>s.id),p=pct(done.length,courseStudents.length);
-      return{id:`exam_${e.id}_${id}`,courseId:id,title,kind,due:p===100?"مكتمل":"متاح للطلاب",completed:done.length,total:courseStudents.length,status:p===100?"success":p<70?"danger":"warning",completedIds:doneIds,pendingIds};
+      return{
+        id:`exam_${e.id}_${id}`,
+        courseId:id,
+        sourceDocId:e.id,
+        sourceCollection:"exams",
+        title,
+        kind,
+        due:p===100?"مكتمل":"متاح للطلاب",
+        completed:done.length,
+        total:courseStudents.length,
+        status:p===100?"success":p<70?"danger":"warning",
+        completedIds:doneIds,
+        pendingIds
+      };
     });
     /*
       ربط النشاط بالدورة يعتمد على أكثر من مصدر:
@@ -576,9 +603,45 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
           ].map(clean).includes(id)
         );
 
+      const hasIndividualMode=
+        activityLiveSessions.some(s=>
+          clean(s.activityId)===clean(a.id) &&
+          clean(s.courseId)===id &&
+          clean(s.mode).toLowerCase()==="individual"
+        );
+
+      const hasTeamMode=
+        activityResults.some(r=>
+          clean(r.activityId)===clean(a.id) &&
+          [
+            r.courseId,
+            r.participantCourseId,
+            r.rankingCourseId,
+            r.targetCourseId
+          ].map(clean).includes(id) &&
+          r.teamMode===true
+        );
+
+      /*
+        إذا لم يوجد سجل Teams ولم توجد جلسة Individual محفوظة،
+        نترك النوع "unknown" حتى يظهر فقط عند اختيار "الكل"
+        ولا نصنف السجل القديم بشكل خاطئ.
+      */
+      const activityMode=
+        hasIndividualMode && hasTeamMode
+          ? "both"
+          : hasIndividualMode
+            ? "individual"
+            : hasTeamMode
+              ? "teams"
+              : "unknown";
+
       return{
         id:`activity_${a.id}_${id}`,
         courseId:id,
+        sourceDocId:a.id,
+        sourceCollection:"FunActivities",
+        activityMode,
         title:clean(
           first(
             a,
@@ -588,11 +651,21 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         ),
         kind:"نشاط",
         due:
-          activeNow
-            ? "مفتوح للطلاب"
-            : usedInCourse
-              ? "تم تشغيله في الدورة"
-              : "نشاط مرتبط",
+          `${
+            activityMode==="individual"
+              ? "Individual"
+              : activityMode==="teams"
+                ? "Teams"
+                : activityMode==="both"
+                  ? "Individual + Teams"
+                  : "غير محدد"
+          } · ${
+            activeNow
+              ? "مفتوح للطلاب"
+              : usedInCourse
+                ? "تم تشغيله في الدورة"
+                : "نشاط مرتبط"
+          }`,
         completed:done.length,
         total:courseStudents.length,
         status:
@@ -684,17 +757,73 @@ function coursesTable(){return`<div class="table-wrap"><table class="data-table"
 function taskCard(t){
   const c=DATA.courses.find(x=>x.id===t.courseId);
   const p=pct(t.completed,t.total);
-  return`<button class="task" onclick="openTask('${esc(t.id)}')">
+
+  const canDelete=
+    t.kind==="نشاط" ||
+    t.kind==="كويز";
+
+  return`
+  <div
+    class="task"
+    role="button"
+    tabindex="0"
+    onclick="openTask('${esc(t.id)}')"
+    onkeydown="if(event.key==='Enter')openTask('${esc(t.id)}')"
+  >
     <div class="task-top">
       <span class="kind ${kindClass(t.kind)}">${esc(t.kind)}</span>
       <span class="task-status ${t.status}">${esc(t.due||"متابعة")}</span>
     </div>
+
     <h3>${esc(t.title)}</h3>
-    <p>${esc(c?.name||"")} · ${esc(c?.branch||"")} · ${esc(c?.period||"")}</p>
-    <div class="task-num"><b>${t.completed} من ${t.total}</b><span>${p}%</span></div>
-    ${progress(p,t.status==="danger"?"red":t.status==="warning"?"amber":"green")}
-    <div class="task-foot"><span>${t.total-t.completed?`${t.total-t.completed} لم يكملوا`:"اكتمل الجميع"}</span><b>‹</b></div>
-  </button>`;
+
+    <p>
+      ${esc(c?.name||"")}
+      ·
+      ${esc(c?.branch||"")}
+      ·
+      ${esc(c?.period||"")}
+    </p>
+
+    <div class="task-num">
+      <b>${t.completed} من ${t.total}</b>
+      <span>${p}%</span>
+    </div>
+
+    ${progress(
+      p,
+      t.status==="danger"
+        ? "red"
+        : t.status==="warning"
+          ? "amber"
+          : "green"
+    )}
+
+    <div class="task-actions">
+      <span>
+        ${
+          t.total-t.completed
+            ? `${t.total-t.completed} لم يكملوا`
+            : "اكتمل الجميع"
+        }
+      </span>
+
+      ${
+        canDelete
+          ? `
+            <button
+              class="task-delete"
+              type="button"
+              onclick="deleteTaskItem(event,'${esc(t.id)}')"
+              title="حذف ${esc(t.kind)}"
+            >
+              🗑 حذف
+            </button>
+          `
+          : ""
+      }
+    </div>
+  </div>`;
 }
 
 function taskCards(items=visibleTasks()){
@@ -730,13 +859,50 @@ function setTaskSort(mode){
   render();
 }
 
+function setActivityModeFilter(mode){
+  ACTIVITY_MODE_FILTER=
+    ["all","individual","teams"].includes(mode)
+      ? mode
+      : "all";
+  render();
+}
+
+function filterTasksByActivityMode(tasks){
+  if(ACTIVITY_MODE_FILTER==="all"){
+    return tasks;
+  }
+
+  return tasks.filter(task=>{
+    /* الكويزات والواجبات لا تدخل في فلتر نمط النشاط */
+    if(task.kind!=="نشاط"){
+      return true;
+    }
+
+    if(ACTIVITY_MODE_FILTER==="individual"){
+      return (
+        task.activityMode==="individual" ||
+        task.activityMode==="both"
+      );
+    }
+
+    if(ACTIVITY_MODE_FILTER==="teams"){
+      return (
+        task.activityMode==="teams" ||
+        task.activityMode==="both"
+      );
+    }
+
+    return true;
+  });
+}
+
 function groupedAcademicTasks(){
 
   if(!FILTERED.length){
     return '<div class="empty">اختر فلترًا واحدًا على الأقل لعرض الدورات والأنشطة</div>';
   }
 
-  const tasks=academicTasks();
+  const tasks=filterTasksByActivityMode(academicTasks());
 
   const courses=FILTERED.map(c=>({
     ...c,
@@ -884,7 +1050,15 @@ function groupedAcademicTasks(){
 
 function alertsBox(){const alerts=visibleAlerts();return`<div class="alerts-list">${alerts.slice(0,7).map(a=>`<button class="alert-item ${a.status}"><i>${a.status==="danger"?"!":"⌛"}</i><span><b>${esc(a.title)}</b><small>${esc(a.text)}</small></span><time>${esc(a.time)}</time></button>`).join("")||'<div class="empty">اختر فلترًا واحدًا على الأقل لعرض التنبيهات</div>'}</div>`}
 function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",comments:"تعليقات المدربين",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
-  if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar"><span>الفرز:</span><button class="${TASK_SORT_MODE==="period"?"active":""}" onclick="setTaskSort('period')">حسب الفترة</button><button class="${TASK_SORT_MODE==="course"?"active":""}" onclick="setTaskSort('course')">حسب الدورة</button></div></div>${groupedAcademicTasks()}</section>`;
+  if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
+<span>نوع النشاط:</span>
+<button class="${ACTIVITY_MODE_FILTER==="all"?"active":""}" onclick="setActivityModeFilter('all')">الكل</button>
+<button class="${ACTIVITY_MODE_FILTER==="individual"?"active":""}" onclick="setActivityModeFilter('individual')">Individual</button>
+<button class="${ACTIVITY_MODE_FILTER==="teams"?"active":""}" onclick="setActivityModeFilter('teams')">Teams</button>
+<span style="margin-right:8px">الفرز:</span>
+<button class="${TASK_SORT_MODE==="period"?"active":""}" onclick="setTaskSort('period')">حسب الفترة</button>
+<button class="${TASK_SORT_MODE==="course"?"active":""}" onclick="setTaskSort('course')">حسب الدورة</button>
+</div></div>${groupedAcademicTasks()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
   if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يظهر التنبيه إذا مضى يوم دراسي ولم يُرصد حضور أي طالب</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>أيام دون تحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td><b class="${c.attendanceMissing?"red":"green"}">${c.attendanceMissing}</b></td><td>${c.attendanceMissing?'<span class="badge bad">! يحتاج متابعة</span>':'<span class="badge good">✓ تم التحضير</span>'}</td></tr>`).join("")}</tbody></table></div></section>`;
   if(ACTIVE_VIEW==="grades")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>رصد درجات الاختبارات</h2><p>المواعيد تُقرأ من StudyPlans حسب الأسبوع واليوم</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>موعد Midterm</th><th>الناقص</th><th>موعد Final</th><th>الناقص</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.period)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.midtermDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.midtermMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','midterm')">${c.midtermMissing?c.midtermMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td><td>${esc(c.finalDue||"غير محدد في الخطة")}</td><td><button class="badge ${c.finalMissing?"bad":"good"}" onclick="openGrade('${esc(c.id)}','final')">${c.finalMissing?c.finalMissing+" لم تُرصد لهم":"مكتمل / غير مستحق"}</button></td></tr>`).join("")}</tbody></table></div></section>`;
@@ -895,6 +1069,85 @@ function sessionRows(list){return list.map(s=>`<tr data-search="${esc(`${s.displ
 function filterSessions(){const q=clean($("sessionSearch")?.value).toLowerCase();document.querySelectorAll("#sessionsBody tr[data-search]").forEach(tr=>tr.style.display=tr.dataset.search.includes(q)?"":"none")}
 function setView(view){ACTIVE_VIEW=view;render();window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll("[data-view]").forEach(button=>button.addEventListener("click",()=>setView(button.dataset.view)));
+
+async function deleteTaskItem(event,id){
+
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  const task=
+    DATA.tasks.find(
+      t=>t.id===id
+    );
+
+  if(!task){
+    alert("تعذر العثور على العنصر.");
+    return;
+  }
+
+  if(
+    task.kind!=="نشاط" &&
+    task.kind!=="كويز"
+  ){
+    return;
+  }
+
+  if(
+    !task.sourceCollection ||
+    !task.sourceDocId
+  ){
+    alert(
+      "لا يمكن حذف هذا العنصر لأن مرجع Firebase غير موجود."
+    );
+    return;
+  }
+
+  const typeLabel=
+    task.kind==="نشاط"
+      ? "النشاط"
+      : "الكويز";
+
+  const ok=
+    confirm(
+      `هل أنت متأكد من حذف ${typeLabel}؟\n\n${task.title}\n\nسيتم حذفه من Firebase ولن يظهر في الدورات.`
+    );
+
+  if(!ok){
+    return;
+  }
+
+  try{
+
+    await db
+      .collection(
+        task.sourceCollection
+      )
+      .doc(
+        task.sourceDocId
+      )
+      .delete();
+
+    alert(
+      `تم حذف ${typeLabel} بنجاح.`
+    );
+
+    await loadAll();
+
+  }catch(error){
+
+    console.error(
+      "Delete task error:",
+      error
+    );
+
+    alert(
+      "تعذر الحذف. تحقق من صلاحيات Firestore."
+    );
+
+  }
+}
 
 function openTask(id){const task=DATA.tasks.find(t=>t.id===id);if(!task)return;ACTIVE_TASK=task;ACTIVE_LIST=task.pendingIds.length?"pending":"done";openModal()}
 function openGrade(courseId,type){const c=DATA.courses.find(x=>x.id===courseId),students=DATA.students.filter(s=>s.courseId===courseId),done=students.filter(s=>hasValue(type==="midterm"?s.midterm:s.finalExam)),ids=done.map(s=>s.id);ACTIVE_TASK={id:`grade_${type}_${courseId}`,courseId,title:type==="midterm"?"رصد درجات Midterm":"رصد درجات Final",kind:"درجات",due:type==="midterm"?c.midtermDue:c.finalDue,completed:done.length,total:students.length,status:done.length===students.length?"success":"danger",completedIds:ids,pendingIds:students.filter(s=>!ids.includes(s.id)).map(s=>s.id)};ACTIVE_LIST=ACTIVE_TASK.pendingIds.length?"pending":"done";openModal()}
