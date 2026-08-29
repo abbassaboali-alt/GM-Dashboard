@@ -3453,316 +3453,21 @@
 }
 
 
-/* =========================================================
-   PRUDLE PDF — FIRST PAGE DETAILED PER COURSE
-   ========================================================= */
 @media print{
-  @page{size:A4 landscape;margin:6mm}
-
-  .first-course-page{
-    break-after:page!important;
-    page-break-after:always!important;
-  }
-
-  .first-course-title{
-    display:flex;
-    justify-content:space-between;
+  .attendance-count-detail{
+    display:inline-flex;
     align-items:center;
-    gap:10px;
-    padding:6px 9px;
-    margin:0 0 4px;
-    border-radius:8px;
-    background:linear-gradient(90deg,#0b3560,#164478 62%,#2b78b2);
-    color:#fff;
-  }
-
-  .first-course-title h2{
-    margin:0!important;
-    padding:0!important;
-    background:none!important;
-    color:#fff!important;
-    font-size:10px!important;
-  }
-
-  .first-course-title span{
-    font-size:5.3px;
-    color:#dce9f4;
-  }
-
-  .first-kpis{
-    display:grid;
-    grid-template-columns:repeat(8,1fr);
     gap:3px;
-    margin-bottom:4px;
-  }
-
-  .first-kpi{
-    position:relative;
-    padding:4px 5px;
-    min-height:35px;
-    border:1px solid #d8e3eb;
+    padding:2px 4px;
     border-radius:7px;
-    background:#fff;
-    overflow:hidden;
-  }
-
-  .first-kpi:before{
-    content:"";
-    position:absolute;
-    right:0;top:0;bottom:0;
-    width:3px;
-    background:#164478;
-  }
-
-  .first-kpi.green:before{background:#149b70}
-  .first-kpi.amber:before{background:#dc9413}
-  .first-kpi.red:before{background:#dc4d57}
-  .first-kpi.violet:before{background:#7357c5}
-
-  .first-kpi span{
-    display:block;
-    color:#71839a;
-    font-size:4.5px;
-    font-weight:800;
-  }
-
-  .first-kpi b{
-    display:block;
-    margin-top:1px;
-    color:#123b60;
-    font-size:9px;
-  }
-
-  .first-kpi small{
-    display:block;
-    color:#93a1ae;
-    font-size:3.9px;
-    margin-top:1px;
-  }
-
-  .course-detail-box{
-    border:1px solid #cddae4;
-    border-radius:8px;
-    overflow:hidden;
-    background:#fff;
-  }
-
-  .course-detail-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-    padding:5px 7px;
-    background:#164478;
-    color:#fff;
-  }
-
-  .course-detail-head h3{
-    margin:0;
-    font-size:6.6px;
-    color:#fff;
-  }
-
-  .course-detail-head span{
-    font-size:4.5px;
-    color:#dce9f4;
-  }
-
-  .course-detail-table{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;
-  }
-
-  .course-detail-table thead{display:table-header-group!important}
-
-  .course-detail-table th{
-    background:#e7f0f6;
-    color:#123a5e;
-    border:1px solid #cad8e3;
-    padding:3px 1.5px;
+    background:#eef5fa;
+    color:#164478;
     font-size:4.4px;
-    line-height:1.15;
     font-weight:900;
-    text-align:center;
-  }
-
-  .course-detail-table td{
-    border:1px solid #dce5ec;
-    padding:3px 1.5px;
-    font-size:4.5px;
-    line-height:1.18;
-    text-align:center;
-    vertical-align:middle;
-  }
-
-  .course-detail-table tbody tr:nth-child(even){background:#f8fbfd}
-  .course-detail-table tr{
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
-  }
-
-  .course-detail-table .course-name-cell{
-    text-align:right;
-  }
-
-  .course-detail-table .course-name-cell b{
-    display:block;
-    font-size:5.7px;
-    color:#123b60;
-  }
-
-  .course-detail-table .course-name-cell small{
-    display:block;
-    margin-top:1px;
-    font-size:3.8px;
-    color:#7a8d9e;
-  }
-
-  .metric-cell{
-    min-width:54px;
-  }
-
-  .metric-cell .metric-count{
-    display:flex;
-    justify-content:center;
-    align-items:baseline;
-    gap:1px;
     white-space:nowrap;
-    margin-bottom:2px;
   }
-
-  .metric-cell .metric-count b{
-    font-size:5px;
-    color:#173d5e;
-  }
-
-  .metric-cell .metric-count small{
-    font-size:3.8px;
-    color:#8293a3;
-  }
-
-  .metric-cell .metric-bar{
-    width:88%;
-    height:3px;
-    margin:0 auto 1px;
-    border-radius:5px;
-    background:#e5ebf0;
-    overflow:hidden;
-  }
-
-  .metric-cell .metric-bar i{
-    display:block;
-    height:100%;
-    border-radius:5px;
-    background:linear-gradient(90deg,#dc9413,#149b70);
-  }
-
-  .metric-cell.low .metric-bar i{
-    background:linear-gradient(90deg,#dc4d57,#dc9413);
-  }
-
-  .metric-cell.good .metric-bar i{
-    background:linear-gradient(90deg,#2b78b2,#149b70);
-  }
-
-  .metric-cell .metric-pct{
-    display:block;
-    font-size:4px;
-    font-weight:900;
-    color:#45647c;
-  }
-
-  .metric-cell .metric-missing{
-    display:block;
-    margin-top:1px;
-    font-size:3.7px;
+  .attendance-count-detail .missing{
     color:#b83d47;
-    font-weight:800;
-  }
-
-  .metric-cell.na{
-    color:#9aa8b5;
-    font-weight:800;
-  }
-
-  .first-bottom-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:4px;
-    margin-top:4px;
-  }
-
-  .first-mini-box{
-    border:1px solid #d6e2eb;
-    border-radius:7px;
-    overflow:hidden;
-    background:#fff;
-  }
-
-  .first-mini-box h3{
-    margin:0;
-    padding:4px 6px;
-    background:#164478;
-    color:#fff;
-    font-size:5.7px;
-  }
-
-  .first-mini-table{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;
-  }
-
-  .first-mini-table th{
-    background:#eaf2f7;
-    color:#153d60;
-    border:1px solid #d3dfe8;
-    padding:2.5px 2px;
-    font-size:4px;
-  }
-
-  .first-mini-table td{
-    border:1px solid #e0e7ed;
-    padding:2.5px 2px;
-    font-size:4.1px;
-    text-align:center;
-  }
-
-  .first-mini-table tbody tr:nth-child(even){background:#f8fbfd}
-
-  /* page-flow safety for the rest of the report */
-  .full-section-title,
-  .pdf-section-band,
-  .report-card-head,
-  .pdf-alert-group-head,
-  .pdf-score-title,
-  .trainer-progress-head{
-    break-after:avoid!important;
-    page-break-after:avoid!important;
-  }
-
-  .report-card,
-  .pdf-alert-group,
-  .pdf-score-section,
-  .trainer-progress-course{
-    break-inside:auto!important;
-    page-break-inside:auto!important;
-  }
-
-  .report-table thead,
-  .pdf-alert-table thead,
-  .pdf-score-table thead,
-  .trainer-progress-table thead{
-    display:table-header-group!important;
-  }
-
-  .report-table tr,
-  .pdf-alert-table tr,
-  .pdf-score-table tr,
-  .trainer-progress-table tr{
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
   }
 }
 
@@ -4874,9 +4579,20 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
 
     const attendanceDateSetByStudent = new Map();
 
+    /*
+      مهم جداً:
+      لا نعتبر وجود سجل بتاريخ فقط = تحضير.
+      التحضير الصحيح يعني:
+      التاريخ يطابق يوماً دراسياً متوقعاً + توجد حالة حضور فعلية
+      (حاضر / غائب / متأخر / بعذر ...).
+
+      لذلك أي سجل بتاريخ ولكن بدون status يبقى "غير محضر".
+    */
     courseStudents.forEach(student=>{
+
       const dates = new Set(
         (Array.isArray(student.records)?student.records:[])
+          .filter(record=>hasAttendanceStatus(record))
           .map(attendanceRecordDate)
           .filter(Boolean)
       );
@@ -4922,6 +4638,40 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         (sum,item)=>sum+item.missingCount,
         0
       );
+
+    /*
+      إجمالي التحضير المطلوب للدورة:
+      عدد الطلاب الفعلي × عدد الأيام الدراسية الفعلية حتى اليوم.
+
+      مثال:
+      14 طالب × 8 أيام = 112 خانة تحضير مطلوبة.
+      إذا تم رصد 100 خانة صحيحة:
+      تم التحضير 100 من 112
+      غير محضر 12
+      نسبة اكتمال التحضير 89%
+    */
+    const attendancePreparationTotal =
+      courseStudents.length *
+      expected.length;
+
+    const attendancePreparationMissing =
+      missingAttendanceStudentsTotal;
+
+    const attendancePreparationDone =
+      Math.max(
+        0,
+        attendancePreparationTotal -
+        attendancePreparationMissing
+      );
+
+    const attendancePreparationPct =
+      attendancePreparationTotal
+        ? Math.round(
+            attendancePreparationDone /
+            attendancePreparationTotal *
+            100
+          )
+        : 0;
 
     let present=0,recorded=0;
     courseStudents.forEach(s=>
@@ -5065,6 +4815,13 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         )
       : null,attendance:pct(present,recorded),comments:pct(commentDone.length,courseStudents.length),attendanceMissing,
       attendanceMissingCases:missingAttendanceStudentsTotal,
+
+      /* اكتمال التحضير الحقيقي المستخدم في التقارير */
+      attendancePreparationDone,
+      attendancePreparationMissing,
+      attendancePreparationTotal,
+      attendancePreparationPct,
+
       expectedAttendanceDates:expected,
       missingAttendanceDates,
       incompleteAttendanceDetails:
@@ -8380,6 +8137,41 @@ function taskScoreRowsForPdf(task){
   `;
 }
 
+
+function attendancePreparationSummaryForPdf(course){
+
+  const total=
+    Number(
+      course?.attendancePreparationTotal||
+      0
+    );
+
+  const done=
+    Number(
+      course?.attendancePreparationDone||
+      0
+    );
+
+  const missing=
+    Number(
+      course?.attendancePreparationMissing||
+      course?.missingAttendanceStudentsTotal||
+      0
+    );
+
+  const p=
+    total
+      ? Math.round(done/total*100)
+      : 0;
+
+  return {
+    done,
+    total,
+    missing,
+    pct:p
+  };
+}
+
 function preparePrintReport(pdfCourses=getPdfCourses()){
 
   const pdfCourseIds=
@@ -9103,24 +8895,28 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     matching the Executive Courses Report source:
       STUDENT_COUNT[courseId]++
   */
-  /* =====================================================
-     FIRST PAGE — DETAILED BY COURSE
-     ===================================================== */
-
   const reportStudentCountMap=(()=>{
+
     const map=new Map();
 
     DATA.students.forEach(s=>{
       const cid=clean(s.courseId);
       if(!cid)return;
-      map.set(cid,(map.get(cid)||0)+1);
+      map.set(
+        cid,
+        (map.get(cid)||0)+1
+      );
     });
 
     return map;
   })();
 
   const studentCountForCourse=(courseId)=>
-    Number(reportStudentCountMap.get(clean(courseId))||0);
+    Number(
+      reportStudentCountMap.get(
+        clean(courseId)
+      )||0
+    );
 
   const metric=(done,total)=>{
     const d=Math.max(0,Number(done||0));
@@ -9130,14 +8926,33 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       done:d,
       total:t,
       missing:Math.max(0,t-d),
-      pct:t ? Math.round(d/t*100) : 0
+      pct:t
+        ? Math.round(d/t*100)
+        : 0
     };
   };
 
-  const courseTaskMetric=(courseId,kind)=>{
+  const metricHtml=(m)=>`
+    <div class="exec-mini">
+      <b>${m.done}/${m.total}</b>
+      <i style="--p:${m.pct}%"></i>
+      <span>${m.pct}%</span>
+    </div>
+  `;
+
+  const courseIds=
+    new Set(
+      pdfCourses.map(c=>c.id)
+    );
+
+  const taskMetric=(courses,kind)=>{
+    const ids=new Set(courses.map(c=>c.id));
+
     const items=
       displayedTasks.filter(
-        t=>t.courseId===courseId && t.kind===kind
+        t=>
+          ids.has(t.courseId) &&
+          t.kind===kind
       );
 
     const total=
@@ -9155,59 +8970,109 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     return metric(done,total);
   };
 
-  const courseGradeMetric=(c,keys)=>{
-    const arr=Array.isArray(keys)?keys:[keys];
-
-    let done=0;
-    let missing=0;
-
-    arr.forEach(key=>{
-      done+=Number(c.gradeSummary?.[key]?.done||0);
-      missing+=Number(c.gradeSummary?.[key]?.missing||0);
-    });
-
-    return metric(done,done+missing);
-  };
-
-  const courseSkillMetric=(c)=>{
-    let done=0;
-    let missing=0;
-
-    SUPERVISION_SKILLS.forEach(skill=>{
-      done+=Number(c.skillSummary?.[skill]?.done||0);
-      missing+=Number(c.skillSummary?.[skill]?.missing||0);
-    });
-
-    return metric(done,done+missing);
-  };
-
-  const courseAttendanceMetric=(c)=>{
-    const students=studentCountForCourse(c.id);
-
-    const days=
-      Array.isArray(c.expectedAttendanceDates)
-        ? c.expectedAttendanceDates.length
-        : 0;
-
-    const total=
-      students*days;
+  const gradeMetric=(courses,key)=>{
+    const done=
+      courses.reduce(
+        (s,c)=>
+          s+
+          Number(
+            c.gradeSummary?.[key]?.done||
+            0
+          ),
+        0
+      );
 
     const missing=
-      Number(
-        c.missingAttendanceStudentsTotal||
+      courses.reduce(
+        (s,c)=>
+          s+
+          Number(
+            c.gradeSummary?.[key]?.missing||
+            0
+          ),
         0
       );
 
     return metric(
-      Math.max(0,total-missing),
+      done,
+      done+missing
+    );
+  };
+
+  const skillMetric=(courses,skill)=>{
+    const done=
+      courses.reduce(
+        (s,c)=>
+          s+
+          Number(
+            c.skillSummary?.[skill]?.done||
+            0
+          ),
+        0
+      );
+
+    const missing=
+      courses.reduce(
+        (s,c)=>
+          s+
+          Number(
+            c.skillSummary?.[skill]?.missing||
+            0
+          ),
+        0
+      );
+
+    return metric(
+      done,
+      done+missing
+    );
+  };
+
+  const attendanceMetric=(courses)=>{
+    let total=0;
+    let missing=0;
+
+    courses.forEach(c=>{
+
+      const students=
+        studentCountForCourse(c.id);
+
+      const days=
+        Array.isArray(
+          c.expectedAttendanceDates
+        )
+          ? c.expectedAttendanceDates.length
+          : 0;
+
+      total+=
+        students*
+        days;
+
+      missing+=
+        Number(
+          c.missingAttendanceStudentsTotal||
+          0
+        );
+    });
+
+    return metric(
+      Math.max(
+        0,
+        total-missing
+      ),
       total
     );
   };
 
-  const courseCommentsMetric=(c)=>{
+  const commentsMetric=(courses)=>{
+    const ids=
+      new Set(
+        courses.map(c=>c.id)
+      );
+
     const students=
       DATA.students.filter(
-        s=>s.courseId===c.id
+        s=>ids.has(s.courseId)
       );
 
     const done=
@@ -9215,356 +9080,541 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         s=>clean(s.trainerComment)
       ).length;
 
-    return metric(done,students.length);
-  };
-
-  const metricCell=(m,showMissing=true)=>{
-    if(!m.total){
-      return `<div class="metric-cell na">—</div>`;
-    }
-
-    const cls=
-      m.pct>=85
-        ? "good"
-        : m.pct<60
-          ? "low"
-          : "";
-
-    return `
-      <div class="metric-cell ${cls}">
-        <div class="metric-count">
-          <b>${m.done}/${m.total}</b>
-          <small>منجز/إجمالي</small>
-        </div>
-
-        <div class="metric-bar">
-          <i style="width:${m.pct}%"></i>
-        </div>
-
-        <span class="metric-pct">${m.pct}%</span>
-
-        ${
-          showMissing && m.missing
-            ? `<span class="metric-missing">ناقص ${m.missing}</span>`
-            : ""
-        }
-      </div>
-    `;
-  };
-
-  const orderedFirstCourses=
-    [...pdfCourses].sort((a,b)=>
-      clean(a.branch).localeCompare(clean(b.branch),"ar",{numeric:true}) ||
-      periodSortValue(a.period)-periodSortValue(b.period) ||
-      clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true}) ||
-      clean(a.trainer).localeCompare(clean(b.trainer),"ar",{numeric:true})
+    return metric(
+      done,
+      students.length
     );
+  };
 
-  const firstCourseRows=
-    orderedFirstCourses.map((c,index)=>{
-
-      const students=
-        studentCountForCourse(c.id);
-
-      const attendance=
-        courseAttendanceMetric(c);
-
-      const activities=
-        courseTaskMetric(c.id,"نشاط");
-
-      const quizzes=
-        courseTaskMetric(c.id,"كويز");
-
-      const homework=
-        courseTaskMetric(c.id,"واجب");
-
-      /* الاختبارات = Midterm + Final + Listening + Speaking */
-      const tests=
-        courseGradeMetric(
-          c,
-          ["midterm","final","listening","speaking"]
-        );
-
-      const midterm=
-        courseGradeMetric(c,"midterm");
-
-      const finalExam=
-        courseGradeMetric(c,"final");
-
-      const skills=
-        courseSkillMetric(c);
-
-      const comments=
-        courseCommentsMetric(c);
-
-      return `
-        <tr>
-          <td>${index+1}</td>
-
-          <td class="course-name-cell">
-            <b>${esc(c.name)}</b>
-            <small>${esc(c.branch)} · ${esc(c.section)}</small>
-          </td>
-
-          <td><b>${esc(c.trainer)}</b></td>
-          <td>${esc(c.period||"—")}</td>
-          <td><b>${students}</b></td>
-
-          <td>${metricCell(attendance,true)}</td>
-          <td>${metricCell(activities,true)}</td>
-          <td>${metricCell(quizzes,true)}</td>
-          <td>${metricCell(homework,true)}</td>
-          <td>${metricCell(tests,true)}</td>
-          <td>${metricCell(midterm,true)}</td>
-          <td>${metricCell(finalExam,true)}</td>
-          <td>${metricCell(skills,true)}</td>
-          <td>${metricCell(comments,true)}</td>
-        </tr>
-      `;
-    }).join("");
-
-  const totalStudentsActual=
-    orderedFirstCourses.reduce(
-      (sum,c)=>sum+studentCountForCourse(c.id),
+  const totalStudentsFromSource=
+    pdfCourses.reduce(
+      (sum,c)=>
+        sum+
+        studentCountForCourse(c.id),
       0
     );
 
-  const overallTaskMetric=(kind)=>{
-    const items=
-      displayedTasks.filter(t=>t.kind===kind);
+  const branches=[
+    ...new Set(
+      pdfCourses
+        .map(c=>clean(c.branch)||"غير محدد")
+    )
+  ].sort(
+    (a,b)=>
+      a.localeCompare(
+        b,
+        "ar",
+        {numeric:true}
+      )
+  );
 
-    const total=
-      items.reduce((s,t)=>s+Number(t.total||0),0);
+  const trainers=[
+    ...new Set(
+      pdfCourses
+        .map(c=>clean(c.trainer))
+        .filter(Boolean)
+    )
+  ];
 
-    const done=
-      items.reduce((s,t)=>s+Number(t.completed||0),0);
+  const overallAttendance=
+    attendanceMetric(pdfCourses);
 
-    return metric(done,total);
-  };
+  const overallActivities=
+    taskMetric(pdfCourses,"نشاط");
 
-  const overallGradeMetric=(keys)=>{
-    const arr=Array.isArray(keys)?keys:[keys];
-    let done=0, missing=0;
+  const overallQuizzes=
+    taskMetric(pdfCourses,"كويز");
 
-    pdfCourses.forEach(c=>{
-      arr.forEach(key=>{
-        done+=Number(c.gradeSummary?.[key]?.done||0);
-        missing+=Number(c.gradeSummary?.[key]?.missing||0);
-      });
-    });
+  const overallHomework=
+    taskMetric(pdfCourses,"واجب");
 
-    return metric(done,done+missing);
-  };
+  const overallComments=
+    commentsMetric(pdfCourses);
 
-  const overallAttendance=(()=>{
-    let done=0,total=0;
-
-    pdfCourses.forEach(c=>{
-      const m=courseAttendanceMetric(c);
-      done+=m.done;
-      total+=m.total;
-    });
-
-    return metric(done,total);
-  })();
-
-  const overallActivities=overallTaskMetric("نشاط");
-  const overallQuizzes=overallTaskMetric("كويز");
-  const overallHomework=overallTaskMetric("واجب");
-  const overallTests=overallGradeMetric(["midterm","final","listening","speaking"]);
-
-  const overallSkills=(()=>{
-    let done=0,missing=0;
-
-    pdfCourses.forEach(c=>{
-      SUPERVISION_SKILLS.forEach(skill=>{
-        done+=Number(c.skillSummary?.[skill]?.done||0);
-        missing+=Number(c.skillSummary?.[skill]?.missing||0);
-      });
-    });
-
-    return metric(done,done+missing);
-  })();
-
-  const summaryTypeRows=[
-    ["الحضور / التحضير",overallAttendance],
-    ["الأنشطة",overallActivities],
-    ["الكويزات",overallQuizzes],
+  const taskTypeRows=[
     ["الواجبات",overallHomework],
-    ["الاختبارات",overallTests]
+    ["الكويزات",overallQuizzes],
+    ["الأنشطة",overallActivities],
+    ["Midterm",gradeMetric(pdfCourses,"midterm")],
+    ["Final",gradeMetric(pdfCourses,"final")]
   ].map(([label,m])=>`
     <tr>
-      <td><b>${label}</b></td>
+      <td class="text-right"><b>${label}</b></td>
       <td>${m.total}</td>
       <td>${m.done}</td>
       <td>${m.missing}</td>
-      <td>${m.pct}%</td>
+      <td>${metricHtml(m)}</td>
     </tr>
   `).join("");
 
-  const summarySkillRows=
+  const skillRows=
     SUPERVISION_SKILLS.map(skill=>{
-
-      let done=0,missing=0;
-
-      pdfCourses.forEach(c=>{
-        done+=Number(c.skillSummary?.[skill]?.done||0);
-        missing+=Number(c.skillSummary?.[skill]?.missing||0);
-      });
-
-      const m=metric(done,done+missing);
+      const m=
+        skillMetric(
+          pdfCourses,
+          skill
+        );
 
       return `
         <tr>
-          <td><b>${esc(skill)}</b></td>
+          <td class="text-right"><b>${esc(skill)}</b></td>
           <td>${m.done}</td>
           <td>${m.missing}</td>
           <td>${m.total}</td>
-          <td>${m.pct}%</td>
+          <td>${metricHtml(m)}</td>
         </tr>
       `;
     }).join("");
 
-  const overviewSection=`
-    <section class="first-course-page">
+  const branchRows=
+    branches.map(branch=>{
 
-      <div class="first-course-title">
-        <h2>1. التقرير التنفيذي التفصيلي حسب الدورة</h2>
+      const courses=
+        pdfCourses.filter(
+          c=>
+            (clean(c.branch)||"غير محدد")===
+            branch
+        );
+
+      const students=
+        courses.reduce(
+          (s,c)=>
+            s+
+            studentCountForCourse(c.id),
+          0
+        );
+
+      const trainerCount=
+        new Set(
+          courses
+            .map(c=>clean(c.trainer))
+            .filter(Boolean)
+        ).size;
+
+      const attendance=
+        attendanceMetric(courses);
+
+      const activities=
+        taskMetric(courses,"نشاط");
+
+      const quizzes=
+        taskMetric(courses,"كويز");
+
+      const homework=
+        taskMetric(courses,"واجب");
+
+      return `
+        <tr>
+          <td class="text-right"><b>${esc(branch)}</b></td>
+          <td>${courses.length}</td>
+          <td>${students}</td>
+          <td>${trainerCount}</td>
+          <td>${metricHtml(attendance)}</td>
+          <td>${metricHtml(activities)}</td>
+          <td>${metricHtml(quizzes)}</td>
+          <td>${metricHtml(homework)}</td>
+        </tr>
+      `;
+    }).join("");
+
+  const trainerRows=
+    trainers.map((trainer,index)=>{
+
+      const courses=
+        pdfCourses.filter(
+          c=>clean(c.trainer)===trainer
+        );
+
+      const students=
+        courses.reduce(
+          (s,c)=>
+            s+
+            studentCountForCourse(c.id),
+          0
+        );
+
+      const attendance=
+        attendanceMetric(courses);
+
+      const missing=
+        courses.reduce(
+          (s,c)=>
+            s+
+            Number(
+              c.missingAttendanceStudentsTotal||
+              0
+            ),
+          0
+        );
+
+      const periods=[
+        ...new Set(
+          courses
+            .map(c=>clean(c.period))
+            .filter(Boolean)
+        )
+      ]
+        .sort(
+          (a,b)=>
+            periodSortValue(a)-
+            periodSortValue(b)
+        )
+        .join(" · ");
+
+      return `
+        <tr class="${missing?"warning-row":"success-row"}">
+          <td>${index+1}</td>
+          <td class="text-right"><b>${esc(trainer)}</b></td>
+          <td>${courses.length}</td>
+          <td>${students}</td>
+          <td>${esc(periods||"—")}</td>
+          <td>${attendance.done}/${attendance.total}</td>
+          <td>${attendance.pct}%</td>
+          <td>${missing}</td>
+        </tr>
+      `;
+    }).join("");
+
+  const priorityRows=
+    [...pdfCourses]
+      .map(c=>{
+
+        const tasks=
+          displayedTasks.filter(
+            t=>t.courseId===c.id
+          );
+
+        const taskMissing=
+          tasks.reduce(
+            (s,t)=>
+              s+
+              Math.max(
+                0,
+                Number(t.total||0)-
+                Number(t.completed||0)
+              ),
+            0
+          );
+
+        const skillMissingCourse=
+          SUPERVISION_SKILLS.reduce(
+            (s,skill)=>
+              s+
+              Number(
+                c.skillSummary?.[skill]?.missing||
+                0
+              ),
+            0
+          );
+
+        const gradeMissingCourse=
+          ["midterm","final","listening","speaking","homework"]
+            .reduce(
+              (s,key)=>
+                s+
+                Number(
+                  c.gradeSummary?.[key]?.missing||
+                  0
+                ),
+              0
+            );
+
+        const attendanceMissing=
+          Number(
+            c.missingAttendanceStudentsTotal||
+            0
+          );
+
+        const score=
+          taskMissing+
+          skillMissingCourse+
+          gradeMissingCourse+
+          attendanceMissing+
+          Number(c.alerts||0);
+
+        return {
+          c,
+          taskMissing,
+          skillMissingCourse,
+          gradeMissingCourse,
+          attendanceMissing,
+          score
+        };
+      })
+      .sort(
+        (a,b)=>
+          b.score-a.score ||
+          periodSortValue(a.c.period)-
+          periodSortValue(b.c.period)
+      )
+      .slice(0,7)
+      .map((x,index)=>{
+
+        const priority=
+          x.score>=20
+            ? "عالية"
+            : x.score>=8
+              ? "متوسطة"
+              : "منخفضة";
+
+        return `
+          <tr>
+            <td>${index+1}</td>
+            <td class="text-right"><b>${esc(x.c.name)}</b></td>
+            <td>${esc(x.c.branch)}</td>
+            <td>${esc(x.c.trainer)}</td>
+            <td>${esc(x.c.period)}</td>
+            <td>${studentCountForCourse(x.c.id)}</td>
+            <td>${x.taskMissing}</td>
+            <td>${x.skillMissingCourse}</td>
+            <td>${x.gradeMissingCourse}</td>
+            <td>${x.attendanceMissing}</td>
+            <td>
+              <span class="exec-priority ${
+                priority==="عالية"
+                  ? "high"
+                  : priority==="متوسطة"
+                    ? "medium"
+                    : "low"
+              }">
+                ${priority}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+  const recommendations=[];
+
+  if(overallAttendance.missing){
+    recommendations.push(
+      `استكمال ${overallAttendance.missing} حالة حضور/تحضير غير مرصودة.`
+    );
+  }
+
+  if(gradeMissing){
+    recommendations.push(
+      `استكمال ${gradeMissing} حالة درجات غير مكتملة.`
+    );
+  }
+
+  if(skillMissing){
+    recommendations.push(
+      `استكمال ${skillMissing} تقييم مهارة ناقص.`
+    );
+  }
+
+  if(commentMissing){
+    recommendations.push(
+      `استكمال ${commentMissing} تعليقًا أكاديميًا للطلاب.`
+    );
+  }
+
+  if(overallCompletion<80){
+    recommendations.push(
+      `رفع متوسط إنجاز المهام؛ النسبة الحالية ${overallCompletion}%.`
+    );
+  }
+
+  if(!recommendations.length){
+    recommendations.push(
+      "المؤشرات الحالية مستقرة؛ الاستمرار في المتابعة اليومية."
+    );
+  }
+
+  const overviewSection=`
+    <section class="exec-one-page">
+
+      <div class="exec-one-title">
+        <h2>1. التقرير التنفيذي العام — جميع الفروع</h2>
         <span>
-          العدد الفعلي للطلاب · المنجز من الإجمالي · التحضير الناقص · شريط الإنجاز لكل دورة
+          أعداد الطلاب مأخوذة مباشرة من students حسب courseId
         </span>
       </div>
 
-      <div class="first-kpis">
+      <div class="exec-kpis-one">
 
-        <div class="first-kpi">
+        <div class="exec-kpi-one">
+          <span>الفروع</span>
+          <b>${branches.length}</b>
+          <small>الفروع المشمولة</small>
+        </div>
+
+        <div class="exec-kpi-one">
           <span>الدورات</span>
           <b>${pdfCourses.length}</b>
           <small>الدورات المحددة</small>
         </div>
 
-        <div class="first-kpi violet">
+        <div class="exec-kpi-one violet">
           <span>الطلاب</span>
-          <b>${totalStudentsActual}</b>
+          <b>${totalStudentsFromSource}</b>
           <small>العدد الفعلي</small>
         </div>
 
-        <div class="first-kpi green">
-          <span>التحضير</span>
+        <div class="exec-kpi-one">
+          <span>المدربون</span>
+          <b>${trainers.length}</b>
+          <small>مدرب مختلف</small>
+        </div>
+
+        <div class="exec-kpi-one green">
+          <span>الحضور</span>
           <b>${overallAttendance.pct}%</b>
           <small>${overallAttendance.done}/${overallAttendance.total}</small>
         </div>
 
-        <div class="first-kpi amber">
+        <div class="exec-kpi-one amber">
           <span>الأنشطة</span>
           <b>${overallActivities.pct}%</b>
           <small>${overallActivities.done}/${overallActivities.total}</small>
         </div>
 
-        <div class="first-kpi amber">
+        <div class="exec-kpi-one amber">
           <span>الكويزات</span>
           <b>${overallQuizzes.pct}%</b>
           <small>${overallQuizzes.done}/${overallQuizzes.total}</small>
         </div>
 
-        <div class="first-kpi green">
+        <div class="exec-kpi-one green">
           <span>الواجبات</span>
           <b>${overallHomework.pct}%</b>
           <small>${overallHomework.done}/${overallHomework.total}</small>
         </div>
 
-        <div class="first-kpi red">
-          <span>الاختبارات</span>
-          <b>${overallTests.pct}%</b>
-          <small>${overallTests.done}/${overallTests.total}</small>
-        </div>
-
-        <div class="first-kpi violet">
-          <span>المهارات</span>
-          <b>${overallSkills.pct}%</b>
-          <small>${overallSkills.done}/${overallSkills.total}</small>
-        </div>
-
       </div>
 
-      <div class="course-detail-box">
+      <div class="exec-main-grid">
 
-        <div class="course-detail-head">
-          <h3>
-            حالة كل دورة — العدد الفعلي والمنجز من الإجمالي
-          </h3>
+        <div class="exec-box">
+          <div class="exec-box-head">
+            <h3>حالة المهام حسب النوع</h3>
+            <span>الإجمالي · المكتمل · غير المكتمل</span>
+          </div>
 
-          <span>
-            فرز تلقائي: الفرع ← الفترة ← الدورة ← المدرب
-          </span>
-        </div>
-
-        <table class="course-detail-table">
-          <thead>
-            <tr>
-              <th style="width:2%">#</th>
-              <th style="width:9%">الدورة / المستوى</th>
-              <th style="width:7%">المدرب</th>
-              <th style="width:8%">الفترة</th>
-              <th style="width:4%">الطلاب</th>
-
-              <th>الحضور / التحضير</th>
-              <th>الأنشطة</th>
-              <th>الكويزات</th>
-              <th>الواجبات</th>
-              <th>الاختبارات</th>
-              <th>Midterm</th>
-              <th>Final</th>
-              <th>المهارات</th>
-              <th>التعليقات</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${firstCourseRows}
-          </tbody>
-        </table>
-
-      </div>
-
-      <div class="first-bottom-grid">
-
-        <div class="first-mini-box">
-          <h3>الإجمالي حسب نوع المهمة</h3>
-
-          <table class="first-mini-table">
+          <table class="exec-table-one">
             <thead>
               <tr>
                 <th>المهمة</th>
                 <th>الإجمالي</th>
-                <th>منجز</th>
+                <th>مكتمل</th>
                 <th>غير مكتمل</th>
-                <th>نسبة الإنجاز</th>
+                <th>الإنجاز</th>
               </tr>
             </thead>
-            <tbody>
-              ${summaryTypeRows}
-            </tbody>
+            <tbody>${taskTypeRows}</tbody>
           </table>
         </div>
 
-        <div class="first-mini-box">
-          <h3>الأداء العام حسب المهارة</h3>
+        <div class="exec-box">
+          <div class="exec-box-head">
+            <h3>الأداء حسب المهارة</h3>
+            <span>تفصيل عام لجميع الطلاب</span>
+          </div>
 
-          <table class="first-mini-table">
+          <table class="exec-table-one">
             <thead>
               <tr>
                 <th>المهارة</th>
                 <th>مرصود</th>
                 <th>ناقص</th>
                 <th>الإجمالي</th>
-                <th>نسبة الإنجاز</th>
+                <th>الإنجاز</th>
               </tr>
             </thead>
-            <tbody>
-              ${summarySkillRows}
-            </tbody>
+            <tbody>${skillRows}</tbody>
           </table>
+        </div>
+
+        <div class="exec-box">
+          <div class="exec-box-head">
+            <h3>حالة الفروع</h3>
+            <span>الدورات والطلاب والأداء</span>
+          </div>
+
+          <table class="exec-table-one">
+            <thead>
+              <tr>
+                <th>الفرع</th>
+                <th>الدورات</th>
+                <th>الطلاب</th>
+                <th>المدربون</th>
+                <th>الحضور</th>
+                <th>الأنشطة</th>
+                <th>الكويزات</th>
+                <th>الواجبات</th>
+              </tr>
+            </thead>
+            <tbody>${branchRows}</tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="exec-bottom-grid">
+
+        <div class="exec-box">
+          <div class="exec-box-head">
+            <h3>الدورات التي تحتاج إلى إجراء</h3>
+            <span>الأعلى أولوية أولاً</span>
+          </div>
+
+          <table class="exec-table-one">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الدورة</th>
+                <th>الفرع</th>
+                <th>المدرب</th>
+                <th>الفترة</th>
+                <th>الطلاب</th>
+                <th>مهام ناقصة</th>
+                <th>مهارات ناقصة</th>
+                <th>درجات ناقصة</th>
+                <th>تحضير ناقص</th>
+                <th>الأولوية</th>
+              </tr>
+            </thead>
+            <tbody>${priorityRows}</tbody>
+          </table>
+        </div>
+
+        <div>
+
+          <div class="exec-box" style="margin-bottom:4px">
+            <div class="exec-box-head">
+              <h3>متابعة المدربين والحضور</h3>
+              <span>تفاصيل التحضير</span>
+            </div>
+
+            <table class="exec-table-one">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>المدرب</th>
+                  <th>الدورات</th>
+                  <th>الطلاب</th>
+                  <th>الفترات</th>
+                  <th>مرصود/مطلوب</th>
+                  <th>الحضور</th>
+                  <th>ناقص</th>
+                </tr>
+              </thead>
+              <tbody>${trainerRows}</tbody>
+            </table>
+          </div>
+
+          <div class="exec-box">
+            <div class="exec-box-head">
+              <h3>التوصيات الإشرافية</h3>
+              <span>إجراءات مباشرة</span>
+            </div>
+
+            <ul class="exec-recs">
+              ${recommendations.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}
+            </ul>
+          </div>
+
         </div>
 
       </div>
