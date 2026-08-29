@@ -1870,6 +1870,125 @@
   .report-alert{padding:8px 9px}
 }
 
+
+/* =========================================================
+   PDF — GROUPED ALERTS BY SECTION
+   ========================================================= */
+@media print{
+
+  .report-alerts{
+    display:block!important;
+  }
+
+  .pdf-alert-group{
+    margin:0 0 10px;
+    border:1px solid #d4e0e9;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .pdf-alert-group-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:8px 11px;
+    background:linear-gradient(90deg,#164478,#2b78b2);
+    color:#fff;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .pdf-alert-group-head h3{
+    margin:0;
+    color:#fff;
+    font-size:12px;
+    font-weight:900;
+  }
+
+  .pdf-alert-group-head p{
+    margin:3px 0 0;
+    color:#dcebf5;
+    font-size:7.5px;
+    line-height:1.5;
+  }
+
+  .pdf-alert-group-head>span{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:12px;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+    font-size:7.5px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+
+  .pdf-alert-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  .pdf-alert-table thead{
+    display:table-header-group;
+  }
+
+  .pdf-alert-table th{
+    padding:6px 5px;
+    background:#e8f1f7;
+    color:#123a5e;
+    border:1px solid #cddae4;
+    font-size:8px;
+    font-weight:900;
+    text-align:center;
+  }
+
+  .pdf-alert-table td{
+    padding:6px 5px;
+    border:1px solid #dde6ed;
+    color:#29475f;
+    font-size:8px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:1.55;
+  }
+
+  .pdf-alert-table tbody tr:nth-child(even){
+    background:#f8fbfd;
+  }
+
+  .pdf-alert-table tr{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .alert-level-cell{
+    text-align:right!important;
+  }
+
+  .alert-level-cell b{
+    display:block;
+    font-size:8.5px;
+    color:#153d60;
+  }
+
+  .alert-level-cell small{
+    display:block;
+    margin-top:2px;
+    font-size:6.8px;
+    color:#7b8d9d;
+  }
+
+  .alert-detail-cell{
+    text-align:right!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4750,7 +4869,7 @@ window.onload=function(){
 }
 
 function render(){renderStats();const titles={overview:"نظرة عامة",courses:"متابعة الدورات",attendance:"الحضور",grades:"رصد الدرجات",skills:"رصد المهارات",comments:"تعليقات المدربين",trainerProgress:"متابعة تقدم المدرب",sessions:"الدخول والخروج"};$("pageTitle").textContent=titles[ACTIVE_VIEW];document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===ACTIVE_VIEW));
-  if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات العاجلة</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
+  if(ACTIVE_VIEW==="overview")$("viewBox").innerHTML=`<section class="grid-main"><div class="panel"><div class="panel-head"><div><h2>متابعة الدورات</h2><p>ملخص مباشر لأداء كل دورة</p></div><button onclick="setView('courses')">عرض الكل</button></div>${coursesTable()}</div><aside class="panel"><div class="panel-head"><div><h2>التنبيهات مجمعة حسب القسم</h2><p>حسب الأولوية والاستحقاق</p></div><span class="count-chip">${visibleAlerts().length} تنبيه</span></div>${alertsBox()}</aside></section><section class="panel"><div class="panel-head"><div><h2>الواجبات والكويزات والأنشطة حسب الدورة</h2><p>كل دورة تعرض ما يرتبط بها من أنشطة وكويزات وواجبات، والفرز الافتراضي حسب الفترة</p></div><div class="task-sortbar">
 <span>نوع النشاط:</span>
 <button class="${ACTIVITY_MODE_FILTER==="all"?"active":""}" onclick="setActivityModeFilter('all')">الكل</button>
 <button class="${ACTIVITY_MODE_FILTER==="individual"?"active":""}" onclick="setActivityModeFilter('individual')">Individual</button>
@@ -6759,22 +6878,326 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       `;
     }).join("");
 
+  const alertCourseMap=
+    new Map(
+      pdfCourses.map(c=>[c.id,c])
+    );
+
+  /*
+    تجميع التنبيهات حسب القسم بدل تكرار كل تنبيه كبطاقة مستقلة.
+    مثال:
+    Reading
+      Level-2 | الفترة | المدرب | التفاصيل
+      Level-4 | الفترة | المدرب | التفاصيل
+  */
+  const alertGroupInfo=(alert)=>{
+
+    const title=
+      clean(alert.title);
+
+    const id=
+      clean(alert.id);
+
+    const skillMatch=
+      title.match(
+        /^مهارة\s+(Listening|Speaking|Reading|Writing|Grammar|Vocabulary)\s+/i
+      );
+
+    if(skillMatch){
+      const skill=
+        skillMatch[1];
+
+      return {
+        key:`skill_${skill.toLowerCase()}`,
+        label:skill,
+        order:{
+          Reading:10,
+          Listening:20,
+          Speaking:30,
+          Writing:40,
+          Grammar:50,
+          Vocabulary:60
+        }[skill]||70
+      };
+    }
+
+    if(
+      id.startsWith("att_") ||
+      title.includes("تحضير المدرب")
+    ){
+      return {
+        key:"attendance",
+        label:"الحضور والتحضير",
+        order:80
+      };
+    }
+
+    if(
+      id.startsWith("mid_") ||
+      title.includes("Midterm")
+    ){
+      return {
+        key:"midterm",
+        label:"Midterm",
+        order:90
+      };
+    }
+
+    if(
+      id.startsWith("fin_") ||
+      title.includes("Final")
+    ){
+      return {
+        key:"final",
+        label:"Final",
+        order:100
+      };
+    }
+
+    if(
+      id.startsWith("com_") ||
+      title.includes("تعليقات")
+    ){
+      return {
+        key:"comments",
+        label:"تعليقات الطلاب",
+        order:110
+      };
+    }
+
+    return {
+      key:"other",
+      label:"تنبيهات أخرى",
+      order:999
+    };
+  };
+
+  const groupedAlerts=(()=>{
+
+    const groups=
+      new Map();
+
+    visibleReportAlerts.forEach(alert=>{
+
+      const info=
+        alertGroupInfo(alert);
+
+      if(!groups.has(info.key)){
+        groups.set(
+          info.key,
+          {
+            ...info,
+            items:[]
+          }
+        );
+      }
+
+      groups.get(info.key)
+        .items.push(alert);
+    });
+
+    return [
+      ...groups.values()
+    ]
+      .sort(
+        (a,b)=>
+          a.order-b.order ||
+          a.label.localeCompare(
+            b.label,
+            "ar",
+            {
+              numeric:true,
+              sensitivity:"base"
+            }
+          )
+      )
+      .map(group=>{
+
+        group.items.sort((a,b)=>{
+
+          const courseA=
+            alertCourseMap.get(a.courseId)||{};
+
+          const courseB=
+            alertCourseMap.get(b.courseId)||{};
+
+          const periodCompare=
+            periodSortValue(
+              a.period||
+              courseA.period
+            )-
+            periodSortValue(
+              b.period||
+              courseB.period
+            );
+
+          if(periodCompare!==0){
+            return periodCompare;
+          }
+
+          const courseCompare=
+            clean(
+              courseA.name||
+              a.courseName
+            ).localeCompare(
+              clean(
+                courseB.name||
+                b.courseName
+              ),
+              "ar",
+              {
+                numeric:true,
+                sensitivity:"base"
+              }
+            );
+
+          if(courseCompare!==0){
+            return courseCompare;
+          }
+
+          return clean(
+            courseA.trainer
+          ).localeCompare(
+            clean(
+              courseB.trainer
+            ),
+            "ar",
+            {
+              numeric:true,
+              sensitivity:"base"
+            }
+          );
+        });
+
+        return group;
+      });
+  })();
+
   const alertCards=
-    visibleReportAlerts.length
-      ? visibleReportAlerts.map(a=>`
-          <div class="report-alert ${a.status==="danger"?"bad":"warn"}">
-            <b>
-              ${esc(a.title)}
-              ·
-              ${esc(a.courseName||"")}
-            </b>
-            <p>${esc(a.text||"")}</p>
-          </div>
-        `).join("")
+    groupedAlerts.length
+      ? groupedAlerts.map(group=>{
+
+          const rows=
+            group.items.map((a,index)=>{
+
+              const course=
+                alertCourseMap.get(a.courseId)||
+                {};
+
+              const courseName=
+                clean(
+                  course.name||
+                  a.courseName||
+                  "غير محدد"
+                );
+
+              const period=
+                clean(
+                  a.period||
+                  course.period||
+                  "غير محدد"
+                );
+
+              const trainer=
+                clean(
+                  course.trainer||
+                  "غير محدد"
+                );
+
+              const branch=
+                clean(
+                  course.branch||
+                  ""
+                );
+
+              const section=
+                clean(
+                  course.section||
+                  ""
+                );
+
+              const statusClass=
+                a.status==="danger"
+                  ? "bad"
+                  : "warn";
+
+              const statusText=
+                a.status==="danger"
+                  ? "عاجل"
+                  : "متابعة";
+
+              return `
+                <tr>
+                  <td>${index+1}</td>
+
+                  <td class="alert-level-cell">
+                    <b>${esc(courseName)}</b>
+                    ${
+                      branch || section
+                        ? `<small>${esc(branch)}${branch&&section?" · ":""}${esc(section)}</small>`
+                        : ""
+                    }
+                  </td>
+
+                  <td>${esc(period)}</td>
+
+                  <td>
+                    <b>${esc(trainer)}</b>
+                  </td>
+
+                  <td class="alert-detail-cell">
+                    ${esc(a.text||a.title||"—")}
+                  </td>
+
+                  <td>
+                    <span class="rstatus ${statusClass}">
+                      ${statusText}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            }).join("");
+
+          return `
+            <section class="pdf-alert-group">
+
+              <div class="pdf-alert-group-head">
+                <div>
+                  <h3>${esc(group.label)}</h3>
+                  <p>
+                    جميع التنبيهات المتعلقة بهذا القسم
+                    مرتبة حسب الفترة ثم الدورة
+                  </p>
+                </div>
+
+                <span>
+                  ${group.items.length} تنبيه
+                </span>
+              </div>
+
+              <table class="pdf-alert-table">
+                <thead>
+                  <tr>
+                    <th style="width:5%">#</th>
+                    <th style="width:18%">المستوى / الدورة</th>
+                    <th style="width:16%">الفترة</th>
+                    <th style="width:15%">المدرب</th>
+                    <th style="width:36%">التفاصيل</th>
+                    <th style="width:10%">الحالة</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+
+            </section>
+          `;
+        }).join("")
       : `
-          <div class="report-alert">
-            <b>لا توجد تنبيهات عاجلة</b>
-            <p>لا توجد تنبيهات مطابقة للدورات المحددة في التقرير.</p>
+          <div class="report-note">
+            ✓ لا توجد تنبيهات عاجلة مطابقة للدورات المحددة في التقرير.
           </div>
         `;
 
@@ -6868,7 +7291,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
       <div class="full-section-title" style="margin-top:7px">
         <h2>التنبيهات العاجلة</h2>
-        <span>${visibleReportAlerts.length} تنبيه</span>
+        <span>${visibleReportAlerts.length} تنبيه · فرز تلقائي حسب الفترة والدورة</span>
       </div>
 
       <div class="report-alerts">
