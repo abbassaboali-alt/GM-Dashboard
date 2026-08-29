@@ -2836,6 +2836,235 @@
   }
 }
 
+
+/* =========================================================
+   PRUDLE PDF — FINAL FIRST-PAGE MATRIX + PAGE FLOW FIX
+   ========================================================= */
+@media print{
+
+  /* ---------- PAGE 1 detailed matrix ---------- */
+  .pdf-first-matrix-wrap{
+    border:1px solid #cddae4;
+    border-radius:9px;
+    overflow:hidden;
+    background:#fff;
+    margin-top:6px;
+  }
+
+  .pdf-first-matrix-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:7px 9px;
+    background:linear-gradient(90deg,#123d66,#164478 62%,#2b78b2);
+    color:#fff;
+  }
+
+  .pdf-first-matrix-head h3{
+    margin:0;
+    color:#fff;
+    font-size:9px;
+  }
+
+  .pdf-first-matrix-head span{
+    font-size:5.8px;
+    color:#d9e8f4;
+  }
+
+  .pdf-first-matrix{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  .pdf-first-matrix thead{
+    display:table-header-group;
+  }
+
+  .pdf-first-matrix th{
+    padding:4px 2px;
+    background:#e8f1f7;
+    color:#123a5e;
+    border:1px solid #cbd8e3;
+    font-size:5.1px;
+    font-weight:900;
+    text-align:center;
+    line-height:1.2;
+  }
+
+  .pdf-first-matrix td{
+    padding:4px 2px;
+    border:1px solid #dde6ed;
+    font-size:5.2px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:1.25;
+  }
+
+  .pdf-first-matrix tbody tr:nth-child(even){
+    background:#f8fbfd;
+  }
+
+  .pdf-first-matrix tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .pdf-first-matrix .course-cell-first{
+    text-align:right;
+  }
+
+  .pdf-first-matrix .course-cell-first b{
+    display:block;
+    font-size:6.4px;
+    color:#123b60;
+  }
+
+  .pdf-first-matrix .course-cell-first small{
+    display:block;
+    margin-top:1px;
+    font-size:4.7px;
+    color:#7c8d9d;
+    line-height:1.25;
+  }
+
+  .pdf-progress-cell{
+    min-width:50px;
+  }
+
+  .pdf-progress-cell b{
+    display:block;
+    margin-bottom:2px;
+    font-size:5.6px;
+    color:#173d5e;
+  }
+
+  .pdf-progress-cell .mini-track{
+    height:4px;
+    border-radius:6px;
+    background:#e4ebf0;
+    overflow:hidden;
+    margin:0 auto;
+    width:86%;
+  }
+
+  .pdf-progress-cell .mini-track i{
+    display:block;
+    height:100%;
+    border-radius:6px;
+    background:linear-gradient(90deg,#dc9413,#149b70);
+  }
+
+  .pdf-progress-cell.low .mini-track i{
+    background:linear-gradient(90deg,#dc4d57,#dc9413);
+  }
+
+  .pdf-progress-cell.good .mini-track i{
+    background:linear-gradient(90deg,#2b78b2,#149b70);
+  }
+
+  .pdf-progress-cell.na{
+    color:#9aa8b5;
+    font-weight:800;
+  }
+
+  .pdf-first-matrix-note{
+    padding:5px 7px;
+    background:#f7fafc;
+    border-top:1px solid #dce5ec;
+    color:#6e8192;
+    font-size:5.1px;
+    line-height:1.45;
+  }
+
+  /* Keep executive first page compact enough to fit the matrix */
+  .pdf-executive-page .pdf-course-summary-grid,
+  .pdf-executive-page .pdf-exec-bottom-grid{
+    display:none!important;
+  }
+
+  .pdf-executive-page .pdf-executive-kpis{
+    margin-bottom:4px!important;
+  }
+
+  /* ---------- PAGE BREAK FIX ---------- */
+  /*
+    Important:
+    A section heading must never stay alone at the bottom of a page.
+    The heading + first table rows move together to the next page.
+  */
+  .pdf-alert-group{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    margin-bottom:8px!important;
+  }
+
+  .pdf-alert-group-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .pdf-alert-group-head + .pdf-alert-table{
+    break-before:avoid!important;
+    page-break-before:avoid!important;
+  }
+
+  .pdf-alert-table thead{
+    display:table-header-group!important;
+  }
+
+  .pdf-alert-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* General section headings stay with data */
+  .pdf-section-band,
+  .full-section-title,
+  .report-card-head,
+  .pdf-score-title,
+  .trainer-progress-head,
+  .trainer-subtitle{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .pdf-section-band + *,
+  .full-section-title + *,
+  .report-card-head + *,
+  .pdf-score-title + *,
+  .trainer-progress-head + *,
+  .trainer-subtitle + *{
+    break-before:avoid!important;
+    page-break-before:avoid!important;
+  }
+
+  /* A long table can continue to next page; table header repeats */
+  .report-card,
+  .pdf-score-section,
+  .trainer-progress-course,
+  .trainer-course-report{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .report-table thead,
+  .pdf-score-table thead,
+  .trainer-progress-table thead,
+  .trainer-mini-table thead{
+    display:table-header-group!important;
+  }
+
+  .report-table tr,
+  .pdf-score-table tr,
+  .trainer-progress-table tr,
+  .trainer-mini-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -8168,13 +8397,265 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     ملخص إداري مفصل + كل الدورات على هيئة بطاقات واضحة.
     لا يبدأ جدول متابعة الدورات في هذه الصفحة.
   */
+  const firstPageMetricPct=(done,missing)=>{
+    const d=Number(done||0);
+    const m=Number(missing||0);
+    const total=d+m;
+    return total>0
+      ? Math.round(d/total*100)
+      : null;
+  };
+
+  const firstPageTaskPct=(courseId,kind)=>{
+    const items=
+      displayedTasks.filter(
+        t=>t.courseId===courseId && t.kind===kind
+      );
+
+    if(!items.length)return null;
+
+    const total=
+      items.reduce(
+        (s,t)=>s+Number(t.total||0),
+        0
+      );
+
+    const done=
+      items.reduce(
+        (s,t)=>s+Number(t.completed||0),
+        0
+      );
+
+    return total>0
+      ? Math.round(done/total*100)
+      : null;
+  };
+
+  const firstPageGradePct=(c,key)=>{
+    const item=
+      c.gradeSummary?.[key];
+
+    if(!item)return null;
+
+    return firstPageMetricPct(
+      item.done,
+      item.missing
+    );
+  };
+
+  const firstPageSkillsPct=(c)=>{
+    const done=
+      SUPERVISION_SKILLS.reduce(
+        (s,skill)=>
+          s+
+          Number(
+            c.skillSummary?.[skill]?.done||
+            0
+          ),
+        0
+      );
+
+    const missing=
+      SUPERVISION_SKILLS.reduce(
+        (s,skill)=>
+          s+
+          Number(
+            c.skillSummary?.[skill]?.missing||
+            0
+          ),
+        0
+      );
+
+    return firstPageMetricPct(done,missing);
+  };
+
+  const firstPagePlanPct=(c)=>{
+    const rows=
+      buildAllCourseDays(c);
+
+    if(!rows.length)return null;
+
+    const done=
+      rows.filter(row=>
+        getProgressRecord(
+          c.id,
+          row.week,
+          row.day
+        )?.completed===true
+      ).length;
+
+    return Math.round(
+      done/
+      rows.length*
+      100
+    );
+  };
+
+  const progressCell=(value)=>{
+    if(
+      value===null ||
+      value===undefined ||
+      !Number.isFinite(Number(value))
+    ){
+      return `
+        <div class="pdf-progress-cell na">
+          —
+        </div>
+      `;
+    }
+
+    const p=
+      Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(Number(value))
+        )
+      );
+
+    const cls=
+      p>=85
+        ? "good"
+        : p>=60
+          ? ""
+          : "low";
+
+    return `
+      <div class="pdf-progress-cell ${cls}">
+        <b>${p}%</b>
+        <div class="mini-track">
+          <i style="width:${p}%"></i>
+        </div>
+      </div>
+    `;
+  };
+
+  const firstPageRows=
+    [...pdfCourses]
+      .sort((a,b)=>
+        periodSortValue(a.period)-
+        periodSortValue(b.period) ||
+        clean(a.name).localeCompare(
+          clean(b.name),
+          "ar",
+          {numeric:true}
+        ) ||
+        clean(a.trainer).localeCompare(
+          clean(b.trainer),
+          "ar",
+          {numeric:true}
+        )
+      )
+      .map((c,index)=>{
+
+        const attendance=
+          Number(c.attendance||0);
+
+        const activitiesPct=
+          firstPageTaskPct(
+            c.id,
+            "نشاط"
+          );
+
+        const quizzesPct=
+          firstPageTaskPct(
+            c.id,
+            "كويز"
+          );
+
+        const homeworkPct=
+          firstPageTaskPct(
+            c.id,
+            "واجب"
+          );
+
+        const midtermPct=
+          firstPageGradePct(
+            c,
+            "midterm"
+          );
+
+        const finalPct=
+          firstPageGradePct(
+            c,
+            "final"
+          );
+
+        const listeningPct=
+          firstPageGradePct(
+            c,
+            "listening"
+          );
+
+        const speakingPct=
+          firstPageGradePct(
+            c,
+            "speaking"
+          );
+
+        const homeworkGradePct=
+          firstPageGradePct(
+            c,
+            "homework"
+          );
+
+        const skillsPct=
+          firstPageSkillsPct(c);
+
+        const commentsPct=
+          Number(c.comments||0);
+
+        const planPct=
+          firstPagePlanPct(c);
+
+        return `
+          <tr>
+            <td>${index+1}</td>
+
+            <td class="course-cell-first">
+              <b>${esc(c.name)}</b>
+              <small>
+                ${esc(c.branch)}
+                · ${esc(c.section)}
+              </small>
+            </td>
+
+            <td>
+              <b>${esc(c.trainer)}</b>
+            </td>
+
+            <td>
+              ${esc(c.period||"—")}
+            </td>
+
+            <td>${progressCell(attendance)}</td>
+            <td>${progressCell(activitiesPct)}</td>
+            <td>${progressCell(quizzesPct)}</td>
+            <td>${progressCell(homeworkPct)}</td>
+            <td>${progressCell(midtermPct)}</td>
+            <td>${progressCell(finalPct)}</td>
+            <td>${progressCell(listeningPct)}</td>
+            <td>${progressCell(speakingPct)}</td>
+            <td>${progressCell(homeworkGradePct)}</td>
+            <td>${progressCell(skillsPct)}</td>
+            <td>${progressCell(commentsPct)}</td>
+            <td>${progressCell(planPct)}</td>
+          </tr>
+        `;
+      }).join("");
+
+  /*
+    PAGE 1
+    Detailed administrative matrix by course and period.
+    Every major trainer duty appears with a progress bar + percentage.
+  */
   const overviewSection=`
     <section class="pdf-executive-page">
 
       <div class="pdf-executive-title">
-        <h2>1. الملخص التنفيذي التفصيلي</h2>
+        <h2>1. الملخص التنفيذي التفصيلي للمهام</h2>
         <span>
-          بيان إداري شامل للدورات والمستويات قبل التفاصيل
+          جميع المهام حسب الدورة والفترة والمدرب
         </span>
       </div>
 
@@ -8195,25 +8676,25 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         <div class="pdf-exec-kpi">
           <span>العناصر الأكاديمية</span>
           <b>${displayedTasks.length}</b>
-          <small>واجبات · كويزات · أنشطة</small>
+          <small>أنشطة وكويزات وواجبات</small>
         </div>
 
         <div class="pdf-exec-kpi green">
           <span>متوسط الإنجاز</span>
           <b>${overallCompletion}%</b>
-          <small>حسب جميع العناصر</small>
+          <small>متوسط عام</small>
         </div>
 
         <div class="pdf-exec-kpi red">
           <span>درجات ناقصة</span>
           <b>${gradeMissing}</b>
-          <small>Midterm · Final · Skills</small>
+          <small>جميع الدرجات</small>
         </div>
 
         <div class="pdf-exec-kpi amber">
           <span>مهارات ناقصة</span>
           <b>${skillMissing}</b>
-          <small>الست مهارات</small>
+          <small>المهارات الست</small>
         </div>
 
         <div class="pdf-exec-kpi red">
@@ -8230,49 +8711,53 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
       </div>
 
-      <div class="pdf-course-summary-grid">
-        ${executiveCourseCards}
-      </div>
+      <div class="pdf-first-matrix-wrap">
 
-      <div class="pdf-exec-bottom-grid">
+        <div class="pdf-first-matrix-head">
+          <h3>
+            حالة جميع المهام الأكاديمية حسب الدورة والفترة
+          </h3>
 
-        <div class="pdf-exec-panel">
-          <div class="pdf-exec-panel-head">
-            <h3>حالة المهام الأكاديمية</h3>
-            <span>ملخص الإنجاز</span>
-          </div>
-
-          <table class="pdf-exec-table">
-            <thead>
-              <tr>
-                <th>النوع</th>
-                <th>الإجمالي</th>
-                <th>مكتمل</th>
-                <th>غير مكتمل</th>
-                <th>الإنجاز</th>
-              </tr>
-            </thead>
-            <tbody>${executiveTaskRows}</tbody>
-          </table>
+          <span>
+            شريط التقدم يوضح نسبة الإنجاز لكل مهمة
+          </span>
         </div>
 
-        <div class="pdf-exec-panel">
-          <div class="pdf-exec-panel-head">
-            <h3>حالة المهارات</h3>
-            <span>جميع الدورات المحددة</span>
-          </div>
+        <table class="pdf-first-matrix">
+          <thead>
+            <tr>
+              <th style="width:2.5%">#</th>
+              <th style="width:9%">الدورة / المستوى</th>
+              <th style="width:6.5%">المدرب</th>
+              <th style="width:8%">الفترة</th>
 
-          <table class="pdf-exec-table">
-            <thead>
-              <tr>
-                <th>المهارة</th>
-                <th>مرصود</th>
-                <th>ناقص</th>
-                <th>الإنجاز</th>
-              </tr>
-            </thead>
-            <tbody>${executiveSkillRows}</tbody>
-          </table>
+              <th>الحضور</th>
+              <th>الأنشطة</th>
+              <th>الكويزات</th>
+              <th>الواجبات</th>
+
+              <th>Midterm</th>
+              <th>Final</th>
+              <th>Listening</th>
+              <th>Speaking</th>
+              <th>درجة الواجب</th>
+
+              <th>المهارات</th>
+              <th>التعليقات</th>
+              <th>تقدم الخطة</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${firstPageRows}
+          </tbody>
+        </table>
+
+        <div class="pdf-first-matrix-note">
+          <b>ملاحظة:</b>
+          الرمز (—) يعني عدم وجود عنصر أو بيانات قابلة للحساب في الدورة الحالية.
+          يتم ترتيب الدورات تلقائياً حسب الفترة ثم اسم الدورة ثم المدرب.
+          المهارات تمثل متوسط اكتمال Listening وSpeaking وReading وWriting وGrammar وVocabulary.
         </div>
 
       </div>
@@ -8284,7 +8769,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       <div class="pdf-section-band">
         <h2>2. متابعة الدورات</h2>
         <span>
-          فرز تلقائي حسب الفترة ثم الدورة · الإنجاز والحضور والتعليقات والتنبيهات
+          الإنجاز والحضور والتعليقات والتنبيهات · فرز تلقائي حسب الفترة ثم الدورة
         </span>
       </div>
 
@@ -8316,23 +8801,30 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                 .map((c,index)=>{
 
                   const taskCount=
-                    displayedTasks.filter(t=>t.courseId===c.id).length;
+                    displayedTasks.filter(
+                      t=>t.courseId===c.id
+                    ).length;
 
                   const status=
                     Number(c.alerts||0)>0 ||
-                    Number(c.missingAttendanceStudentsTotal||0)>0
+                    Number(
+                      c.missingAttendanceStudentsTotal||
+                      0
+                    )>0
                       ? "يحتاج متابعة"
                       : "مستقر";
 
                   return `
                     <tr class="${status==="مستقر"?"success-row":"warning-row"}">
                       <td>${index+1}</td>
+
                       <td class="text-right">
                         <b>${esc(c.name)}</b>
                         <small style="display:block;color:#71839a;margin-top:2px">
                           ${esc(c.branch)} · ${esc(c.section)}
                         </small>
                       </td>
+
                       <td>${esc(c.trainer)}</td>
                       <td>${esc(c.period)}</td>
                       <td>${c.students}</td>
@@ -8341,6 +8833,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                       <td>${c.attendance}%</td>
                       <td>${c.comments}%</td>
                       <td>${c.alerts||0}</td>
+
                       <td>
                         <span class="rstatus ${status==="مستقر"?"ok":"warn"}">
                           ${status}
@@ -8372,7 +8865,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     </section>
   `;
 
-    /* =====================================================
+      /* =====================================================
      2) TASKS / COURSES
      ===================================================== */
 
