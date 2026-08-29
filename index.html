@@ -2166,183 +2166,84 @@
 }
 
 
+/* ===== FINAL PDF: separated academic blocks + professional attendance states ===== */
 @media print{
-  /* ===== Professional attendance status design ===== */
-  .count-box.attendance-alert,
-  .count-box.attendance-ok{
-    position:relative;
-    overflow:hidden;
-    min-height:31px;
-    padding:4px 5px 4px 7px;
-    border-radius:8px;
-    text-align:center;
-  }
-
-  .count-box.attendance-alert{
-    background:linear-gradient(180deg,#fff7f8,#fff0f1);
-    border:1px solid #efc5ca;
-    box-shadow:inset 0 0 0 1px rgba(220,77,87,.04);
-  }
-
-  .count-box.attendance-alert:before{
-    content:"";
-    position:absolute;
-    right:0;
-    top:0;
-    bottom:0;
-    width:4px;
-    background:#dc4d57;
-  }
-
-  .count-box.attendance-ok{
-    background:linear-gradient(180deg,#f4fcf8,#eaf8f2);
-    border:1px solid #c4e8db;
-    box-shadow:inset 0 0 0 1px rgba(20,155,112,.04);
-  }
-
-  .count-box.attendance-ok:before{
-    content:"";
-    position:absolute;
-    right:0;
-    top:0;
-    bottom:0;
-    width:4px;
-    background:#149b70;
-  }
-
-  .attendance-main-line{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-    margin-bottom:2px;
-  }
-
-  .attendance-icon{
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    display:inline-grid;
-    place-items:center;
-    font-size:4.8px;
-    font-weight:900;
-  }
-
-  .attendance-alert .attendance-icon{
-    background:#dc4d57;
-    color:#fff;
-  }
-
-  .attendance-ok .attendance-icon{
-    background:#149b70;
-    color:#fff;
-  }
-
-  .attendance-value{
-    font-size:7px!important;
-    font-weight:900!important;
-    line-height:1!important;
-  }
-
-  .attendance-alert .attendance-value{
-    color:#c43e49!important;
-  }
-
-  .attendance-ok .attendance-value{
-    color:#0e7d58!important;
-  }
-
-  .attendance-label{
-    display:block;
-    font-size:4.1px!important;
-    font-weight:900!important;
-    line-height:1.2;
-  }
-
-  .attendance-alert .attendance-label{
-    color:#a9343e!important;
-  }
-
-  .attendance-ok .attendance-label{
-    color:#0f7656!important;
-  }
-
-  .attendance-days{
-    display:inline-block;
-    margin-top:2px;
-    padding:1px 4px;
-    border-radius:7px;
-    font-size:3.7px!important;
-    font-weight:800!important;
-  }
-
-  .attendance-alert .attendance-days{
-    background:#fff;
-    border:1px solid #f0c9cd;
-    color:#a9343e!important;
-  }
-
-  .attendance-summary-pill{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-    min-width:42px;
-    padding:3px 6px;
-    border-radius:12px;
-    font-weight:900;
-    font-size:4.5px;
-    white-space:nowrap;
-  }
-
-  .attendance-summary-pill.bad{
-    background:#fff0f1;
-    border:1px solid #efc4c9;
-    color:#bd3944;
-  }
-
-  .attendance-summary-pill.good{
-    background:#eaf8f2;
-    border:1px solid #bfe5d7;
-    color:#0f7b58;
-  }
-
-  .attendance-summary-pill i{
-    width:11px;
-    height:11px;
-    border-radius:50%;
+  .first-academic-grid{
     display:grid;
-    place-items:center;
-    font-style:normal;
-    font-size:3.7px;
-    color:#fff;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-top:7px;
   }
-
-  .attendance-summary-pill.bad i{background:#dc4d57}
-  .attendance-summary-pill.good i{background:#149b70}
-
-  /* improve the whole first table slightly */
-  .same-counts-table th{
-    background:linear-gradient(180deg,#edf4f8,#dfeaf2)!important;
-    color:#123a5e!important;
-    border-color:#c9d7e2!important;
+  .first-academic-card{
+    border:1px solid #cbdbe7;
+    border-radius:9px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:avoid;
+    page-break-inside:avoid;
   }
-
-  .same-counts-table tbody tr:nth-child(even){
-    background:#f7fafc!important;
+  .first-academic-card h3{
+    margin:0!important;
+    padding:6px 8px!important;
+    font-size:6.7px!important;
+    color:#fff!important;
+    background:linear-gradient(90deg,#164478,#2b78b2)!important;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
   }
+  .first-academic-card h3 small{font-size:4.8px;color:#dbeaf5;font-weight:700}
+  .first-academic-card.exam h3{background:linear-gradient(90deg,#493a87,#7357c5)!important}
+  .first-academic-card.skills h3{background:linear-gradient(90deg,#08775e,#149b70)!important}
+  .first-academic-card.attendance h3{background:linear-gradient(90deg,#a53a44,#dc4d57)!important}
 
-  .same-counts-table tbody tr:hover{
-    background:inherit!important;
+  .first-mini-table{width:100%;border-collapse:collapse;table-layout:fixed}
+  .first-mini-table th{
+    padding:4px 3px;background:#edf4f8;color:#31536e;
+    border:1px solid #d6e2eb;font-size:4.8px;font-weight:900;text-align:center
   }
+  .first-mini-table td{
+    padding:4px 3px;border:1px solid #e0e8ee;font-size:4.8px;text-align:center;vertical-align:middle
+  }
+  .first-mini-table tbody tr:nth-child(even){background:#f8fbfd}
 
-  .same-counts-head{
-    box-shadow:0 3px 8px rgba(15,51,82,.08);
+  .att-state{
+    display:inline-flex;align-items:center;justify-content:center;gap:3px;
+    min-width:54px;padding:3px 5px;border-radius:12px;font-size:4.8px;font-weight:900;
+    border:1px solid transparent
   }
+  .att-state i{
+    width:10px;height:10px;border-radius:50%;display:grid;place-items:center;
+    font-style:normal;color:#fff;font-size:4px
+  }
+  .att-state.bad{background:#fff0f1;color:#bd3944;border-color:#f0c5ca}
+  .att-state.bad i{background:#dc4d57}
+  .att-state.ok{background:#e9f8f2;color:#0f7b58;border-color:#bee6d7}
+  .att-state.ok i{background:#149b70}
 
-  .same-summary-box{
-    box-shadow:0 2px 6px rgba(15,51,82,.05);
+  .skill-line{display:flex;align-items:center;gap:4px;justify-content:center}
+  .skill-track{width:45px;height:5px;border-radius:8px;background:#e5edf1;overflow:hidden}
+  .skill-track i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#149b70,#55b997)}
+  .exam-track i{background:linear-gradient(90deg,#7357c5,#a48ee0)}
+
+  /* First main table attendance: red only for missing, green for complete */
+  .same-counts-table .attendance-alert,
+  .same-counts-table .attendance-ok{
+    border-radius:8px;padding:4px 3px;min-height:30px;position:relative;overflow:hidden
   }
+  .same-counts-table .attendance-alert{background:#fff0f1;border:1px solid #efc3c8}
+  .same-counts-table .attendance-ok{background:#eaf8f2;border:1px solid #bde5d6}
+  .same-counts-table .attendance-alert:after,
+  .same-counts-table .attendance-ok:after{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:3px
+  }
+  .same-counts-table .attendance-alert:after{background:#dc4d57}
+  .same-counts-table .attendance-ok:after{background:#149b70}
+  .attendance-value{font-size:6.6px!important;font-weight:900}
+  .attendance-alert .attendance-value{color:#bd3944!important}
+  .attendance-ok .attendance-value{color:#0f7b58!important}
+  .attendance-label{display:block;font-size:4.2px!important;font-weight:900;margin-top:1px}
+  .attendance-days{display:block;font-size:3.8px!important;margin-top:2px}
 }
 
 </style>
@@ -7700,22 +7601,15 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td><b>${c.students}</b></td>
 
             <td>
-              <div class="count-box ${att.missing ? "attendance-alert" : "attendance-ok"}">
-                <div class="attendance-main-line">
-                  <span class="attendance-icon">
-                    ${att.missing ? "!" : "✓"}
-                  </span>
-                  <b class="attendance-value">${att.missing}</b>
-                </div>
-
+              <div class="${att.missing ? "attendance-alert" : "attendance-ok"}">
+                <b class="attendance-value">${att.missing ? att.missing : "✓"}</b>
                 <span class="attendance-label">
                   ${att.missing ? "خانة غير محضّرة" : "التحضير مكتمل"}
                 </span>
-
                 ${
                   att.incompleteDays
                     ? `<span class="attendance-days">${att.incompleteDays} يوم غير مكتمل</span>`
-                    : ""
+                    : `<span class="attendance-days">لا يوجد نقص</span>`
                 }
               </div>
             </td>
@@ -7782,14 +7676,71 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td>${esc(c.period)}</td>
             <td>${c.students}</td>
             <td>
-              <span class="attendance-summary-pill ${m.missing ? "bad" : "good"}">
-                <i>${m.missing ? "!" : "✓"}</i>
+              <b style="color:${m.missing ? '#b83d47' : '#0f7d59'}">
                 ${m.missing}
-              </span>
+              </b>
             </td>
             <td>${m.incompleteDays}</td>
           </tr>
         `;
+      }).join("");
+
+
+  const firstExamRows=
+    [...pdfCourses].map((c,index)=>{
+      const mid=exactGradeMetric(c,"midterm");
+      const fin=exactGradeMetric(c,"final");
+      const lis=exactGradeMetric(c,"listening");
+      const spk=exactGradeMetric(c,"speaking");
+      const hwg=exactGradeMetric(c,"homework");
+      const exams=[
+        ["Midterm",mid],["Final",fin],["Listening",lis],["Speaking",spk],["Homework",hwg]
+      ];
+      const total=exams.reduce((s,x)=>s+x[1].total,0);
+      const done=exams.reduce((s,x)=>s+x[1].done,0);
+      const p=total?Math.round(done/total*100):0;
+      return `<tr>
+        <td>${index+1}</td>
+        <td><b>${esc(c.name)}</b></td>
+        <td>${c.students}</td>
+        <td>${exams.map(x=>`${x[0]} ${x[1].done}/${x[1].total}`).join("<br>")}</td>
+        <td><div class="skill-line"><b>${p}%</b><span class="skill-track exam-track"><i style="width:${p}%"></i></span></div></td>
+      </tr>`;
+    }).join("");
+
+  const firstSkillReportRows=
+    SUPERVISION_SKILLS.map(skill=>{
+      let done=0,total=0;
+      pdfCourses.forEach(c=>{
+        const m=exactSkillMetric(c,skill);
+        done+=m.done; total+=m.total;
+      });
+      const missing=Math.max(0,total-done);
+      const p=total?Math.round(done/total*100):0;
+      return `<tr>
+        <td><b>${esc(skill)}</b></td>
+        <td>${done}</td><td>${missing}</td><td>${total}</td>
+        <td><div class="skill-line"><b>${p}%</b><span class="skill-track"><i style="width:${p}%"></i></span></div></td>
+      </tr>`;
+    }).join("");
+
+  const firstAttendanceCompactRows=
+    [...pdfCourses]
+      .sort((a,b)=>periodSortValue(a.period)-periodSortValue(b.period))
+      .map((c,index)=>{
+        const m=exactAttendanceMetric(c);
+        return `<tr>
+          <td>${index+1}</td>
+          <td><b>${esc(c.name)}</b></td>
+          <td>${esc(c.trainer)}</td>
+          <td>${c.students}</td>
+          <td>
+            <span class="att-state ${m.missing?"bad":"ok"}">
+              <i>${m.missing?"!":"✓"}</i>
+              ${m.missing ? `${m.missing} ناقص` : "مكتمل"}
+            </span>
+          </td>
+        </tr>`;
       }).join("");
 
   const overviewSection=`
@@ -7811,7 +7762,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <th>الفترة</th>
             <th>الطلاب</th>
 
-            <th>التحضير<br><small>الخانات غير المرصودة</small></th>
+            <th>التحضير<br><small>أحمر = نقص · أخضر = مكتمل</small></th>
             <th>الأنشطة</th>
             <th>الكويزات</th>
             <th>الواجبات</th>
@@ -7836,41 +7787,50 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         </tbody>
       </table>
 
-      <div class="same-summary-grid">
+      <div class="first-academic-grid">
 
-        <div class="same-summary-box">
-          <h3>متابعة التحضير حسب الدورة — الخانات غير المرصودة</h3>
-
-          <table class="same-summary-table">
+        <div class="first-academic-card attendance">
+          <h3>
+            <span>متابعة التحضير</span>
+            <small>بدون تكرار — الخانات غير المرصودة فقط</small>
+          </h3>
+          <table class="first-mini-table">
             <thead>
               <tr>
-                <th>#</th>
-                <th>الدورة</th>
-                <th>المدرب</th>
-                <th>الفترة</th>
-                <th>الطلاب</th>
-                <th>الخانات غير المحضرة</th>
-                <th>أيام التحضير غير المكتمل</th>
+                <th>#</th><th>الدورة</th><th>المدرب</th><th>الطلاب</th><th>الحالة</th>
               </tr>
             </thead>
-            <tbody>${generalAttendanceRows}</tbody>
+            <tbody>${firstAttendanceCompactRows}</tbody>
           </table>
         </div>
 
-        <div class="same-summary-box">
-          <h3>المهارات — نفس عدد تم الرصد والناقص في الكود</h3>
-
-          <table class="same-summary-table">
+        <div class="first-academic-card exam">
+          <h3>
+            <span>الاختبارات والدرجات الأساسية</span>
+            <small>جدول مستقل</small>
+          </h3>
+          <table class="first-mini-table">
             <thead>
               <tr>
-                <th>المهارة</th>
-                <th>مرصود</th>
-                <th>ناقص</th>
-                <th>الإجمالي</th>
-                <th>النسبة</th>
+                <th>#</th><th>الدورة</th><th>الطلاب</th><th>الرصد الفعلي</th><th>الاكتمال</th>
               </tr>
             </thead>
-            <tbody>${generalSkillRows}</tbody>
+            <tbody>${firstExamRows}</tbody>
+          </table>
+        </div>
+
+        <div class="first-academic-card skills" style="grid-column:1/-1">
+          <h3>
+            <span>تقرير المهارات العام</span>
+            <small>Listening · Speaking · Reading · Writing · Grammar · Vocabulary</small>
+          </h3>
+          <table class="first-mini-table">
+            <thead>
+              <tr>
+                <th>المهارة</th><th>مرصود</th><th>ناقص</th><th>الإجمالي</th><th>نسبة الإنجاز</th>
+              </tr>
+            </thead>
+            <tbody>${firstSkillReportRows}</tbody>
           </table>
         </div>
 
