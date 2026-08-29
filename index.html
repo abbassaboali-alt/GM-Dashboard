@@ -3695,6 +3695,191 @@
   .print-footer{font-size:6.5px!important}
 }
 
+
+/* =========================================================
+   PRUDLE PDF — EXECUTIVE TABLE REFINEMENT
+   Removes Homework from page 1 and improves readability
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:5mm}
+
+  /* Main first-page operational section */
+  .premium-block:first-of-type{
+    border:1.3px solid #b9cedd!important;
+    border-radius:12px!important;
+    overflow:hidden!important;
+    box-shadow:0 4px 14px rgba(15,51,82,.07)!important;
+  }
+
+  .premium-block:first-of-type .premium-block-head{
+    min-height:35px!important;
+    padding:7px 11px!important;
+    background:linear-gradient(90deg,#0b3154 0%,#165483 58%,#2a7eb6 100%)!important;
+    border-bottom:0!important;
+  }
+
+  .premium-block:first-of-type .premium-block-head h3{
+    font-size:10px!important;
+    font-weight:900!important;
+    letter-spacing:.1px!important;
+  }
+
+  .premium-block:first-of-type .premium-block-head p,
+  .premium-block:first-of-type .premium-block-head > span{
+    font-size:6.2px!important;
+    line-height:1.4!important;
+  }
+
+  /* First page operational table */
+  .premium-block:first-of-type .premium-table{
+    width:100%!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    table-layout:fixed!important;
+  }
+
+  .premium-block:first-of-type .premium-table th{
+    background:linear-gradient(180deg,#e8f1f6 0%,#dce9f1 100%)!important;
+    color:#113b5d!important;
+    font-size:7.4px!important;
+    font-weight:900!important;
+    padding:6.5px 4px!important;
+    line-height:1.3!important;
+    border-left:1px solid #c6d7e2!important;
+    border-bottom:1.5px solid #b7cbd8!important;
+    white-space:nowrap!important;
+  }
+
+  .premium-block:first-of-type .premium-table td{
+    font-size:7.2px!important;
+    font-weight:700!important;
+    color:#173b57!important;
+    padding:6.5px 4px!important;
+    line-height:1.45!important;
+    border-left:1px solid #d6e2ea!important;
+    border-bottom:1px solid #d9e4eb!important;
+    vertical-align:middle!important;
+  }
+
+  .premium-block:first-of-type .premium-table tbody tr:nth-child(odd){
+    background:#ffffff!important;
+  }
+
+  .premium-block:first-of-type .premium-table tbody tr:nth-child(even){
+    background:#f4f8fb!important;
+  }
+
+  .premium-block:first-of-type .premium-table tbody tr{
+    min-height:38px!important;
+  }
+
+  /* Course/level identity */
+  .premium-block:first-of-type .premium-course b{
+    font-size:8.2px!important;
+    font-weight:900!important;
+    color:#0b3d63!important;
+  }
+
+  .premium-block:first-of-type .premium-course small{
+    font-size:5.7px!important;
+    color:#7890a3!important;
+    font-weight:700!important;
+  }
+
+  /* Trainer / period / students */
+  .premium-block:first-of-type .premium-table td:nth-child(3),
+  .premium-block:first-of-type .premium-table td:nth-child(4),
+  .premium-block:first-of-type .premium-table td:nth-child(5){
+    font-size:7.3px!important;
+    font-weight:800!important;
+  }
+
+  /* Attendance boxes */
+  .premium-block:first-of-type .premium-att{
+    min-height:34px!important;
+    padding:6px 5px!important;
+    border-radius:9px!important;
+  }
+
+  .premium-block:first-of-type .premium-att strong{
+    font-size:9.5px!important;
+    line-height:1.05!important;
+  }
+
+  .premium-block:first-of-type .premium-att small{
+    font-size:5.5px!important;
+    line-height:1.25!important;
+  }
+
+  .premium-block:first-of-type .premium-att.bad{
+    background:linear-gradient(135deg,#fff5f5,#ffe7ea)!important;
+    border:1.2px solid #efb6bd!important;
+    color:#b8323e!important;
+  }
+
+  .premium-block:first-of-type .premium-att.good{
+    background:linear-gradient(135deg,#f0faf6,#e2f5ed)!important;
+    border:1.2px solid #b3ddce!important;
+    color:#0a7b57!important;
+  }
+
+  /* Metric cells / progress */
+  .premium-block:first-of-type .pm b{
+    font-size:7.4px!important;
+    font-weight:900!important;
+    color:#153e60!important;
+  }
+
+  .premium-block:first-of-type .pm small{
+    font-size:5.4px!important;
+    font-weight:700!important;
+    color:#71879a!important;
+  }
+
+  .premium-block:first-of-type .pm-track{
+    height:5px!important;
+    margin-top:3px!important;
+    border-radius:7px!important;
+    background:#e3ebf0!important;
+  }
+
+  /* Make all other PDF tables slightly larger too */
+  .premium-table:not(.premium-block:first-of-type .premium-table) th,
+  .report-table th,
+  .pdf-score-table th,
+  .trainer-progress-table th,
+  .pdf-alert-table th{
+    font-size:7.4px!important;
+  }
+
+  .premium-table:not(.premium-block:first-of-type .premium-table) td,
+  .report-table td,
+  .pdf-score-table td,
+  .trainer-progress-table td,
+  .pdf-alert-table td{
+    font-size:7.2px!important;
+  }
+
+  .full-section-title h2{font-size:13.5px!important}
+  .report-card-head h3{font-size:10.8px!important}
+
+  /* Better page-break behavior */
+  .premium-block-head,
+  .full-section-title,
+  .report-card-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .premium-table tr,
+  .report-table tr,
+  .pdf-score-table tr,
+  .trainer-progress-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -9021,7 +9206,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         const att=exactAttendanceMetric(c);
         const act=exactTaskMetric(c.id,"نشاط");
         const quiz=exactTaskMetric(c.id,"كويز");
-        const hw=exactTaskMetric(c.id,"واجب");
 
         const mid=exactGradeMetric(c,"midterm");
         const fin=exactGradeMetric(c,"final");
@@ -9379,7 +9563,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             </td>
             <td>${premiumMetricView(act)}</td>
             <td>${premiumMetricView(quiz)}</td>
-            <td>${premiumMetricView(hw)}</td>
             <td>${premiumMetricView(comments)}</td>
           </tr>
         `;
@@ -9550,7 +9733,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               <th style="width:10%">التحضير</th>
               <th>الأنشطة</th>
               <th>الكويزات</th>
-              <th>الواجبات</th>
               <th>التعليقات</th>
             </tr>
           </thead>
