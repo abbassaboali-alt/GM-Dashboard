@@ -1956,6 +1956,253 @@
   }
 }
 
+
+/* =========================================================
+   FINAL PDF LAYOUT — TRAINER-CENTRIC REPORT
+   كل مدرب في قسم مستقل ودوراته مرتبة حسب الفترة
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+
+  .trainer-report-group{
+    break-before:page;
+    page-break-before:always;
+  }
+
+  .trainer-report-group.first-trainer{
+    break-before:page;
+    page-break-before:always;
+  }
+
+  .trainer-report-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:12px 15px;
+    margin:0 0 10px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#0d365d,#164478 62%,#2b78b2);
+    color:#fff;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .trainer-report-head h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    color:#fff!important;
+    font-size:18px!important;
+  }
+
+  .trainer-report-head p{
+    margin:4px 0 0;
+    color:#dbeaf5;
+    font-size:9px;
+  }
+
+  .trainer-report-head .trainer-head-stats{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .trainer-head-stat{
+    min-width:88px;
+    padding:7px 9px;
+    border-radius:10px;
+    text-align:center;
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.2);
+  }
+
+  .trainer-head-stat span{
+    display:block;
+    font-size:7px;
+    color:#d8e7f2;
+  }
+
+  .trainer-head-stat b{
+    display:block;
+    margin-top:2px;
+    font-size:12px;
+    color:#fff;
+  }
+
+  .trainer-course-report{
+    margin:0 0 13px;
+    border:1px solid #cbd9e4;
+    border-radius:12px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:auto;
+    page-break-inside:auto;
+  }
+
+  .trainer-course-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 12px;
+    background:#edf4f8;
+    border-bottom:2px solid #164478;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .trainer-course-title h3{
+    margin:0;
+    color:#123d62;
+    font-size:14px;
+  }
+
+  .trainer-course-title p{
+    margin:3px 0 0;
+    color:#6f8294;
+    font-size:8px;
+  }
+
+  .trainer-course-title .period-box{
+    padding:6px 10px;
+    border-radius:10px;
+    background:#164478;
+    color:#fff;
+    font-size:9px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+
+  .trainer-course-kpis{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:0;
+    border-bottom:1px solid #dce5ec;
+  }
+
+  .trainer-course-kpi{
+    padding:7px 5px;
+    text-align:center;
+    border-left:1px solid #e1e8ee;
+  }
+
+  .trainer-course-kpi:last-child{border-left:0}
+  .trainer-course-kpi span{display:block;font-size:7px;color:#718397}
+  .trainer-course-kpi b{display:block;margin-top:2px;font-size:11px;color:#153b5d}
+
+  .trainer-task-checklist{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+    padding:8px;
+    background:#fafcfd;
+  }
+
+  .trainer-task-line{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:7px 9px;
+    border:1px solid #dce5ec;
+    border-radius:9px;
+    background:#fff;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .trainer-task-line strong{
+    font-size:8.5px;
+    color:#173d5d;
+  }
+
+  .trainer-task-line small{
+    display:block;
+    margin-top:2px;
+    font-size:7px;
+    color:#7b8d9d;
+  }
+
+  .trainer-subtitle{
+    margin:0;
+    padding:7px 10px;
+    background:#164478;
+    color:#fff;
+    font-size:10px;
+    font-weight:900;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .trainer-mini-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:auto;
+  }
+
+  .trainer-mini-table thead{display:table-header-group}
+
+  .trainer-mini-table th{
+    padding:6px 5px;
+    background:#e8f1f7;
+    color:#123a5e;
+    border:1px solid #cbd9e4;
+    font-size:8px;
+    text-align:center;
+  }
+
+  .trainer-mini-table td{
+    padding:6px 5px;
+    border:1px solid #dce5ec;
+    font-size:8px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:1.55;
+  }
+
+  .trainer-mini-table tbody tr:nth-child(even){background:#f9fbfd}
+  .trainer-mini-table tr{break-inside:avoid;page-break-inside:avoid}
+  .trainer-mini-table .text-right{text-align:right}
+  .trainer-mini-table .danger-row{background:#fff0f1!important}
+  .trainer-mini-table .warning-row{background:#fff8e7!important}
+  .trainer-mini-table .success-row{background:#effaf5!important}
+
+  .trainer-status{
+    display:inline-block;
+    padding:4px 7px;
+    border-radius:12px;
+    font-size:7px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  .trainer-status.ok{background:#e5f7ef;color:#0f7d59}
+  .trainer-status.warn{background:#fff5df;color:#a86a08}
+  .trainer-status.bad{background:#fff0f1;color:#b83d47}
+  .trainer-status.info{background:#eaf3fa;color:#21669b}
+
+  .trainer-detail-note{
+    padding:8px 10px;
+    font-size:8px;
+    line-height:1.7;
+    color:#63798b;
+    background:#f8fbfd;
+    border-top:1px solid #dfe7ed;
+  }
+
+  .trainer-global-summary{
+    margin-top:8px;
+    padding:10px;
+    border:1px solid #d6e2eb;
+    border-radius:10px;
+    background:#f8fbfd;
+    font-size:9px;
+    line-height:1.8;
+    color:#48647b;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -6309,281 +6556,19 @@ document.addEventListener(
   }
 );
 
-function selectedFilterText(){
-  const labels={
-    fBranch:"الفرع",
-    fSection:"القسم",
-    fCourse:"الدورة",
-    fStart:"تاريخ البدء",
-    fType:"نوع الدورة",
-    fTrainer:"المدرب",
-    fPeriod:"الفترة"
-  };
+function selectedFilterText(function preparePrintReport(pdfCourses=getPdfCourses()){
 
-  const parts=
-    Object.entries(labels)
-      .map(([id,label])=>
-        $(id).value
-          ? `<b>${label}:</b> ${esc($(id).value)}`
-          : ""
-      )
-      .filter(Boolean);
-
-  const modeLabel=
-    ACTIVITY_MODE_FILTER==="individual"
-      ? "Individual"
-      : ACTIVITY_MODE_FILTER==="teams"
-        ? "Teams"
-        : "الكل";
-
-  const sortLabel=
-    TASK_SORT_MODE==="course"
-      ? "حسب الدورة"
-      : "حسب الفترة";
-
-  parts.push(
-    `<b>عرض الأنشطة:</b> ${modeLabel}`
-  );
-
-  parts.push(
-    `<b>الترتيب:</b> ${sortLabel}`
-  );
-
-  return parts.join(
-    " &nbsp; | &nbsp; "
-  );
-}
-
-function pdfStudentNames(ids){
-  const names=
-    (ids||[])
-      .map(id=>
-        DATA.students.find(
-          s=>s.id===id
-        )
-      )
-      .filter(Boolean)
-      .map(s=>
-        `${esc(s.name)}${s.iqama?` (${esc(s.iqama)})`:""}`
-      );
-
-  return names.length
-    ? names.join("، ")
-    : "لا يوجد";
-}
-
-function pdfTaskCard(task){
-
-  const p=
-    pct(
-      task.completed,
-      task.total
-    );
-
-  const cssClass=
-    task.kind==="نشاط"
-      ? "activity"
-      : task.kind==="كويز"
-        ? "quiz"
-        : "homework";
-
-  const mode=
-    task.kind==="نشاط"
-      ? (
-          task.activityMode==="individual"
-            ? "Individual"
-            : task.activityMode==="teams"
-              ? "Teams"
-              : task.activityMode==="both"
-                ? "Individual + Teams"
-                : "غير محدد"
-        )
-      : "—";
-
-  return `
-    <article class="pdf-task-card ${cssClass}">
-
-      <div class="pdf-task-top">
-        <span class="pdf-task-kind ${cssClass}">
-          ${esc(task.kind)}
-        </span>
-
-        <span class="pdf-task-state">
-          ${esc(task.due||"متابعة")}
-        </span>
-      </div>
-
-      <h3>${esc(task.title)}</h3>
-
-      <div class="pdf-task-sub">
-        ${
-          task.kind==="نشاط"
-            ? `طريقة التنفيذ: <b>${esc(mode)}</b>`
-            : `نوع العنصر: <b>${esc(task.kind)}</b>`
-        }
-      </div>
-
-      <div class="pdf-task-numbers">
-
-        <div class="pdf-mini-stat">
-          <span>إجمالي الطلاب</span>
-          <b>${task.total}</b>
-        </div>
-
-        <div class="pdf-mini-stat">
-          <span>أكملوا</span>
-          <b>${task.completed}</b>
-        </div>
-
-        <div class="pdf-mini-stat">
-          <span>لم يكملوا</span>
-          <b>${Math.max(0,task.total-task.completed)}</b>
-        </div>
-
-        <div class="pdf-mini-stat">
-          <span>الإنجاز</span>
-          <b>${p}%</b>
-        </div>
-
-      </div>
-
-      <div class="pdf-progress">
-        <i style="width:${p}%"></i>
-      </div>
-
-      <div class="pdf-student-groups">
-
-        <div class="pdf-students done">
-          <strong>✓ الطلاب المكتملون</strong>
-          <p>${pdfStudentNames(task.completedIds)}</p>
-        </div>
-
-        <div class="pdf-students pending">
-          <strong>! الطلاب غير المكتملين</strong>
-          <p>${pdfStudentNames(task.pendingIds)}</p>
-        </div>
-
-      </div>
-
-    </article>
-  `;
-}
-
-
-function taskScoreRowsForPdf(task){
-  if(
-    !task ||
-    ![
-      "نشاط",
-      "كويز",
-      "واجب"
-    ].includes(task.kind)
-  ){
-    return "";
+  if(!pdfCourses.length){
+    $("printTables").innerHTML=
+      `<div class="trainer-global-summary">لا توجد دورات محددة للتقرير.</div>`;
+    return;
   }
-
-  const students=
-    (task.completedIds||[])
-      .map(id=>
-        DATA.students.find(
-          s=>s.id===id
-        )
-      )
-      .filter(Boolean);
-
-  if(!students.length){
-    return "";
-  }
-
-  const rows=
-    students.map((student,index)=>{
-      const info=
-        task.studentResults?.[student.id];
-
-      const scoreText=
-        info && info.score!==""
-          ? `${info.score}${
-              info.total!==""
-                ? ` / ${info.total}`
-                : ""
-            }`
-          : "—";
-
-      const percent=
-        info && info.percentage!==""
-          ? Number(info.percentage)
-          : null;
-
-      const percentText=
-        percent!==null
-          ? `${percent}%`
-          : "—";
-
-      const tone=
-        percent===null
-          ? ""
-          : percent>=80
-            ? "pdf-score-good"
-            : percent>=60
-              ? "pdf-score-mid"
-              : "pdf-score-low";
-
-      return `
-        <tr>
-          <td>${index+1}</td>
-          <td>${esc(student.name)}</td>
-          <td>${esc(student.iqama||student.id)}</td>
-          <td>${esc(scoreText)}</td>
-          <td class="${tone}">${esc(percentText)}</td>
-        </tr>
-      `;
-    }).join("");
-
-  return `
-    <div class="pdf-score-section">
-      <div class="pdf-score-title">
-        <span>
-          نتائج الطلاب — ${esc(task.title)}
-        </span>
-        <small>
-          ${esc(task.kind)}
-          ·
-          ${students.length} طالب
-        </small>
-      </div>
-
-      <table class="pdf-score-table">
-        <thead>
-          <tr>
-            <th style="width:6%">#</th>
-            <th style="width:34%">الطالب</th>
-            <th style="width:24%">الهوية</th>
-            <th style="width:18%">الدرجة</th>
-            <th style="width:18%">النسبة</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function preparePrintReport(pdfCourses=getPdfCourses()){
 
   /*
-    ترتيب التقرير تلقائياً:
-    1) المدرب
-    2) الفترة
-    3) اسم الدورة
-    4) تاريخ البداية
-
-    النتيجة:
-    جميع دورات المدرب الواحد تظهر معاً،
-    وكل مدرب جديد يبدأ في صفحة جديدة.
+    الفرز النهائي المطلوب:
+    المدرب ← الفترة ← اسم الدورة ← تاريخ البداية
   */
-  pdfCourses=
+  const orderedCourses=
     [...pdfCourses].sort((a,b)=>{
 
       const trainerCompare=
@@ -6616,133 +6601,47 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         return courseCompare;
       }
 
-      return clean(a.start).localeCompare(
-        clean(b.start)
-      );
+      return clean(a.start).localeCompare(clean(b.start));
     });
 
-  /*
-    عنوان تلقائي لكل مدرب داخل أقسام التقرير.
-    بداية كل مدرب جديد = صفحة PDF جديدة.
-  */
-  const trainerHeading=(course,index)=>{
-
-    const previous=
-      index>0
-        ? pdfCourses[index-1]
-        : null;
-
-    const isNewTrainer=
-      !previous ||
-      clean(previous.trainer)!==
-      clean(course.trainer);
-
-    if(!isNewTrainer){
-      return "";
-    }
-
-    const trainerCourses=
-      pdfCourses.filter(
-        c=>
-          clean(c.trainer)===
-          clean(course.trainer)
-      );
-
-    const trainerPeriods=[
-      ...new Set(
-        trainerCourses
-          .map(c=>clean(c.period))
-          .filter(Boolean)
-      )
-    ].sort(
-      (a,b)=>
-        periodSortValue(a)-
-        periodSortValue(b)
-    );
-
-    return `
-      <div class="pdf-trainer-heading ${
-        index===0
-          ? "first-trainer"
-          : "new-trainer"
-      }">
-        <div>
-          <h3>
-            المدرب: ${esc(course.trainer||"غير محدد")}
-          </h3>
-          <p>
-            يتم عرض جميع دورات هذا المدرب معاً
-            ومرتبة تلقائياً حسب الفترة
-          </p>
-        </div>
-
-        <div class="trainer-meta">
-          <span>
-            عدد الدورات: ${trainerCourses.length}
-          </span>
-
-          <span>
-            الفترات:
-            ${
-              trainerPeriods.length
-                ? trainerPeriods.map(esc).join(" · ")
-                : "غير محدد"
-            }
-          </span>
-        </div>
-      </div>
-    `;
-  };
-
-  const pdfCourseIds=
+  const ids=
     new Set(
-      pdfCourses.map(c=>c.id)
+      orderedCourses.map(c=>c.id)
     );
 
-  const pdfStudents=
+  const reportStudents=
     DATA.students.filter(
-      s=>pdfCourseIds.has(s.courseId)
+      s=>ids.has(s.courseId)
     );
 
-  const displayedTasks=
+  const reportTasks=
     filterTasksByActivityMode(
       academicTasks()
     ).filter(
-      t=>pdfCourseIds.has(t.courseId)
+      t=>ids.has(t.courseId)
     );
 
-  const visibleReportAlerts=
+  const reportAlerts=
     DATA.alerts.filter(
-      a=>pdfCourseIds.has(a.courseId)
+      a=>ids.has(a.courseId)
     );
 
-  const totalStudents=
-    pdfStudents.length;
+  const trainerNames=[
+    ...new Set(
+      orderedCourses
+        .map(c=>clean(c.trainer)||"غير محدد")
+    )
+  ];
 
-  const activities=
-    displayedTasks.filter(
-      t=>t.kind==="نشاط"
-    );
-
-  const quizzes=
-    displayedTasks.filter(
-      t=>t.kind==="كويز"
-    );
-
-  const homework=
-    displayedTasks.filter(
-      t=>t.kind==="واجب"
-    );
-
-  const completedTaskCases=
-    displayedTasks.reduce(
-      (sum,t)=>sum+Number(t.completed||0),
+  const totalTaskCases=
+    reportTasks.reduce(
+      (sum,t)=>sum+Number(t.total||0),
       0
     );
 
-  const totalTaskCases=
-    displayedTasks.reduce(
-      (sum,t)=>sum+Number(t.total||0),
+  const completedTaskCases=
+    reportTasks.reduce(
+      (sum,t)=>sum+Number(t.completed||0),
       0
     );
 
@@ -6756,7 +6655,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       : 0;
 
   const attendanceMissingCases=
-    pdfCourses.reduce(
+    orderedCourses.reduce(
       (sum,c)=>
         sum+
         Number(
@@ -6767,75 +6666,9 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       0
     );
 
-  const skillMissing=
-    pdfCourses.reduce(
-      (sum,c)=>
-        sum+
-        SUPERVISION_SKILLS.reduce(
-          (s,skill)=>
-            s+
-            Number(
-              c.skillSummary?.[skill]?.missing||
-              0
-            ),
-          0
-        ),
-      0
-    );
-
-  const commentMissing=
-    pdfCourses.reduce(
-      (sum,c)=>{
-        const students=
-          DATA.students.filter(
-            s=>s.courseId===c.id
-          );
-
-        return (
-          sum+
-          students.filter(
-            s=>!clean(s.trainerComment)
-          ).length
-        );
-      },
-      0
-    );
-
-  const gradeKeys=[
-    ["midterm","Midterm"],
-    ["final","Final"],
-    ["listening","Listening"],
-    ["speaking","Speaking"],
-    ["homework","Homework"]
-  ];
-
-  const gradeMissing=
-    pdfCourses.reduce(
-      (sum,c)=>
-        sum+
-        gradeKeys.reduce(
-          (s,[key])=>
-            s+
-            Number(
-              c.gradeSummary?.[key]?.missing||
-              0
-            ),
-          0
-        ),
-      0
-    );
-
-  const sortText=
-    TASK_SORT_MODE==="period"
-      ? "حسب الفترة"
-      : "حسب الدورة";
-
   $("printMeta").innerHTML=`
     <b>تاريخ الإصدار</b><br>
     ${new Date().toLocaleString("ar-SA")}
-    <br>
-    <b>نوع التقرير</b><br>
-    تقرير تفصيلي شامل
     <br>
     <b>الفرز التلقائي</b><br>
     المدرب ← الفترة
@@ -6843,22 +6676,27 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
   $("printFilters").innerHTML=
     selectedFilterText()+
-    ` &nbsp; | &nbsp; <b>النطاق:</b> جميع مهام الإشراف الأكاديمي عدا الدخول والخروج`;
+    ` &nbsp; | &nbsp; <b>طريقة التقرير:</b> كل مدرب في قسم مستقل، ودوراته مرتبة حسب الفترة`;
 
   $("printStats").innerHTML=`
     <article class="print-stat">
-      <span>الدورات</span>
-      <b>${pdfCourses.length}</b>
+      <span>المدربون</span>
+      <b>${trainerNames.length}</b>
+    </article>
+
+    <article class="print-stat">
+      <span>الدورات المحددة</span>
+      <b>${orderedCourses.length}</b>
     </article>
 
     <article class="print-stat">
       <span>الطلاب</span>
-      <b>${totalStudents}</b>
+      <b>${reportStudents.length}</b>
     </article>
 
     <article class="print-stat">
       <span>العناصر الأكاديمية</span>
-      <b>${displayedTasks.length}</b>
+      <b>${reportTasks.length}</b>
     </article>
 
     <article class="print-stat">
@@ -6867,19 +6705,19 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     </article>
 
     <article class="print-stat">
-      <span>تنبيهات المتابعة</span>
-      <b>${visibleReportAlerts.length}</b>
-    </article>
-
-    <article class="print-stat">
       <span>حالات التحضير الناقصة</span>
       <b>${attendanceMissingCases}</b>
     </article>
   `;
 
-  const studentNames=(ids=[])=>{
+  const stateBadge=(ok,partialText="ناقص")=>
+    ok
+      ? `<span class="trainer-status ok">✓ مكتمل</span>`
+      : `<span class="trainer-status bad">⚠ ${partialText}</span>`;
+
+  const studentNames=(studentIds=[])=>{
     const names=
-      ids
+      studentIds
         .map(id=>
           DATA.students.find(
             s=>s.id===id
@@ -6893,672 +6731,749 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       : "—";
   };
 
-  const scoreText=(value,total)=>{
-    if(!hasValue(value))return "—";
+  const trainerGroups=
+    trainerNames.map(trainer=>{
 
-    const n=Number(value);
-
-    if(
-      Number.isFinite(n) &&
-      Number.isFinite(Number(total)) &&
-      Number(total)>0
-    ){
-      const p=
-        Math.round(
-          n/Number(total)*100
+      const courses=
+        orderedCourses.filter(
+          c=>
+            (clean(c.trainer)||"غير محدد")===
+            trainer
         );
 
-      return `${esc(value)} / ${total} (${p}%)`;
-    }
+      const trainerStudents=
+        reportStudents.filter(
+          s=>
+            courses.some(
+              c=>c.id===s.courseId
+            )
+        );
 
-    return esc(value);
-  };
+      const trainerTasks=
+        reportTasks.filter(
+          t=>
+            courses.some(
+              c=>c.id===t.courseId
+            )
+        );
 
-  /* =====================================================
-     1) EXECUTIVE / OVERVIEW
-     ===================================================== */
+      const trainerAlerts=
+        reportAlerts.filter(
+          a=>
+            courses.some(
+              c=>c.id===a.courseId
+            )
+        );
 
-  const overviewCourseRows=
-    pdfCourses.map((c,index)=>{
-
-      const taskCount=
-        displayedTasks.filter(
-          t=>t.courseId===c.id
-        ).length;
-
-      const missingSkills=
-        SUPERVISION_SKILLS.reduce(
-          (sum,skill)=>
-            sum+
-            Number(
-              c.skillSummary?.[skill]?.missing||
-              0
-            ),
+      const trainerTotal=
+        trainerTasks.reduce(
+          (sum,t)=>sum+Number(t.total||0),
           0
         );
 
-      const status=
-        (
-          Number(c.alerts||0)>0 ||
-          Number(c.missingAttendanceStudentsTotal||0)>0 ||
-          missingSkills>0
-        )
-          ? "يحتاج متابعة"
-          : "مستقر";
-
-      return `
-        <tr class="${status==="يحتاج متابعة"?"warning-row":"success-row"}">
-          <td>${index+1}</td>
-          <td class="text-right">
-            <b>${esc(c.name)}</b><br>
-            <small>${esc(c.branch)} · ${esc(c.section)}</small>
-          </td>
-          <td>${esc(c.trainer)}</td>
-          <td>${esc(c.period)}</td>
-          <td>${c.students}</td>
-          <td>${taskCount}</td>
-          <td>${c.completion===null?"—":c.completion+"%"}</td>
-          <td>${c.attendance}%</td>
-          <td>${c.comments}%</td>
-          <td>${c.alerts||0}</td>
-          <td>
-            <span class="rstatus ${status==="مستقر"?"ok":"warn"}">
-              ${status}
-            </span>
-          </td>
-        </tr>
-      `;
-    }).join("");
-
-  const alertCards=
-    visibleReportAlerts.length
-      ? visibleReportAlerts.map(a=>`
-          <div class="report-alert ${a.status==="danger"?"bad":"warn"}">
-            <b>
-              ${esc(a.title)}
-              ·
-              ${esc(a.courseName||"")}
-            </b>
-            <p>${esc(a.text||"")}</p>
-          </div>
-        `).join("")
-      : `
-          <div class="report-alert">
-            <b>لا توجد تنبيهات عاجلة</b>
-            <p>لا توجد تنبيهات مطابقة للدورات المحددة في التقرير.</p>
-          </div>
-        `;
-
-  const overviewSection=`
-    <section class="full-report-page first">
-
-      <div class="full-section-title">
-        <h2>1. الملخص التنفيذي ونظرة عامة</h2>
-        <span>ملخص مباشر لأهم مؤشرات الإشراف الأكاديمي</span>
-      </div>
-
-      <div class="full-summary-grid">
-        <div class="full-summary-card">
-          <span>الواجبات</span>
-          <b>${homework.length}</b>
-          <small>العناصر المرتبطة بالدورات المحددة</small>
-        </div>
-
-        <div class="full-summary-card violet">
-          <span>الكويزات</span>
-          <b>${quizzes.length}</b>
-          <small>الكويزات والاختبارات القصيرة</small>
-        </div>
-
-        <div class="full-summary-card green">
-          <span>الأنشطة</span>
-          <b>${activities.length}</b>
-          <small>Individual / Teams حسب الفلترة</small>
-        </div>
-
-        <div class="full-summary-card red">
-          <span>نواقص الدرجات</span>
-          <b>${gradeMissing}</b>
-          <small>Midterm · Final · Listening · Speaking · Homework</small>
-        </div>
-
-        <div class="full-summary-card amber">
-          <span>نواقص المهارات</span>
-          <b>${skillMissing}</b>
-          <small>Listening · Speaking · Reading · Writing · Grammar · Vocabulary</small>
-        </div>
-
-        <div class="full-summary-card red">
-          <span>حالات تحضير غير مرصودة</span>
-          <b>${attendanceMissingCases}</b>
-          <small>خانات الطلاب في الأيام الدراسية الفعلية</small>
-        </div>
-
-        <div class="full-summary-card amber">
-          <span>تعليقات ناقصة</span>
-          <b>${commentMissing}</b>
-          <small>طلاب دون تعليق من المدرب</small>
-        </div>
-
-        <div class="full-summary-card">
-          <span>الترتيب الحالي</span>
-          <b>${sortText}</b>
-          <small>وفق إعدادات العرض الحالية</small>
-        </div>
-      </div>
-
-      <div class="report-card">
-        <div class="report-card-head">
-          <div>
-            <h3>متابعة الدورات</h3>
-            <p>الإنجاز والحضور والتعليقات والتنبيهات لكل دورة</p>
-          </div>
-        </div>
-
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th style="width:4%">#</th>
-              <th style="width:17%">الدورة</th>
-              <th style="width:11%">المدرب</th>
-              <th style="width:11%">الفترة</th>
-              <th style="width:7%">الطلاب</th>
-              <th style="width:7%">المهام</th>
-              <th style="width:9%">الإنجاز</th>
-              <th style="width:8%">الحضور</th>
-              <th style="width:8%">التعليقات</th>
-              <th style="width:7%">التنبيهات</th>
-              <th style="width:11%">الحالة</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${overviewCourseRows}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="full-section-title" style="margin-top:7px">
-        <h2>التنبيهات العاجلة</h2>
-        <span>${visibleReportAlerts.length} تنبيه</span>
-      </div>
-
-      <div class="report-alerts">
-        ${alertCards}
-      </div>
-
-    </section>
-  `;
-
-  /* =====================================================
-     2) TASKS / COURSES
-     ===================================================== */
-
-  const taskSections=
-    pdfCourses.map((c,index)=>{
-
-      const tasks=
-        displayedTasks
-          .filter(t=>t.courseId===c.id)
-          .sort((a,b)=>
-            String(a.kind).localeCompare(String(b.kind),"ar") ||
-            String(a.title).localeCompare(String(b.title),"ar",{numeric:true})
-          );
-
-      const rows=
-        tasks.map((t,index)=>{
-
-          const p=
-            pct(
-              t.completed,
-              t.total
-            );
-
-          const mode=
-            t.kind==="نشاط"
-              ? (
-                  t.activityMode==="individual"
-                    ? "Individual"
-                    : t.activityMode==="teams"
-                      ? "Teams"
-                      : t.activityMode==="both"
-                        ? "Individual + Teams"
-                        : "—"
-                )
-              : "—";
-
-          return `
-            <tr class="${p===100?"success-row":p>=70?"warning-row":"danger-row"}">
-              <td>${index+1}</td>
-              <td>${esc(t.kind)}</td>
-              <td class="text-right"><b>${esc(t.title)}</b></td>
-              <td>${esc(mode)}</td>
-              <td>${t.total}</td>
-              <td>${t.completed}</td>
-              <td>${Math.max(0,t.total-t.completed)}</td>
-              <td>
-                <b>${p}%</b>
-                <div class="report-progress">
-                  <i style="width:${p}%"></i>
-                </div>
-              </td>
-              <td>${esc(t.due||"متابعة")}</td>
-            </tr>
-          `;
-        }).join("");
-
-      return `
-        ${trainerHeading(c,index)}
-        <div class="report-card">
-          <div class="report-card-head">
-            <div>
-              <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
-              <p>
-                ${esc(c.branch)} · ${esc(c.section)} · ${esc(c.period)}
-                · البداية ${esc(c.start||"—")}
-              </p>
-            </div>
-
-            <div class="chips">
-              <span class="report-chip">الطلاب ${c.students}</span>
-              <span class="report-chip">العناصر ${tasks.length}</span>
-              <span class="report-chip">الإنجاز ${c.completion===null?"—":c.completion+"%"}</span>
-            </div>
-          </div>
-
-          ${
-            rows
-              ? `
-                <table class="report-table">
-                  <thead>
-                    <tr>
-                      <th style="width:4%">#</th>
-                      <th style="width:8%">النوع</th>
-                      <th style="width:29%">العنوان</th>
-                      <th style="width:12%">النمط</th>
-                      <th style="width:8%">الطلاب</th>
-                      <th style="width:8%">أكملوا</th>
-                      <th style="width:9%">لم يكملوا</th>
-                      <th style="width:12%">الإنجاز</th>
-                      <th style="width:10%">الموعد / الحالة</th>
-                    </tr>
-                  </thead>
-                  <tbody>${rows}</tbody>
-                </table>
-              `
-              : `
-                <div class="report-note">
-                  لا توجد واجبات أو كويزات أو أنشطة مطابقة للعرض الحالي لهذه الدورة.
-                </div>
-              `
-          }
-
-          ${
-            tasks
-              .filter(t=>
-                ["نشاط","كويز","واجب"].includes(t.kind)
-              )
-              .map(taskScoreRowsForPdf)
-              .join("")
-          }
-        </div>
-      `;
-    }).join("");
-
-  const tasksSection=`
-    <section class="full-report-page">
-      <div class="full-section-title">
-        <h2>2. متابعة الدورات والواجبات والكويزات والأنشطة</h2>
-        <span>تفصيل حسب الدورة مع نسب الإنجاز ونتائج الطلاب</span>
-      </div>
-      ${taskSections || '<div class="report-note">لا توجد بيانات مهام.</div>'}
-    </section>
-  `;
-
-  /* =====================================================
-     3) ATTENDANCE
-     ===================================================== */
-
-  const attendanceSections=
-    pdfCourses.map((c,index)=>{
-
-      const details=
-        c.incompleteAttendanceDetails||
-        [];
-
-      const missingRows=
-        details.map((item,index)=>`
-          <tr class="danger-row">
-            <td>${index+1}</td>
-            <td>${esc(item.date)}</td>
-            <td>${item.missingCount}</td>
-            <td class="student-names">
-              ${studentNames(item.missingStudentIds||[])}
-            </td>
-          </tr>
-        `).join("");
-
-      return `
-        ${trainerHeading(c,index)}
-        <div class="report-card">
-          <div class="report-card-head">
-            <div>
-              <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
-              <p>${esc(c.branch)} · ${esc(c.period)} · ${esc(c.start||"—")}</p>
-            </div>
-            <div class="chips">
-              <span class="report-chip">الحضور ${c.attendance}%</span>
-              <span class="report-chip">الأيام المطلوبة ${(c.expectedAttendanceDates||[]).length}</span>
-              <span class="report-chip">الحالات الناقصة ${c.missingAttendanceStudentsTotal||0}</span>
-            </div>
-          </div>
-
-          ${
-            missingRows
-              ? `
-                <table class="report-table">
-                  <thead>
-                    <tr>
-                      <th style="width:6%">#</th>
-                      <th style="width:18%">التاريخ</th>
-                      <th style="width:15%">عدد الحالات غير المرصودة</th>
-                      <th style="width:61%">الطلاب دون رصد</th>
-                    </tr>
-                  </thead>
-                  <tbody>${missingRows}</tbody>
-                </table>
-              `
-              : `
-                <div class="report-note">
-                  ✓ تم رصد جميع الطلاب في كل الأيام الدراسية المطلوبة حتى وقت إصدار التقرير.
-                </div>
-              `
-          }
-        </div>
-      `;
-    }).join("");
-
-  const attendanceSection=`
-    <section class="full-report-page">
-      <div class="full-section-title">
-        <h2>3. الحضور والتحضير</h2>
-        <span>حالات التحضير غير المرصودة حسب أيام الدورة الفعلية</span>
-      </div>
-      ${attendanceSections}
-    </section>
-  `;
-
-  /* =====================================================
-     4) GRADES
-     ===================================================== */
-
-  const gradeFieldConfig={
-    midterm:{field:"midterm",label:"Midterm",total:40},
-    final:{field:"finalExam",label:"Final",total:100},
-    listening:{field:"listening",label:"Listening",total:10},
-    speaking:{field:"speaking",label:"Speaking",total:10},
-    homework:{field:"hwScore",label:"Homework",total:10}
-  };
-
-  const gradeSections=
-    pdfCourses.map((c,index)=>{
-
-      const students=
-        DATA.students.filter(
-          s=>s.courseId===c.id
+      const trainerDone=
+        trainerTasks.reduce(
+          (sum,t)=>sum+Number(t.completed||0),
+          0
         );
 
-      const summaryRows=
-        gradeKeys.map(([key,label])=>{
+      const trainerCompletion=
+        trainerTotal
+          ? Math.round(
+              trainerDone/
+              trainerTotal*
+              100
+            )
+          : 0;
 
-          const item=
-            c.gradeSummary?.[key]||
-            {done:0,missing:students.length};
+      const periods=[
+        ...new Set(
+          courses
+            .map(c=>clean(c.period))
+            .filter(Boolean)
+        )
+      ].sort(
+        (a,b)=>
+          periodSortValue(a)-
+          periodSortValue(b)
+      );
 
-          const p=
-            students.length
+      const courseBlocks=
+        courses.map(c=>{
+
+          const students=
+            DATA.students.filter(
+              s=>s.courseId===c.id
+            );
+
+          const tasks=
+            reportTasks.filter(
+              t=>t.courseId===c.id
+            );
+
+          const courseAlerts=
+            reportAlerts.filter(
+              a=>a.courseId===c.id
+            );
+
+          const activities=
+            tasks.filter(
+              t=>t.kind==="نشاط"
+            );
+
+          const quizzes=
+            tasks.filter(
+              t=>t.kind==="كويز"
+            );
+
+          const homework=
+            tasks.filter(
+              t=>t.kind==="واجب"
+            );
+
+          const allAttendanceDone=
+            Number(
+              c.missingAttendanceStudentsTotal||
+              0
+            )===0;
+
+          const gradeItems=[
+            ["midterm","Midterm"],
+            ["final","Final"],
+            ["listening","Listening"],
+            ["speaking","Speaking"],
+            ["homework","Homework"]
+          ];
+
+          const missingGrades=
+            gradeItems.reduce(
+              (sum,[key])=>
+                sum+
+                Number(
+                  c.gradeSummary?.[key]?.missing||
+                  0
+                ),
+              0
+            );
+
+          const missingSkills=
+            SUPERVISION_SKILLS.reduce(
+              (sum,skill)=>
+                sum+
+                Number(
+                  c.skillSummary?.[skill]?.missing||
+                  0
+                ),
+              0
+            );
+
+          const commentsDone=
+            students.filter(
+              s=>clean(s.trainerComment)
+            ).length;
+
+          const progressRows=
+            buildAllCourseDays(c);
+
+          const progressDone=
+            progressRows.filter(row=>
+              getProgressRecord(
+                c.id,
+                row.week,
+                row.day
+              )?.completed===true
+            ).length;
+
+          const taskCompletion=
+            tasks.length
               ? Math.round(
-                  Number(item.done||0)/
-                  students.length*
-                  100
+                  tasks.reduce(
+                    (sum,t)=>
+                      sum+
+                      pct(t.completed,t.total),
+                    0
+                  )/
+                  tasks.length
                 )
               : 0;
 
-          return `
-            <tr class="${item.missing? p>=70?"warning-row":"danger-row":"success-row"}">
-              <td>${label}</td>
-              <td>${item.done||0}</td>
-              <td>${item.missing||0}</td>
-              <td>${students.length}</td>
-              <td>${p}%</td>
-              <td>
-                <span class="rstatus ${item.missing?"bad":"ok"}">
-                  ${item.missing?"ناقص":"مكتمل"}
-                </span>
-              </td>
-            </tr>
+          /* المهام الفعلية للمدرب — ملخص بالنقاط */
+          const actualTrainerTasks=`
+            <div class="trainer-task-checklist">
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>تسجيل حضور الطلاب</strong>
+                  <small>
+                    ${
+                      allAttendanceDone
+                        ? "تم استكمال التحضير المطلوب"
+                        : `${c.missingAttendanceStudentsTotal||0} حالة غير مرصودة`
+                    }
+                  </small>
+                </div>
+                ${stateBadge(allAttendanceDone,"تحضير ناقص")}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>تنفيذ الخطة الدراسية وتحديث التقدم</strong>
+                  <small>${progressDone}/${progressRows.length} يوم مكتمل</small>
+                </div>
+                ${stateBadge(progressRows.length>0 && progressDone===progressRows.length,"غير مكتمل")}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>تنفيذ الأنشطة الصفية</strong>
+                  <small>${activities.length} نشاط · الإنجاز حسب الطلاب</small>
+                </div>
+                ${stateBadge(
+                  activities.length===0 ||
+                  activities.every(t=>t.completed>=t.total),
+                  "يحتاج متابعة"
+                )}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>تنفيذ الكويزات والاختبارات القصيرة</strong>
+                  <small>${quizzes.length} كويز</small>
+                </div>
+                ${stateBadge(
+                  quizzes.length===0 ||
+                  quizzes.every(t=>t.completed>=t.total),
+                  "يحتاج متابعة"
+                )}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>متابعة الواجبات</strong>
+                  <small>${homework.length} واجب</small>
+                </div>
+                ${stateBadge(
+                  homework.length===0 ||
+                  homework.every(t=>t.completed>=t.total),
+                  "يحتاج متابعة"
+                )}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>رصد Midterm / Final / Listening / Speaking / Homework</strong>
+                  <small>${missingGrades} خانة درجات ناقصة</small>
+                </div>
+                ${stateBadge(missingGrades===0,"درجات ناقصة")}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>رصد مهارات اللغة الإنجليزية</strong>
+                  <small>${missingSkills} تقييم مهارة ناقص</small>
+                </div>
+                ${stateBadge(missingSkills===0,"تقييمات ناقصة")}
+              </div>
+
+              <div class="trainer-task-line">
+                <div>
+                  <strong>كتابة ملاحظات الطلاب</strong>
+                  <small>${commentsDone}/${students.length} طالب لديهم تعليق</small>
+                </div>
+                ${stateBadge(
+                  students.length===0 ||
+                  commentsDone===students.length,
+                  "تعليقات ناقصة"
+                )}
+              </div>
+
+            </div>
           `;
-        }).join("");
 
-      const studentRows=
-        students.map((s,index)=>`
-          <tr>
-            <td>${index+1}</td>
-            <td class="text-right">${esc(s.name)}</td>
-            <td>${esc(s.iqama||s.id)}</td>
-            <td>${scoreText(s.midterm,40)}</td>
-            <td>${scoreText(s.finalExam,100)}</td>
-            <td>${scoreText(s.listening,10)}</td>
-            <td>${scoreText(s.speaking,10)}</td>
-            <td>${scoreText(s.hwScore,10)}</td>
-          </tr>
-        `).join("");
+          const taskRows=
+            tasks.map((t,index)=>{
 
-      return `
-        ${trainerHeading(c,index)}
-        <div class="report-card">
-          <div class="report-card-head">
-            <div>
-              <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
-              <p>${esc(c.branch)} · ${esc(c.period)}</p>
-            </div>
-            <div class="chips">
-              <span class="report-chip">الطلاب ${students.length}</span>
-              <span class="report-chip">Midterm ${esc(c.midtermDue||"—")}</span>
-              <span class="report-chip">Final ${esc(c.finalDue||"—")}</span>
-            </div>
-          </div>
+              const p=
+                pct(
+                  t.completed,
+                  t.total
+                );
 
-          <div class="two-col-report">
-            <table class="report-table">
-              <thead>
-                <tr>
-                  <th>نوع الدرجة</th>
-                  <th>مرصود</th>
-                  <th>ناقص</th>
-                  <th>الطلاب</th>
-                  <th>الاكتمال</th>
-                  <th>الحالة</th>
+              const mode=
+                t.kind==="نشاط"
+                  ? (
+                      t.activityMode==="individual"
+                        ? "Individual"
+                        : t.activityMode==="teams"
+                          ? "Teams"
+                          : t.activityMode==="both"
+                            ? "Individual + Teams"
+                            : "—"
+                    )
+                  : "—";
+
+              return `
+                <tr class="${
+                  p===100
+                    ? "success-row"
+                    : p>=70
+                      ? "warning-row"
+                      : "danger-row"
+                }">
+                  <td>${index+1}</td>
+                  <td>${esc(t.kind)}</td>
+                  <td class="text-right">${esc(t.title)}</td>
+                  <td>${esc(mode)}</td>
+                  <td>${t.total}</td>
+                  <td>${t.completed}</td>
+                  <td>${Math.max(0,t.total-t.completed)}</td>
+                  <td>${p}%</td>
+                  <td>${esc(t.due||"متابعة")}</td>
                 </tr>
-              </thead>
-              <tbody>${summaryRows}</tbody>
-            </table>
+              `;
+            }).join("");
 
-            <div class="report-note">
-              <b>مكونات رصد الدرجات:</b><br>
-              Midterm · Final · Listening · Speaking · Homework.
-              يظهر الجدول التفصيلي أدناه الدرجة الفعلية لكل طالب عند توفرها.
-            </div>
-          </div>
+          const attendanceRows=
+            (c.incompleteAttendanceDetails||[])
+              .map((item,index)=>`
+                <tr class="danger-row">
+                  <td>${index+1}</td>
+                  <td>${esc(item.date)}</td>
+                  <td>${item.missingCount}</td>
+                  <td class="text-right">
+                    ${studentNames(item.missingStudentIds||[])}
+                  </td>
+                </tr>
+              `).join("");
 
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th style="width:4%">#</th>
-                <th style="width:24%">الطالب</th>
-                <th style="width:15%">الهوية</th>
-                <th>Midterm</th>
-                <th>Final</th>
-                <th>Listening</th>
-                <th>Speaking</th>
-                <th>Homework</th>
+          const gradeRows=
+            gradeItems.map(([key,label])=>{
+
+              const item=
+                c.gradeSummary?.[key]||
+                {
+                  done:0,
+                  missing:students.length
+                };
+
+              const rate=
+                students.length
+                  ? Math.round(
+                      Number(item.done||0)/
+                      students.length*
+                      100
+                    )
+                  : 0;
+
+              return `
+                <tr class="${Number(item.missing||0)===0?"success-row":"warning-row"}">
+                  <td>${label}</td>
+                  <td>${item.done||0}</td>
+                  <td>${item.missing||0}</td>
+                  <td>${rate}%</td>
+                  <td>
+                    ${
+                      Number(item.missing||0)===0
+                        ? '<span class="trainer-status ok">مكتمل</span>'
+                        : '<span class="trainer-status warn">ناقص</span>'
+                    }
+                  </td>
+                </tr>
+              `;
+            }).join("");
+
+          const skillRows=
+            SUPERVISION_SKILLS.map(skill=>{
+
+              const item=
+                c.skillSummary?.[skill]||
+                {
+                  done:0,
+                  missing:students.length,
+                  total:students.length
+                };
+
+              const rate=
+                pct(
+                  item.done||0,
+                  item.total||students.length
+                );
+
+              return `
+                <tr class="${Number(item.missing||0)===0?"success-row":"warning-row"}">
+                  <td>${esc(skill)}</td>
+                  <td>${item.done||0}</td>
+                  <td>${item.missing||0}</td>
+                  <td>${rate}%</td>
+                  <td>
+                    ${
+                      Number(item.missing||0)===0
+                        ? '<span class="trainer-status ok">مكتمل</span>'
+                        : '<span class="trainer-status warn">ناقص</span>'
+                    }
+                  </td>
+                </tr>
+              `;
+            }).join("");
+
+          const commentRows=
+            students.map((s,index)=>`
+              <tr class="${clean(s.trainerComment)?"success-row":"warning-row"}">
+                <td>${index+1}</td>
+                <td class="text-right">${esc(s.name)}</td>
+                <td>${esc(s.iqama||s.id)}</td>
+                <td class="text-right">
+                  ${clean(s.trainerComment)?esc(s.trainerComment):"—"}
+                </td>
+                <td>
+                  ${
+                    clean(s.trainerComment)
+                      ? '<span class="trainer-status ok">تم</span>'
+                      : '<span class="trainer-status warn">ناقص</span>'
+                  }
+                </td>
               </tr>
-            </thead>
-            <tbody>${studentRows}</tbody>
-          </table>
-        </div>
-      `;
-    }).join("");
+            `).join("");
 
-  const gradesSection=`
-    <section class="full-report-page">
-      <div class="full-section-title">
-        <h2>4. رصد الدرجات</h2>
-        <span>Midterm · Final · Listening · Speaking · Homework</span>
-      </div>
-      ${gradeSections}
-    </section>
-  `;
+          const progressTableRows=
+            progressRows.map((row,index)=>{
 
-  /* =====================================================
-     5) SKILLS
-     ===================================================== */
+              const record=
+                getProgressRecord(
+                  c.id,
+                  row.week,
+                  row.day
+                )||{};
 
-  const skillSections=
-    pdfCourses.map((c,index)=>{
+              const date=
+                trainerPlanDate(
+                  c,
+                  row
+                );
 
-      const rows=
-        SUPERVISION_SKILLS.map(skill=>{
+              const completed=
+                record.completed===true;
 
-          const item=
-            c.skillSummary?.[skill]||
-            {
-              done:0,
-              missing:c.students,
-              total:c.students,
-              completedIds:[],
-              pendingIds:[]
-            };
+              const overdue=
+                Boolean(
+                  date &&
+                  date<todayIso() &&
+                  !completed
+                );
 
-          const p=
-            pct(
-              item.done||0,
-              item.total||c.students
-            );
+              return `
+                <tr class="${
+                  completed
+                    ? "success-row"
+                    : overdue
+                      ? "danger-row"
+                      : ""
+                }">
+                  <td>${index+1}</td>
+                  <td>Week ${row.week}</td>
+                  <td>${esc(row.day)}</td>
+                  <td>${esc(date||"—")}</td>
+                  <td class="text-right">${row.activity?esc(row.activity):"—"}</td>
+                  <td>${clean(record.unit)?esc(record.unit):"—"}</td>
+                  <td>${hasValue(record.page)&&Number(record.page)!==0?esc(record.page):"—"}</td>
+                  <td>
+                    ${
+                      completed
+                        ? '<span class="trainer-status ok">مكتمل</span>'
+                        : overdue
+                          ? '<span class="trainer-status bad">متأخر</span>'
+                          : '<span class="trainer-status warn">معلق</span>'
+                    }
+                  </td>
+                </tr>
+              `;
+            }).join("");
 
           return `
-            <tr class="${item.missing===0?"success-row":item.done===0?"danger-row":"warning-row"}">
-              <td><b>${esc(skill)}</b></td>
-              <td>${item.done||0}</td>
-              <td>${item.missing||0}</td>
-              <td>${item.total||c.students}</td>
-              <td>${p}%</td>
-              <td class="student-names">
-                ${studentNames(item.completedIds||[])}
-              </td>
-              <td class="student-names">
-                ${studentNames(item.pendingIds||[])}
-              </td>
-              <td>
-                <span class="rstatus ${item.missing===0?"ok":item.done===0?"bad":"warn"}">
-                  ${item.missing===0?"مكتمل":item.done===0?"لم يرصد":"جزئي"}
-                </span>
-              </td>
-            </tr>
+            <section class="trainer-course-report">
+
+              <div class="trainer-course-title">
+                <div>
+                  <h3>${esc(c.name)}</h3>
+                  <p>
+                    ${esc(c.branch)}
+                    · ${esc(c.section)}
+                    · البداية ${esc(c.start||"—")}
+                  </p>
+                </div>
+
+                <div class="period-box">
+                  الفترة: ${esc(c.period||"—")}
+                </div>
+              </div>
+
+              <div class="trainer-course-kpis">
+                <div class="trainer-course-kpi">
+                  <span>الطلاب</span>
+                  <b>${students.length}</b>
+                </div>
+
+                <div class="trainer-course-kpi">
+                  <span>المهام</span>
+                  <b>${tasks.length}</b>
+                </div>
+
+                <div class="trainer-course-kpi">
+                  <span>إنجاز المهام</span>
+                  <b>${taskCompletion}%</b>
+                </div>
+
+                <div class="trainer-course-kpi">
+                  <span>الحضور</span>
+                  <b>${c.attendance}%</b>
+                </div>
+
+                <div class="trainer-course-kpi">
+                  <span>التعليقات</span>
+                  <b>${c.comments}%</b>
+                </div>
+
+                <div class="trainer-course-kpi">
+                  <span>التنبيهات</span>
+                  <b>${courseAlerts.length}</b>
+                </div>
+              </div>
+
+              <div class="trainer-subtitle">
+                المهام الفعلية للمدرب — ملخص تنفيذي
+              </div>
+
+              ${actualTrainerTasks}
+
+              <div class="trainer-subtitle">
+                الأنشطة والكويزات والواجبات
+              </div>
+
+              ${
+                taskRows
+                  ? `
+                    <table class="trainer-mini-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>النوع</th>
+                          <th>العنوان</th>
+                          <th>النمط</th>
+                          <th>الطلاب</th>
+                          <th>أكملوا</th>
+                          <th>لم يكملوا</th>
+                          <th>الإنجاز</th>
+                          <th>الحالة</th>
+                        </tr>
+                      </thead>
+                      <tbody>${taskRows}</tbody>
+                    </table>
+                  `
+                  : `
+                    <div class="trainer-detail-note">
+                      لا توجد عناصر أكاديمية مطابقة للدورة الحالية.
+                    </div>
+                  `
+              }
+
+              <div class="trainer-subtitle">
+                الحضور والتحضير
+              </div>
+
+              ${
+                attendanceRows
+                  ? `
+                    <table class="trainer-mini-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>التاريخ</th>
+                          <th>الحالات الناقصة</th>
+                          <th>الطلاب دون رصد</th>
+                        </tr>
+                      </thead>
+                      <tbody>${attendanceRows}</tbody>
+                    </table>
+                  `
+                  : `
+                    <div class="trainer-detail-note">
+                      ✓ لا توجد حالات تحضير ناقصة مسجلة لهذه الدورة.
+                    </div>
+                  `
+              }
+
+              <div class="trainer-subtitle">
+                رصد الدرجات
+              </div>
+
+              <table class="trainer-mini-table">
+                <thead>
+                  <tr>
+                    <th>البند</th>
+                    <th>مرصود</th>
+                    <th>ناقص</th>
+                    <th>نسبة الاكتمال</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>${gradeRows}</tbody>
+              </table>
+
+              <div class="trainer-subtitle">
+                رصد المهارات
+              </div>
+
+              <table class="trainer-mini-table">
+                <thead>
+                  <tr>
+                    <th>المهارة</th>
+                    <th>مرصود</th>
+                    <th>ناقص</th>
+                    <th>النسبة</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>${skillRows}</tbody>
+              </table>
+
+              <div class="trainer-subtitle">
+                تعليقات المدرب للطلاب
+              </div>
+
+              ${
+                commentRows
+                  ? `
+                    <table class="trainer-mini-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>الطالب</th>
+                          <th>الهوية</th>
+                          <th>التعليق</th>
+                          <th>الحالة</th>
+                        </tr>
+                      </thead>
+                      <tbody>${commentRows}</tbody>
+                    </table>
+                  `
+                  : `
+                    <div class="trainer-detail-note">
+                      لا توجد بيانات طلاب في هذه الدورة.
+                    </div>
+                  `
+              }
+
+              <div class="trainer-subtitle">
+                متابعة تقدم المدرب في الخطة الدراسية
+              </div>
+
+              ${
+                progressTableRows
+                  ? `
+                    <table class="trainer-mini-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>الأسبوع</th>
+                          <th>اليوم</th>
+                          <th>التاريخ</th>
+                          <th>المحتوى المخطط</th>
+                          <th>الوحدة</th>
+                          <th>الصفحة</th>
+                          <th>الحالة</th>
+                        </tr>
+                      </thead>
+                      <tbody>${progressTableRows}</tbody>
+                    </table>
+                  `
+                  : `
+                    <div class="trainer-detail-note">
+                      لا توجد أيام خطة دراسية مرتبطة بهذه الدورة.
+                    </div>
+                  `
+              }
+
+            </section>
           `;
         }).join("");
 
       return `
-        ${trainerHeading(c,index)}
-        <div class="report-card">
-          <div class="report-card-head">
+        <section class="trainer-report-group">
+
+          <div class="trainer-report-head">
             <div>
-              <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
-              <p>${esc(c.branch)} · ${esc(c.section)} · ${esc(c.period)}</p>
+              <h2>المدرب: ${esc(trainer)}</h2>
+              <p>
+                جميع دورات المدرب مجمعة في هذا القسم
+                ومرتبة تلقائياً حسب الفترة
+              </p>
+            </div>
+
+            <div class="trainer-head-stats">
+
+              <div class="trainer-head-stat">
+                <span>الدورات</span>
+                <b>${courses.length}</b>
+              </div>
+
+              <div class="trainer-head-stat">
+                <span>الطلاب</span>
+                <b>${trainerStudents.length}</b>
+              </div>
+
+              <div class="trainer-head-stat">
+                <span>إنجاز المهام</span>
+                <b>${trainerCompletion}%</b>
+              </div>
+
+              <div class="trainer-head-stat">
+                <span>التنبيهات</span>
+                <b>${trainerAlerts.length}</b>
+              </div>
+
+              <div class="trainer-head-stat">
+                <span>الفترات</span>
+                <b>${periods.length}</b>
+              </div>
+
             </div>
           </div>
 
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th style="width:9%">المهارة</th>
-                <th style="width:7%">مرصود</th>
-                <th style="width:7%">ناقص</th>
-                <th style="width:7%">الطلاب</th>
-                <th style="width:8%">النسبة</th>
-                <th style="width:26%">تم الرصد لهم</th>
-                <th style="width:26%">لم يتم الرصد لهم</th>
-                <th style="width:10%">الحالة</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
+          ${courseBlocks}
+
+        </section>
       `;
     }).join("");
 
-  const skillsSection=`
-    <section class="full-report-page">
-      <div class="full-section-title">
-        <h2>5. رصد مهارات اللغة الإنجليزية</h2>
-        <span>Listening · Speaking · Reading · Writing · Grammar · Vocabulary</span>
-      </div>
-      ${skillSections}
-    </section>
+  /*
+    مهم:
+    لم يعد هناك جدول واحد يجمع جميع الدورات.
+    الصفحة الأولى تحتوي فقط على ملخص عام،
+    ثم يبدأ كل مدرب في صفحة جديدة مستقلة.
+  */
+  const intro=`
+    <div class="trainer-global-summary">
+      <b>طريقة عرض التقرير:</b>
+      تم إلغاء جدول «متابعة الدورات» الذي كان يجمع جميع الدورات في صفحة واحدة.
+      يبدأ التقرير الآن بملخص رقمي فقط، ثم يُنشأ قسم مستقل لكل مدرب.
+      جميع دورات المدرب نفسه تظهر معاً ومرتبة حسب الفترة، ثم اسم الدورة، ثم تاريخ البداية.
+      <br>
+      <b>المدربون في التقرير:</b>
+      ${trainerNames.map(esc).join(" · ")}
+    </div>
   `;
 
-  /* =====================================================
-     6) TRAINER COMMENTS
-     ===================================================== */
-
-  const commentsSections=
-    pdfCourses.map((c,index)=>{
-
-      const students=
-        DATA.students.filter(
-          s=>s.courseId===c.id
-        );
-
-      const done=
-        students.filter(
-          s=>clean(s.trainerComment)
-        ).length;
-
-      const rows=
-        students.map((s,index)=>`
-          <tr class="${clean(s.trainerComment)?"success-row":"warning-row"}">
-            <td>${index+1}</td>
-            <td class="text-right">${esc(s.name)}</td>
-            <td>${esc(s.iqama||s.id)}</td>
-            <td class="text-right">
-              ${clean(s.trainerComment)?esc(s.trainerComment):"—"}
-            </td>
-            <td>
-              <span class="rstatus ${clean(s.trainerComment)?"ok":"warn"}">
-                ${clean(s.trainerComment)?"تم التعليق":"دون تعليق"}
-              </span>
-            </td>
-          </tr>
-        `).join("");
-
-      return `
-        ${trainerHeading(c,index)}
-        <div class="report-card">
-          <div class="report-card-head">
-            <div>
-              <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
-              <p>${esc(c.branch)} · ${esc(c.period)}</p>
-            </div>
-            <div class="chips">
-              <span class="report-chip">التعليقات ${done}/${students.length}</span>
-              <span class="report-chip">النسبة ${pct(done,students.length)}%</span>
-            </div>
-          </div>
-
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th style="width:5%">#</th>
-                <th style="width:25%">الطالب</th>
+  $("printTables").innerHTML=
+    intro+
+    trainerGroups+
+    `
+      <div class="trainer-global-summary">
+        التقرير مخصص للمتابعة الإشرافية الأكاديمية.
+        سجل الدخول والخروج غير مدرج ضمن هذا التقرير.
+      </div>
+    `;
+}
+ <th style="width:25%">الطالب</th>
                 <th style="width:17%">الهوية</th>
                 <th style="width:41%">تعليق المدرب</th>
                 <th style="width:12%">الحالة</th>
