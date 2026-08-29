@@ -2724,6 +2724,658 @@
   }
 }
 
+
+@media print{
+  .level-skills-cell{
+    padding:3px!important;
+  }
+  .level-skills-wrap{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+    min-width:150px;
+  }
+  .level-skill{
+    border:1px solid #cce7dc;
+    background:#f2fbf7;
+    border-radius:6px;
+    padding:2px 3px;
+    text-align:center;
+  }
+  .level-skill strong{
+    display:block;
+    font-size:3.9px;
+    color:#0b7259;
+    white-space:nowrap;
+  }
+  .level-skill b{
+    display:block;
+    margin-top:1px;
+    font-size:4.5px;
+    color:#124f42;
+  }
+  .level-skill small{
+    display:block;
+    font-size:3.3px;
+    color:#6d8c81;
+  }
+  .level-skill-track{
+    height:3px;
+    margin-top:2px;
+    border-radius:5px;
+    overflow:hidden;
+    background:#deebe6;
+  }
+  .level-skill-track i{
+    display:block;
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg,#0f8466,#25b487);
+  }
+}
+
+
+/* =========================================================
+   PRUDLE — PREMIUM ADMINISTRATIVE PDF / COMPLETE REDESIGN
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:6mm}
+
+  html,body{
+    background:#fff!important;
+  }
+
+  .print-report{
+    font-family:Tajawal,Arial,sans-serif!important;
+    color:#183a56!important;
+    background:#fff!important;
+  }
+
+  /* ---------- Master header ---------- */
+  .print-cover{
+    min-height:68px!important;
+    padding:8px 12px!important;
+    margin-bottom:5px!important;
+    border-radius:12px!important;
+    background:
+      linear-gradient(112deg,#092d4e 0%,#123f68 55%,#1f6b9e 100%)!important;
+    box-shadow:0 5px 16px rgba(8,45,78,.14)!important;
+    border:0!important;
+  }
+
+  .print-logo-img{
+    width:54px!important;
+    height:54px!important;
+    border-radius:12px!important;
+    padding:3px!important;
+    background:#fff!important;
+  }
+
+  .print-title h1{
+    font-size:16px!important;
+    letter-spacing:.2px!important;
+  }
+
+  .print-title p{
+    font-size:6.3px!important;
+    line-height:1.5!important;
+  }
+
+  .print-meta{
+    min-width:155px!important;
+    padding:6px 8px!important;
+    font-size:5.5px!important;
+    line-height:1.55!important;
+    border-radius:9px!important;
+    background:rgba(255,255,255,.09)!important;
+  }
+
+  .print-filters{
+    margin:4px 0 5px!important;
+    padding:5px 7px!important;
+    border-radius:8px!important;
+    border:1px solid #d6e3ec!important;
+    background:#f4f8fb!important;
+    border-right:4px solid #2b78b2!important;
+    font-size:5.4px!important;
+    line-height:1.45!important;
+  }
+
+  .print-stats{
+    display:none!important;
+  }
+
+  /* ---------- Page 1 ---------- */
+  .premium-first-page{
+    break-after:page!important;
+    page-break-after:always!important;
+  }
+
+  .premium-hero{
+    display:grid;
+    grid-template-columns:1.3fr .7fr;
+    gap:7px;
+    margin-bottom:6px;
+  }
+
+  .premium-hero-main{
+    position:relative;
+    overflow:hidden;
+    min-height:62px;
+    padding:10px 12px;
+    border-radius:11px;
+    background:
+      radial-gradient(circle at 5% 20%,rgba(255,255,255,.09) 0 45px,transparent 46px),
+      linear-gradient(115deg,#123d66,#164478 62%,#2b78b2);
+    color:#fff;
+  }
+
+  .premium-hero-main h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    color:#fff!important;
+    font-size:13px!important;
+  }
+
+  .premium-hero-main p{
+    margin:3px 0 0;
+    color:#d8e8f4;
+    font-size:5.7px;
+    line-height:1.55;
+  }
+
+  .premium-hero-badges{
+    display:flex;
+    gap:4px;
+    flex-wrap:wrap;
+    margin-top:7px;
+  }
+
+  .premium-hero-badges span{
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+    padding:3px 6px;
+    border-radius:12px;
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.18);
+    color:#fff;
+    font-size:4.6px;
+    font-weight:900;
+  }
+
+  .premium-hero-side{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+  }
+
+  .premium-kpi{
+    position:relative;
+    min-height:28px;
+    padding:5px 6px;
+    border:1px solid #d6e2eb;
+    border-radius:9px;
+    background:#fff;
+    overflow:hidden;
+    box-shadow:0 2px 7px rgba(15,51,82,.045);
+  }
+
+  .premium-kpi:before{
+    content:"";
+    position:absolute;
+    top:0;right:0;bottom:0;width:4px;
+    background:#164478;
+  }
+
+  .premium-kpi.green:before{background:#149b70}
+  .premium-kpi.red:before{background:#dc4d57}
+  .premium-kpi.violet:before{background:#7357c5}
+  .premium-kpi.amber:before{background:#dc9413}
+
+  .premium-kpi span{
+    display:block;
+    color:#788b9c;
+    font-size:4.4px;
+    font-weight:800;
+  }
+
+  .premium-kpi b{
+    display:block;
+    margin-top:1px;
+    color:#123a5e;
+    font-size:9.5px;
+    font-weight:900;
+  }
+
+  .premium-kpi small{
+    display:block;
+    margin-top:1px;
+    color:#94a3af;
+    font-size:3.6px;
+  }
+
+  /* ---------- Section cards ---------- */
+  .premium-block{
+    margin-top:6px;
+    border:1px solid #cedbe5;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 2px 8px rgba(15,51,82,.045);
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .premium-block-head{
+    min-height:27px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 8px;
+    color:#fff;
+  }
+
+  .premium-block-head.blue{background:linear-gradient(90deg,#123d66,#2b78b2)}
+  .premium-block-head.violet{background:linear-gradient(90deg,#44357f,#7357c5)}
+  .premium-block-head.green{background:linear-gradient(90deg,#086652,#149b70)}
+
+  .premium-block-title{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .premium-block-num{
+    width:17px;height:17px;
+    border-radius:6px;
+    display:grid;place-items:center;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.18);
+    font-size:5px;
+    font-weight:900;
+  }
+
+  .premium-block-head h3{
+    margin:0;
+    color:#fff;
+    font-size:6.7px;
+  }
+
+  .premium-block-head p{
+    margin:1px 0 0;
+    color:rgba(255,255,255,.78);
+    font-size:4px;
+  }
+
+  .premium-block-head>span{
+    font-size:4.2px;
+    color:rgba(255,255,255,.82);
+  }
+
+  /* ---------- Premium tables ---------- */
+  .premium-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  .premium-table thead{
+    display:table-header-group!important;
+  }
+
+  .premium-table th{
+    padding:4px 2.5px;
+    background:linear-gradient(180deg,#f0f5f8,#e4edf3);
+    color:#244964;
+    border:1px solid #d0dce5;
+    font-size:4.6px;
+    font-weight:900;
+    text-align:center;
+    line-height:1.2;
+  }
+
+  .premium-table td{
+    padding:4px 2.5px;
+    border:1px solid #dde6ed;
+    color:#294b65;
+    font-size:4.7px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:1.25;
+  }
+
+  .premium-table tbody tr:nth-child(even){
+    background:#f8fbfd;
+  }
+
+  .premium-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .premium-course{
+    text-align:right!important;
+  }
+
+  .premium-course b{
+    display:block;
+    color:#103d61;
+    font-size:5.7px;
+  }
+
+  .premium-course small{
+    display:block;
+    margin-top:1px;
+    color:#7f92a1;
+    font-size:3.7px;
+  }
+
+  /* ---------- Metrics ---------- */
+  .pm{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:1px;
+  }
+
+  .pm b{
+    color:#173f5e;
+    font-size:5px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+
+  .pm small{
+    color:#8495a3;
+    font-size:3.5px;
+    white-space:nowrap;
+  }
+
+  .pm-track{
+    width:82%;
+    height:3px;
+    margin-top:2px;
+    border-radius:5px;
+    overflow:hidden;
+    background:#e3eaef;
+  }
+
+  .pm-track i{
+    display:block;
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg,#dc9413,#149b70);
+  }
+
+  .pm-track.violet i{
+    background:linear-gradient(90deg,#7357c5,#a48ce0);
+  }
+
+  .pm-track.green i{
+    background:linear-gradient(90deg,#0d8062,#2eb189);
+  }
+
+  /* ---------- Attendance single display ---------- */
+  .premium-att{
+    position:relative;
+    overflow:hidden;
+    min-height:31px;
+    padding:4px 5px;
+    border-radius:8px;
+  }
+
+  .premium-att.bad{
+    background:#fff0f1;
+    border:1px solid #efc4c9;
+    color:#ba3944;
+  }
+
+  .premium-att.good{
+    background:#eaf8f2;
+    border:1px solid #bee5d7;
+    color:#0f7a58;
+  }
+
+  .premium-att:before{
+    content:"";
+    position:absolute;
+    right:0;top:0;bottom:0;width:3px;
+  }
+
+  .premium-att.bad:before{background:#dc4d57}
+  .premium-att.good:before{background:#149b70}
+
+  .premium-att strong{
+    display:block;
+    font-size:6.5px;
+    font-weight:900;
+  }
+
+  .premium-att small{
+    display:block;
+    margin-top:1px;
+    font-size:3.7px;
+    color:inherit;
+  }
+
+  /* ---------- Skills per LEVEL ---------- */
+  .skill-level-cell{
+    padding:3px!important;
+  }
+
+  .skill-level{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+  }
+
+  .skill-level b{
+    font-size:4.4px;
+    color:#0d6f57;
+    white-space:nowrap;
+  }
+
+  .skill-level small{
+    font-size:3.3px;
+    color:#728f84;
+    white-space:nowrap;
+  }
+
+  .skill-level-track{
+    width:90%;
+    height:3px;
+    margin:1px auto 0;
+    background:#dcebe5;
+    border-radius:5px;
+    overflow:hidden;
+  }
+
+  .skill-level-track i{
+    display:block;
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg,#0d8062,#2db087);
+  }
+
+  /* ---------- Rest of report redesign ---------- */
+  .full-report-page{
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .full-section-title{
+    margin:0 0 7px!important;
+    padding:7px 9px!important;
+    border-radius:10px!important;
+    background:linear-gradient(90deg,#0d365d,#164478 65%,#2b78b2)!important;
+    box-shadow:0 3px 9px rgba(15,51,82,.08)!important;
+    color:#fff!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .full-section-title h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    color:#fff!important;
+    font-size:9px!important;
+  }
+
+  .full-section-title span{
+    color:#d9e8f4!important;
+    font-size:5px!important;
+  }
+
+  .report-card{
+    margin:0 0 8px!important;
+    border:1px solid #d0dde6!important;
+    border-radius:10px!important;
+    overflow:hidden!important;
+    background:#fff!important;
+    box-shadow:0 2px 8px rgba(15,51,82,.04)!important;
+  }
+
+  .report-card-head{
+    padding:7px 9px!important;
+    background:linear-gradient(90deg,#f0f5f8,#e8f0f5)!important;
+    border-bottom:1px solid #cfdae3!important;
+    color:#173c5b!important;
+  }
+
+  .report-card-head h3{
+    font-size:7.2px!important;
+    color:#123a5e!important;
+  }
+
+  .report-card-head p{
+    font-size:4.6px!important;
+    color:#738798!important;
+  }
+
+  .report-chip{
+    padding:3px 6px!important;
+    border-radius:11px!important;
+    background:#fff!important;
+    border:1px solid #cbd9e3!important;
+    color:#245070!important;
+    font-size:4.4px!important;
+    font-weight:900!important;
+  }
+
+  .report-table{
+    width:100%!important;
+    border-collapse:collapse!important;
+    table-layout:fixed!important;
+  }
+
+  .report-table thead{
+    display:table-header-group!important;
+  }
+
+  .report-table th{
+    padding:4px 3px!important;
+    background:#164478!important;
+    color:#fff!important;
+    border:1px solid #2d5d83!important;
+    font-size:4.8px!important;
+    font-weight:900!important;
+  }
+
+  .report-table td{
+    padding:4px 3px!important;
+    border:1px solid #dee6ed!important;
+    font-size:4.7px!important;
+    line-height:1.3!important;
+  }
+
+  .report-table tbody tr:nth-child(even){
+    background:#f8fbfd!important;
+  }
+
+  .report-progress{
+    height:4px!important;
+    border-radius:6px!important;
+  }
+
+  .rstatus{
+    padding:2px 5px!important;
+    border-radius:9px!important;
+    font-size:4.2px!important;
+  }
+
+  .report-note{
+    margin:5px!important;
+    padding:6px 8px!important;
+    border:1px solid #d7e2ea!important;
+    border-radius:8px!important;
+    background:#f7fafc!important;
+    color:#647d90!important;
+    font-size:4.7px!important;
+    line-height:1.55!important;
+  }
+
+  .pdf-score-section{
+    margin:6px!important;
+    border:1px solid #d7e2ea!important;
+    border-radius:8px!important;
+    overflow:hidden!important;
+  }
+
+  .pdf-score-title{
+    padding:5px 7px!important;
+    background:#edf4f8!important;
+    color:#164478!important;
+    font-size:5px!important;
+  }
+
+  .pdf-score-table th{
+    font-size:4.5px!important;
+    padding:3.5px!important;
+  }
+
+  .pdf-score-table td{
+    font-size:4.5px!important;
+    padding:3.5px!important;
+  }
+
+  .trainer-progress-head{
+    padding:7px 9px!important;
+    border-radius:0!important;
+    background:linear-gradient(90deg,#123d66,#2b78b2)!important;
+  }
+
+  .trainer-progress-head h3{font-size:7px!important}
+  .trainer-progress-head p{font-size:4.5px!important}
+  .trainer-progress-kpis span{
+    padding:3px 5px!important;
+    font-size:4.4px!important;
+  }
+
+  .trainer-progress-table th{
+    padding:4px!important;
+    font-size:4.7px!important;
+  }
+
+  .trainer-progress-table td{
+    padding:4px!important;
+    font-size:4.7px!important;
+  }
+
+  .print-footer{
+    font-size:4.5px!important;
+    color:#93a1ad!important;
+    border-top:1px solid #d9e2e9!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -8222,6 +8874,29 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       }).join("");
 
 
+
+  const levelSkillsView=(c)=>{
+    return `
+      <div class="level-skills-wrap">
+        ${
+          SUPERVISION_SKILLS.map(skill=>{
+            const m=exactSkillMetric(c,skill);
+            return `
+              <div class="level-skill">
+                <strong>${esc(skill)}</strong>
+                <b>${m.done}/${m.total}</b>
+                <small>ناقص ${m.missing} · ${m.pct}%</small>
+                <div class="level-skill-track">
+                  <i style="width:${m.pct}%"></i>
+                </div>
+              </div>
+            `;
+          }).join("")
+        }
+      </div>
+    `;
+  };
+
   const firstOperationsRows=
     [...pdfCourses]
       .sort((a,b)=>
@@ -8295,6 +8970,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td>${metricView(quiz)}</td>
             <td>${metricView(hw)}</td>
             <td>${metricView(comments)}</td>
+            <td class="level-skills-cell">${levelSkillsView(c)}</td>
           </tr>
         `;
       }).join("");
@@ -8324,84 +9000,231 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         .filter(Boolean)
     ).size;
 
+
+  const premiumMetricView=(m,type="normal")=>{
+    if(!m.total){
+      return `<div class="pm"><b>—</b><small>لا توجد بيانات</small></div>`;
+    }
+
+    return `
+      <div class="pm">
+        <b>${m.done}/${m.total}</b>
+        <small>ناقص ${m.missing} · ${m.pct}%</small>
+        <div class="pm-track ${type}">
+          <i style="width:${m.pct}%"></i>
+        </div>
+      </div>
+    `;
+  };
+
+  const premiumOperationsRows=
+    [...pdfCourses]
+      .sort((a,b)=>
+        clean(a.branch).localeCompare(clean(b.branch),"ar",{numeric:true}) ||
+        periodSortValue(a.period)-periodSortValue(b.period) ||
+        clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+      )
+      .map((c,index)=>{
+
+        const att=exactAttendanceMetric(c);
+        const act=exactTaskMetric(c.id,"نشاط");
+        const quiz=exactTaskMetric(c.id,"كويز");
+        const hw=exactTaskMetric(c.id,"واجب");
+
+        const students=
+          DATA.students.filter(s=>s.courseId===c.id);
+
+        const commentDone=
+          students.filter(s=>clean(s.trainerComment)).length;
+
+        const comments=
+          exactMetric(commentDone,students.length);
+
+        return `
+          <tr>
+            <td>${index+1}</td>
+            <td class="premium-course">
+              <b>${esc(c.name)}</b>
+              <small>${esc(c.branch)} · ${esc(c.section)}</small>
+            </td>
+            <td>${esc(c.trainer)}</td>
+            <td>${esc(c.period)}</td>
+            <td><b>${c.students}</b></td>
+            <td>
+              <div class="premium-att ${att.missing?"bad":"good"}">
+                <strong>${att.missing?att.missing:"✓"}</strong>
+                <small>
+                  ${att.missing?`خانة ناقصة · ${att.incompleteDays} يوم`:"مكتمل"}
+                </small>
+              </div>
+            </td>
+            <td>${premiumMetricView(act)}</td>
+            <td>${premiumMetricView(quiz)}</td>
+            <td>${premiumMetricView(hw)}</td>
+            <td>${premiumMetricView(comments)}</td>
+          </tr>
+        `;
+      }).join("");
+
+  const premiumExamRows=
+    [...pdfCourses]
+      .sort((a,b)=>
+        periodSortValue(a.period)-periodSortValue(b.period) ||
+        clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+      )
+      .map((c,index)=>{
+
+        const mid=exactGradeMetric(c,"midterm");
+        const fin=exactGradeMetric(c,"final");
+        const lis=exactGradeMetric(c,"listening");
+        const spk=exactGradeMetric(c,"speaking");
+        const hwg=exactGradeMetric(c,"homework");
+
+        return `
+          <tr>
+            <td>${index+1}</td>
+            <td class="premium-course">
+              <b>${esc(c.name)}</b>
+              <small>${esc(c.trainer)} · ${esc(c.period)}</small>
+            </td>
+            <td>${c.students}</td>
+            <td>${premiumMetricView(mid,"violet")}</td>
+            <td>${premiumMetricView(fin,"violet")}</td>
+            <td>${premiumMetricView(lis,"violet")}</td>
+            <td>${premiumMetricView(spk,"violet")}</td>
+            <td>${premiumMetricView(hwg,"violet")}</td>
+          </tr>
+        `;
+      }).join("");
+
+  const premiumSkillCell=(c,skill)=>{
+    const m=exactSkillMetric(c,skill);
+
+    if(!m.total){
+      return `<div class="skill-level"><b>—</b><small>لا بيانات</small></div>`;
+    }
+
+    return `
+      <div class="skill-level">
+        <b>${m.done}/${m.total}</b>
+        <small>ناقص ${m.missing} · ${m.pct}%</small>
+        <div class="skill-level-track">
+          <i style="width:${m.pct}%"></i>
+        </div>
+      </div>
+    `;
+  };
+
+  const premiumSkillsRows=
+    [...pdfCourses]
+      .sort((a,b)=>
+        periodSortValue(a.period)-periodSortValue(b.period) ||
+        clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+      )
+      .map((c,index)=>`
+        <tr>
+          <td>${index+1}</td>
+          <td class="premium-course">
+            <b>${esc(c.name)}</b>
+            <small>${esc(c.trainer)} · ${esc(c.period)} · ${c.students} طالب</small>
+          </td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Listening")}</td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Speaking")}</td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Reading")}</td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Writing")}</td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Grammar")}</td>
+          <td class="skill-level-cell">${premiumSkillCell(c,"Vocabulary")}</td>
+        </tr>
+      `).join("");
+
+  const premiumBranchCount=
+    new Set(
+      pdfCourses.map(c=>clean(c.branch)).filter(Boolean)
+    ).size;
+
+  const premiumTrainerCount=
+    new Set(
+      pdfCourses.map(c=>clean(c.trainer)).filter(Boolean)
+    ).size;
+
+  const premiumAttendanceMissing=
+    pdfCourses.reduce(
+      (sum,c)=>sum+Number(c.missingAttendanceStudentsTotal||0),
+      0
+    );
+
+  const premiumAttendanceComplete=
+    pdfCourses.filter(
+      c=>Number(c.missingAttendanceStudentsTotal||0)===0
+    ).length;
+
   const overviewSection=`
-    <section class="same-counts-page">
+    <section class="premium-first-page">
 
-      <div class="exec-first-hero">
+      <div class="premium-hero">
 
-        <div>
-          <h2>1. الملخص التنفيذي الأكاديمي</h2>
+        <div class="premium-hero-main">
+          <h2>الملخص التنفيذي للأداء الأكاديمي</h2>
           <p>
-            متابعة الدورات والطلاب والتحضير والمهام والاختبارات والمهارات
+            قراءة إدارية مباشرة لكل مستوى: الطلاب، التحضير، المهام،
+            الاختبارات والمهارات - بدون تكرار المؤشرات.
           </p>
+
+          <div class="premium-hero-badges">
+            <span>${premiumBranchCount} فرع</span>
+            <span>${pdfCourses.length} دورة</span>
+            <span>${totalStudents} طالب</span>
+            <span>${premiumTrainerCount} مدرب</span>
+          </div>
         </div>
 
-        <div class="exec-first-tags">
-          <span>${executiveBranchCount} فرع</span>
-          <span>${pdfCourses.length} دورة</span>
-          <span>${totalStudents} طالب</span>
-          <span>${executiveTrainerCount} مدرب</span>
-        </div>
+        <div class="premium-hero-side">
+          <div class="premium-kpi">
+            <span>الدورات</span>
+            <b>${pdfCourses.length}</b>
+            <small>ضمن التقرير الحالي</small>
+          </div>
 
-      </div>
+          <div class="premium-kpi violet">
+            <span>الطلاب</span>
+            <b>${totalStudents}</b>
+            <small>إجمالي الطلاب</small>
+          </div>
 
-      <div class="exec-kpi-strip">
+          <div class="premium-kpi green">
+            <span>تحضير مكتمل</span>
+            <b>${premiumAttendanceComplete}</b>
+            <small>دورات بلا نقص</small>
+          </div>
 
-        <div class="exec-kpi-card">
-          <span>إجمالي الدورات</span>
-          <b>${pdfCourses.length}</b>
-          <small>ضمن التقرير الحالي</small>
-        </div>
-
-        <div class="exec-kpi-card violet">
-          <span>إجمالي الطلاب</span>
-          <b>${totalStudents}</b>
-          <small>الطلاب المرتبطون بالدورات</small>
-        </div>
-
-        <div class="exec-kpi-card">
-          <span>المدربون</span>
-          <b>${executiveTrainerCount}</b>
-          <small>مدرب مختلف</small>
-        </div>
-
-        <div class="exec-kpi-card green">
-          <span>دورات التحضير المكتمل</span>
-          <b>${executiveCompletedAttendanceCourses}</b>
-          <small>لا توجد خانات ناقصة</small>
-        </div>
-
-        <div class="exec-kpi-card red">
-          <span>خانات التحضير الناقصة</span>
-          <b>${executiveMissingAttendance}</b>
-          <small>الخانات غير المرصودة فقط</small>
-        </div>
-
-        <div class="exec-kpi-card amber">
-          <span>متوسط إنجاز المهام</span>
-          <b>${overallCompletion}%</b>
-          <small>أنشطة · كويزات · واجبات</small>
+          <div class="premium-kpi red">
+            <span>خانات تحضير ناقصة</span>
+            <b>${premiumAttendanceMissing}</b>
+            <small>الخانات غير المرصودة فقط</small>
+          </div>
         </div>
 
       </div>
 
 
-      <!-- ONE attendance view only: inside this operational table -->
-      <div class="exec-section-card">
+      <div class="premium-block">
 
-        <div class="exec-section-head operations">
-          <h3>متابعة الدورات والمهام اليومية</h3>
-          <span>
-            التحضير يظهر هنا مرة واحدة فقط · الأحمر نقص · الأخضر مكتمل
-          </span>
+        <div class="premium-block-head blue">
+          <div class="premium-block-title">
+            <span class="premium-block-num">01</span>
+            <div>
+              <h3>متابعة الدورات والمهام التشغيلية</h3>
+              <p>التحضير يظهر هنا مرة واحدة فقط</p>
+            </div>
+          </div>
+          <span>أحمر = نقص · أخضر = مكتمل</span>
         </div>
 
-        <table class="exec-pro-table">
-
+        <table class="premium-table">
           <thead>
             <tr>
               <th style="width:3%">#</th>
-              <th style="width:12%">الدورة / المستوى</th>
+              <th style="width:13%">الدورة / المستوى</th>
               <th style="width:8%">المدرب</th>
               <th style="width:9%">الفترة</th>
               <th style="width:5%">الطلاب</th>
@@ -8412,114 +9235,73 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               <th>التعليقات</th>
             </tr>
           </thead>
-
-          <tbody>
-            ${firstOperationsRows}
-          </tbody>
-
+          <tbody>${premiumOperationsRows}</tbody>
         </table>
 
       </div>
 
 
-      <div class="exec-bottom-grid">
+      <div class="premium-block">
 
-        <!-- EXAMS: unique purple identity -->
-        <div class="exec-section-card" style="margin-top:0">
-
-          <div class="exec-section-head exams">
-            <h3>الاختبارات والدرجات الأساسية</h3>
-            <span>Midterm · Final · Listening · Speaking · Homework</span>
+        <div class="premium-block-head violet">
+          <div class="premium-block-title">
+            <span class="premium-block-num">02</span>
+            <div>
+              <h3>الاختبارات والدرجات الأساسية حسب كل مستوى</h3>
+              <p>لا يوجد تجميع بين المستويات</p>
+            </div>
           </div>
-
-          <table class="exec-pro-table">
-            <thead>
-              <tr>
-                <th style="width:5%">#</th>
-                <th style="width:24%">الدورة</th>
-                <th style="width:9%">الطلاب</th>
-                <th style="width:47%">الرصد الفعلي</th>
-                <th style="width:15%">الاكتمال</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${firstExamRows}
-            </tbody>
-          </table>
-
+          <span>Midterm · Final · Listening · Speaking · Homework</span>
         </div>
 
-
-        <!-- SKILLS: unique green identity -->
-        <div class="exec-section-card" style="margin-top:0">
-
-          <div class="exec-section-head skills">
-            <h3>الأداء العام للمهارات</h3>
-            <span>تقرير مستقل عن الاختبارات</span>
-          </div>
-
-          <table class="exec-pro-table">
-            <thead>
-              <tr>
-                <th>المهارة</th>
-                <th>مرصود</th>
-                <th>ناقص</th>
-                <th>الإجمالي</th>
-                <th>الإنجاز</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              ${
-                SUPERVISION_SKILLS.map(skill=>{
-
-                  let done=0,total=0;
-
-                  pdfCourses.forEach(c=>{
-                    const m=exactSkillMetric(c,skill);
-                    done+=m.done;
-                    total+=m.total;
-                  });
-
-                  const missing=Math.max(0,total-done);
-                  const p=total?Math.round(done/total*100):0;
-
-                  return `
-                    <tr>
-                      <td>
-                        <div class="exec-skill-name">
-                          <span class="exec-skill-dot">✓</span>
-                          <b>${esc(skill)}</b>
-                        </div>
-                      </td>
-                      <td>${done}</td>
-                      <td>${missing}</td>
-                      <td>${total}</td>
-                      <td>
-                        <div class="exec-metric">
-                          <b>${p}%</b>
-                          <div class="exec-metric-track">
-                            <i style="width:${p}%"></i>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  `;
-                }).join("")
-              }
-            </tbody>
-
-          </table>
-
-        </div>
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th style="width:3%">#</th>
+              <th style="width:18%">الدورة / المستوى</th>
+              <th style="width:5%">الطلاب</th>
+              <th>Midterm</th>
+              <th>Final</th>
+              <th>Listening</th>
+              <th>Speaking</th>
+              <th>Homework</th>
+            </tr>
+          </thead>
+          <tbody>${premiumExamRows}</tbody>
+        </table>
 
       </div>
 
 
-      <div class="exec-note-line">
-        ملاحظة: تم حذف جدول التحضير الإضافي من الصفحة الأولى لمنع التكرار.
-        حالة التحضير تظهر فقط داخل جدول متابعة الدورات أعلاه، بينما تبقى صفحة
-        الحضور التفصيلية لاحقًا مخصصة للتواريخ وأسماء الطلاب غير المرصودين.
+      <div class="premium-block">
+
+        <div class="premium-block-head green">
+          <div class="premium-block-title">
+            <span class="premium-block-num">03</span>
+            <div>
+              <h3>تقييم المهارات حسب كل مستوى</h3>
+              <p>كل صف يمثل مستوى واحد فقط - وليس إجمالي المستويات</p>
+            </div>
+          </div>
+          <span>مرصود / إجمالي · ناقص · نسبة</span>
+        </div>
+
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th style="width:3%">#</th>
+              <th style="width:18%">الدورة / المستوى</th>
+              <th>Listening</th>
+              <th>Speaking</th>
+              <th>Reading</th>
+              <th>Writing</th>
+              <th>Grammar</th>
+              <th>Vocabulary</th>
+            </tr>
+          </thead>
+          <tbody>${premiumSkillsRows}</tbody>
+        </table>
+
       </div>
 
     </section>
