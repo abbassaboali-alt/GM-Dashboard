@@ -1870,6 +1870,92 @@
   .report-alert{padding:8px 9px}
 }
 
+
+/* ===== PDF: automatic grouping by trainer + period ===== */
+@media print{
+
+  .pdf-trainer-heading{
+    margin:10px 0 9px;
+    padding:10px 13px;
+    border-radius:10px;
+    background:linear-gradient(135deg,#0d365d,#164478 62%,#2b78b2);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .pdf-trainer-heading.new-trainer{
+    break-before:page;
+    page-break-before:always;
+  }
+
+  .pdf-trainer-heading.first-trainer{
+    break-before:auto;
+    page-break-before:auto;
+  }
+
+  .pdf-trainer-heading h3{
+    margin:0;
+    font-size:15px;
+    color:#fff;
+    font-weight:900;
+  }
+
+  .pdf-trainer-heading p{
+    margin:3px 0 0;
+    font-size:8px;
+    color:#d8e8f4;
+    line-height:1.6;
+  }
+
+  .pdf-trainer-heading .trainer-meta{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+
+  .pdf-trainer-heading .trainer-meta span{
+    display:inline-block;
+    padding:5px 8px;
+    border-radius:13px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+    font-size:7.5px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+
+  /*
+    لا نكسر بطاقة الدورة مباشرة بعد عنوان المدرب.
+    إذا كان للمدرب عدة دورات فإنها تستمر بالترتيب حسب الفترة.
+  */
+  .pdf-trainer-heading + .report-card{
+    break-before:avoid;
+    page-break-before:avoid;
+  }
+
+  .report-card{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .report-card-head{
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .report-table thead{
+    display:table-header-group;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -6486,6 +6572,128 @@ function taskScoreRowsForPdf(task){
 
 function preparePrintReport(pdfCourses=getPdfCourses()){
 
+  /*
+    ترتيب التقرير تلقائياً:
+    1) المدرب
+    2) الفترة
+    3) اسم الدورة
+    4) تاريخ البداية
+
+    النتيجة:
+    جميع دورات المدرب الواحد تظهر معاً،
+    وكل مدرب جديد يبدأ في صفحة جديدة.
+  */
+  pdfCourses=
+    [...pdfCourses].sort((a,b)=>{
+
+      const trainerCompare=
+        clean(a.trainer).localeCompare(
+          clean(b.trainer),
+          "ar",
+          {numeric:true,sensitivity:"base"}
+        );
+
+      if(trainerCompare!==0){
+        return trainerCompare;
+      }
+
+      const periodCompare=
+        periodSortValue(a.period)-
+        periodSortValue(b.period);
+
+      if(periodCompare!==0){
+        return periodCompare;
+      }
+
+      const courseCompare=
+        clean(a.name).localeCompare(
+          clean(b.name),
+          "ar",
+          {numeric:true,sensitivity:"base"}
+        );
+
+      if(courseCompare!==0){
+        return courseCompare;
+      }
+
+      return clean(a.start).localeCompare(
+        clean(b.start)
+      );
+    });
+
+  /*
+    عنوان تلقائي لكل مدرب داخل أقسام التقرير.
+    بداية كل مدرب جديد = صفحة PDF جديدة.
+  */
+  const trainerHeading=(course,index)=>{
+
+    const previous=
+      index>0
+        ? pdfCourses[index-1]
+        : null;
+
+    const isNewTrainer=
+      !previous ||
+      clean(previous.trainer)!==
+      clean(course.trainer);
+
+    if(!isNewTrainer){
+      return "";
+    }
+
+    const trainerCourses=
+      pdfCourses.filter(
+        c=>
+          clean(c.trainer)===
+          clean(course.trainer)
+      );
+
+    const trainerPeriods=[
+      ...new Set(
+        trainerCourses
+          .map(c=>clean(c.period))
+          .filter(Boolean)
+      )
+    ].sort(
+      (a,b)=>
+        periodSortValue(a)-
+        periodSortValue(b)
+    );
+
+    return `
+      <div class="pdf-trainer-heading ${
+        index===0
+          ? "first-trainer"
+          : "new-trainer"
+      }">
+        <div>
+          <h3>
+            المدرب: ${esc(course.trainer||"غير محدد")}
+          </h3>
+          <p>
+            يتم عرض جميع دورات هذا المدرب معاً
+            ومرتبة تلقائياً حسب الفترة
+          </p>
+        </div>
+
+        <div class="trainer-meta">
+          <span>
+            عدد الدورات: ${trainerCourses.length}
+          </span>
+
+          <span>
+            الفترات:
+            ${
+              trainerPeriods.length
+                ? trainerPeriods.map(esc).join(" · ")
+                : "غير محدد"
+            }
+          </span>
+        </div>
+      </div>
+    `;
+  };
+
   const pdfCourseIds=
     new Set(
       pdfCourses.map(c=>c.id)
@@ -6628,6 +6836,9 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     <br>
     <b>نوع التقرير</b><br>
     تقرير تفصيلي شامل
+    <br>
+    <b>الفرز التلقائي</b><br>
+    المدرب ← الفترة
   `;
 
   $("printFilters").innerHTML=
@@ -6883,7 +7094,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
      ===================================================== */
 
   const taskSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const tasks=
         displayedTasks
@@ -6936,6 +7147,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         }).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7007,7 +7219,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
      ===================================================== */
 
   const attendanceSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const details=
         c.incompleteAttendanceDetails||
@@ -7026,6 +7238,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         `).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7087,7 +7300,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
   };
 
   const gradeSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const students=
         DATA.students.filter(
@@ -7141,6 +7354,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         `).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7210,7 +7424,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
      ===================================================== */
 
   const skillSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const rows=
         SUPERVISION_SKILLS.map(skill=>{
@@ -7254,6 +7468,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         }).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7296,7 +7511,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
      ===================================================== */
 
   const commentsSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const students=
         DATA.students.filter(
@@ -7326,6 +7541,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         `).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7369,7 +7585,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
      ===================================================== */
 
   const progressSections=
-    pdfCourses.map(c=>{
+    pdfCourses.map((c,index)=>{
 
       const rows=
         buildAllCourseDays(c);
@@ -7440,6 +7656,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         }).join("");
 
       return `
+        ${trainerHeading(c,index)}
         <div class="report-card">
           <div class="report-card-head">
             <div>
@@ -7503,6 +7720,8 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       هذا التقرير يجمع جميع أقسام المتابعة الأكاديمية الموجودة في الشريط الجانبي
       باستثناء سجل الدخول والخروج، ويطبق فلترة الصفحة واختيار الدورات المحددة للـPDF.
       البيانات المعروضة مأخوذة من البيانات الحالية المحملة من Firebase وقت إنشاء التقرير.
+      يتم تجميع الدورات تلقائياً حسب المدرب، وترتيب دورات كل مدرب حسب الفترة،
+      ويبدأ كل مدرب جديد في صفحة مستقلة داخل أقسام التقرير.
     </div>
   `;
 
