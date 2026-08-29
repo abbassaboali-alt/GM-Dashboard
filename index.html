@@ -7465,7 +7465,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
 
     return `
       <div class="count-box">
-        <b>${m.done} من ${m.total}</b>
+        <b>${m.done} من ${m.total} حالة</b>
         <small>
           <span class="good">تم ${m.done}</span>
           ·
@@ -7520,10 +7520,23 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td><b>${c.students}</b></td>
 
             <td>
-              ${cell(
-                att,
-                `· ${att.incompleteDays} يوم غير مكتمل`
-              )}
+              <div class="count-box">
+                <b>${att.done} من ${att.total} حالة تحضير</b>
+                <small>
+                  عدد الطلاب: ${c.students}
+                  ·
+                  الأيام: ${att.days}
+                </small>
+                <small>
+                  <span class="good">مرصود ${att.done}</span>
+                  ·
+                  <span class="bad">غير مرصود ${att.missing}</span>
+                </small>
+                <div class="same-progress">
+                  <i style="width:${att.pct}%"></i>
+                </div>
+                <small>${att.pct}% · ${att.incompleteDays} يوم غير مكتمل</small>
+              </div>
             </td>
 
             <td>${cell(act)}</td>
@@ -7603,7 +7616,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       <div class="same-counts-head">
         <h2>1. التقرير العام — نفس أعداد لوحة الإشراف</h2>
         <span>
-          تم / ناقص / إجمالي لكل دورة بدون تغيير طريقة الحساب الأصلية
+          ملاحظة: التحضير يُحسب كحالات رصد = عدد الطلاب × عدد الأيام، وليس كعدد طلاب
         </span>
       </div>
 
@@ -7616,7 +7629,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <th>الفترة</th>
             <th>الطلاب</th>
 
-            <th>التحضير</th>
+            <th>التحضير<br><small>حالات الرصد وليس عدد الطلاب</small></th>
             <th>الأنشطة</th>
             <th>الكويزات</th>
             <th>الواجبات</th>
@@ -7655,10 +7668,10 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                 <th>الفترة</th>
                 <th>الطلاب</th>
                 <th>الأيام المطلوبة</th>
-                <th>تم تحضيرهم</th>
-                <th>غير محضر</th>
+                <th>حالات التحضير المرصودة</th>
+                <th>حالات غير مرصودة</th>
                 <th>أيام غير مكتملة</th>
-                <th>الإجمالي</th>
+                <th>إجمالي حالات التحضير</th>
                 <th>النسبة</th>
               </tr>
             </thead>
