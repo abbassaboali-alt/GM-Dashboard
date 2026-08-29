@@ -2047,6 +2047,300 @@
   }
 }
 
+
+/* =========================================================
+   PRUDLE PDF — PROFESSIONAL COMPACT ADMIN REPORT
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:7mm}
+
+  .print-report{
+    font-family:Tajawal,Arial,sans-serif!important;
+    color:#17324d!important;
+  }
+
+  /* Header */
+  .print-cover{
+    border-radius:10px!important;
+    padding:10px 13px!important;
+    margin-bottom:6px!important;
+    background:linear-gradient(135deg,#0c3761,#164478 58%,#2a78b2)!important;
+  }
+
+  .print-logo-img{
+    width:60px!important;
+    height:60px!important;
+    border-radius:10px!important;
+    padding:3px!important;
+  }
+
+  .print-title h1{
+    font-size:17px!important;
+  }
+
+  .print-title p{
+    font-size:7px!important;
+  }
+
+  .print-meta{
+    min-width:165px!important;
+    font-size:6.4px!important;
+    padding:6px 8px!important;
+  }
+
+  .print-filters{
+    margin:5px 0 6px!important;
+    padding:6px 8px!important;
+    font-size:6.5px!important;
+  }
+
+  /* General report cards */
+  .full-report-page{
+    break-before:auto!important;
+    page-break-before:auto!important;
+    margin:0!important;
+  }
+
+  .full-report-page + .full-report-page{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+
+  .full-section-title{
+    padding:7px 10px!important;
+    margin:0 0 6px!important;
+    border-radius:8px!important;
+  }
+
+  .full-section-title h2{
+    font-size:12px!important;
+  }
+
+  .full-section-title span{
+    font-size:7px!important;
+  }
+
+  .full-summary-grid{
+    grid-template-columns:repeat(8,1fr)!important;
+    gap:4px!important;
+    margin-bottom:5px!important;
+  }
+
+  .full-summary-card{
+    min-height:52px!important;
+    padding:6px 7px!important;
+    border-radius:8px!important;
+  }
+
+  .full-summary-card span{font-size:6.5px!important}
+  .full-summary-card b{font-size:14px!important;margin-top:2px!important}
+  .full-summary-card small{font-size:5.2px!important;line-height:1.35!important}
+
+  /* New course / level ribbon in overview */
+  .pdf-course-ribbons{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin:0 0 6px;
+  }
+
+  .pdf-course-ribbon{
+    position:relative;
+    overflow:hidden;
+    border:1px solid #d5e1ea;
+    border-radius:9px;
+    background:#fff;
+    padding:7px 9px 7px 12px;
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .pdf-course-ribbon:before{
+    content:"";
+    position:absolute;
+    right:0;top:0;bottom:0;
+    width:5px;
+    background:#164478;
+  }
+
+  .pdf-course-ribbon h3{
+    margin:0;
+    font-size:9.5px;
+    color:#123b60;
+  }
+
+  .pdf-course-ribbon p{
+    margin:2px 0 0;
+    font-size:6.2px;
+    color:#6f8294;
+    line-height:1.45;
+  }
+
+  .pdf-course-ribbon .ribbon-stats{
+    display:flex;
+    gap:4px;
+    flex-wrap:wrap;
+    margin-top:4px;
+  }
+
+  .pdf-course-ribbon .ribbon-stats span{
+    display:inline-block;
+    padding:2px 5px;
+    border-radius:8px;
+    background:#eef5fa;
+    color:#164478;
+    font-size:5.6px;
+    font-weight:900;
+  }
+
+  /* Avoid giant white gaps: cards/tables may split naturally */
+  .report-card{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+    margin-bottom:7px!important;
+    border-radius:9px!important;
+  }
+
+  .report-card-head,
+  .report-card-head + table,
+  .report-card-head + .two-col-report{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .report-card-head{
+    padding:7px 9px!important;
+  }
+
+  .report-card-head h3{font-size:10px!important}
+  .report-card-head p{font-size:6.3px!important}
+  .report-chip{font-size:6px!important;padding:3px 6px!important}
+
+  .report-table{
+    table-layout:auto!important;
+  }
+
+  .report-table thead{
+    display:table-header-group!important;
+  }
+
+  .report-table th{
+    font-size:7px!important;
+    padding:5px 4px!important;
+  }
+
+  .report-table td{
+    font-size:7px!important;
+    padding:5px 4px!important;
+    line-height:1.45!important;
+  }
+
+  .report-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* Student results: larger and more readable */
+  .pdf-score-section{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+    margin:5px 0 7px!important;
+    border-radius:8px!important;
+  }
+
+  .pdf-score-title{
+    padding:6px 8px!important;
+    font-size:7.7px!important;
+    background:linear-gradient(90deg,#edf5fa,#f8fbfd)!important;
+    color:#123b60!important;
+  }
+
+  .pdf-score-title small{
+    font-size:6.6px!important;
+  }
+
+  .pdf-score-table{
+    table-layout:auto!important;
+  }
+
+  .pdf-score-table thead{
+    display:table-header-group!important;
+  }
+
+  .pdf-score-table th{
+    font-size:7.2px!important;
+    padding:5px 5px!important;
+    background:#164478!important;
+  }
+
+  .pdf-score-table td{
+    font-size:7.8px!important;
+    padding:5px 5px!important;
+    line-height:1.45!important;
+  }
+
+  .pdf-score-table td:nth-child(4),
+  .pdf-score-table td:nth-child(5){
+    font-size:9.2px!important;
+    font-weight:900!important;
+  }
+
+  .pdf-score-table td:nth-child(2){
+    font-weight:800!important;
+  }
+
+  .pdf-score-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* Compact task cards and detailed blocks */
+  .pdf-task-list{
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:5px!important;
+    padding:6px!important;
+  }
+
+  .pdf-task-card{
+    padding:6px!important;
+    border-radius:8px!important;
+  }
+
+  .pdf-task-card h3{font-size:7.4px!important}
+  .pdf-task-sub{font-size:5.6px!important}
+  .pdf-task-numbers{gap:3px!important;margin:4px 0!important}
+  .pdf-mini-stat{padding:4px 3px!important}
+  .pdf-mini-stat span{font-size:4.8px!important}
+  .pdf-mini-stat b{font-size:7px!important}
+  .pdf-students{padding:4px!important;min-height:30px!important}
+  .pdf-students p{font-size:5px!important}
+
+  /* Keep titles with first data rows */
+  .trainer-progress-head,
+  .trainer-subtitle,
+  .pdf-alert-group-head,
+  .full-section-title{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .pdf-alert-group{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .pdf-alert-table thead,
+  .trainer-progress-table thead,
+  .trainer-mini-table thead{
+    display:table-header-group!important;
+  }
+
+  /* Footer, tighter */
+  .print-footer{
+    font-size:5.2px!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -6650,7 +6944,7 @@ function taskScoreRowsForPdf(task){
             <th style="width:34%">الطالب</th>
             <th style="width:24%">الهوية</th>
             <th style="width:18%">الدرجة</th>
-            <th style="width:18%">النسبة</th>
+            <th style="width:18%">النسبة %</th>
           </tr>
         </thead>
         <tbody>
@@ -7259,12 +7553,36 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
           </div>
         `;
 
+  const courseRibbons=
+    [...pdfCourses]
+      .sort((a,b)=>
+        clean(a.branch).localeCompare(clean(b.branch),"ar",{numeric:true}) ||
+        periodSortValue(a.period)-periodSortValue(b.period) ||
+        clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+      )
+      .map(c=>`
+        <article class="pdf-course-ribbon">
+          <h3>${esc(c.name)} — ${esc(c.trainer)}</h3>
+          <p>
+            ${esc(c.branch)} · ${esc(c.section)}
+            · ${esc(c.period)}
+            · البداية ${esc(c.start||"—")}
+          </p>
+          <div class="ribbon-stats">
+            <span>الطلاب ${c.students}</span>
+            <span>الإنجاز ${c.completion===null?"—":c.completion+"%"}</span>
+            <span>الحضور ${c.attendance}%</span>
+            <span>التنبيهات ${c.alerts||0}</span>
+          </div>
+        </article>
+      `).join("");
+
   const overviewSection=`
     <section class="full-report-page first">
 
       <div class="full-section-title">
         <h2>1. الملخص التنفيذي ونظرة عامة</h2>
-        <span>ملخص مباشر لأهم مؤشرات الإشراف الأكاديمي</span>
+        <span>تقرير عام مضغوط - صفحة أو صفحتان حسب عدد الدورات والبيانات</span>
       </div>
 
       <div class="full-summary-grid">
@@ -7315,6 +7633,10 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
           <b>${sortText}</b>
           <small>وفق إعدادات العرض الحالية</small>
         </div>
+      </div>
+
+      <div class="pdf-course-ribbons">
+        ${courseRibbons}
       </div>
 
       <div class="report-card">
