@@ -3664,6 +3664,286 @@
   .print-footer{font-size:5.5px!important}
 }
 
+
+@media print{
+  /* Global readability */
+  .print-report{font-size:7px!important}
+  .print-title h1{font-size:20px!important}
+  .print-title p{font-size:8px!important}
+  .print-meta,.print-filters{font-size:7px!important}
+
+  /* First page */
+  .premium-hero-main h2{font-size:17px!important}
+  .premium-hero-main p{font-size:7.8px!important}
+  .premium-hero-badges span{font-size:6.4px!important}
+  .premium-kpi span{font-size:6.2px!important}
+  .premium-kpi b{font-size:13px!important}
+  .premium-kpi small{font-size:5.1px!important}
+
+  .premium-block-head h3{font-size:9px!important}
+  .premium-block-head p{font-size:5.8px!important}
+  .premium-block-head>span{font-size:5.8px!important}
+  .premium-block-num{font-size:6.5px!important}
+
+  .premium-table th{
+    font-size:6.6px!important;
+    padding:5px 3px!important;
+  }
+  .premium-table td{
+    font-size:6.5px!important;
+    padding:5px 3px!important;
+    line-height:1.35!important;
+  }
+  .premium-course b{font-size:7.5px!important}
+  .premium-course small{font-size:5.1px!important}
+  .pm b{font-size:6.8px!important}
+  .pm small{font-size:4.9px!important}
+  .premium-att strong{font-size:8.8px!important}
+  .premium-att small{font-size:5.1px!important}
+  .skill-level b{font-size:6.2px!important}
+  .skill-level small{font-size:4.8px!important}
+
+  /* All following pages */
+  .full-section-title h2{font-size:13px!important}
+  .full-section-title span{font-size:7.3px!important}
+  .report-card-head h3{font-size:10.5px!important}
+  .report-card-head p{font-size:7px!important}
+  .report-chip{font-size:6.6px!important}
+
+  .report-table th,
+  .pdf-report-table th,
+  .pdf-alert-table th,
+  .pdf-attendance-table th,
+  .pdf-grades-table th,
+  .pdf-skills-table th,
+  .pdf-comments-table th,
+  .trainer-progress-table th,
+  .pdf-score-table th{
+    font-size:7.1px!important;
+    padding:5.5px 3px!important;
+  }
+
+  .report-table td,
+  .pdf-report-table td,
+  .pdf-alert-table td,
+  .pdf-attendance-table td,
+  .pdf-grades-table td,
+  .pdf-skills-table td,
+  .pdf-comments-table td,
+  .trainer-progress-table td,
+  .pdf-score-table td{
+    font-size:7px!important;
+    padding:5.5px 3px!important;
+    line-height:1.42!important;
+  }
+
+  .pdf-score-title{font-size:7.5px!important}
+  .report-note{font-size:7px!important}
+  .rstatus{font-size:6.4px!important}
+  .student-names{font-size:6.9px!important}
+  .pdf-alert-group-head{font-size:9px!important}
+  .trainer-progress-head h3{font-size:10.2px!important}
+  .trainer-progress-head p{font-size:6.9px!important}
+  .trainer-progress-kpis span{font-size:6.6px!important}
+  .print-footer{font-size:6.2px!important}
+}
+
+
+/* =========================================================
+   PRUDLE — ULTRA PROFESSIONAL PDF FINISH
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:5.5mm}
+
+  .print-report{
+    color:#173b57!important;
+    letter-spacing:0!important;
+  }
+
+  /* Elegant corporate header */
+  .print-cover{
+    position:relative!important;
+    overflow:hidden!important;
+    border-radius:14px!important;
+    background:linear-gradient(115deg,#082b4a 0%,#123e67 58%,#2375aa 100%)!important;
+    box-shadow:0 5px 16px rgba(8,43,74,.16)!important;
+  }
+  .print-cover:after{
+    content:""!important;
+    position:absolute!important;
+    width:210px!important;height:210px!important;
+    border-radius:50%!important;
+    left:-100px!important;top:-135px!important;
+    background:rgba(255,255,255,.055)!important;
+  }
+  .print-logo-img{
+    border-radius:13px!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.12)!important;
+  }
+
+  /* Executive page visual hierarchy */
+  .premium-hero{
+    gap:8px!important;
+  }
+  .premium-hero-main{
+    border-radius:13px!important;
+    box-shadow:0 4px 13px rgba(13,58,94,.12)!important;
+  }
+  .premium-hero-side{gap:6px!important}
+  .premium-kpi{
+    border-radius:11px!important;
+    border-color:#d3e0e9!important;
+    box-shadow:0 3px 9px rgba(15,51,82,.055)!important;
+  }
+
+  /* More premium section cards */
+  .premium-block,
+  .report-card{
+    border-radius:12px!important;
+    border-color:#cbd9e3!important;
+    box-shadow:0 3px 11px rgba(15,51,82,.055)!important;
+  }
+  .premium-block-head{
+    padding:6px 9px!important;
+    min-height:31px!important;
+  }
+  .premium-block-head.blue{
+    background:linear-gradient(90deg,#0d355a,#1c5b8a 68%,#2d82bb)!important;
+  }
+  .premium-block-head.violet{
+    background:linear-gradient(90deg,#403476,#6550aa 68%,#8872d1)!important;
+  }
+  .premium-block-head.green{
+    background:linear-gradient(90deg,#075846,#0d8062 68%,#22a77e)!important;
+  }
+
+  /* Cleaner tables */
+  .premium-table th{
+    background:#eaf2f7!important;
+    color:#123b5d!important;
+    border-color:#c9d8e3!important;
+  }
+  .premium-table td{
+    border-color:#d8e4ec!important;
+  }
+  .premium-table tbody tr:nth-child(even){
+    background:#f5f9fc!important;
+  }
+  .premium-table tbody tr:hover{
+    background:inherit!important;
+  }
+
+  /* Course identity */
+  .premium-course b{
+    color:#0b3b60!important;
+    font-weight:900!important;
+  }
+  .premium-course small{
+    color:#7b8f9f!important;
+  }
+
+  /* Attendance */
+  .premium-att.bad{
+    background:linear-gradient(135deg,#fff7f7,#ffe9eb)!important;
+    border-color:#efb9bf!important;
+    box-shadow:inset 0 0 0 1px rgba(220,77,87,.04)!important;
+  }
+  .premium-att.good{
+    background:linear-gradient(135deg,#f2fbf7,#e3f6ee)!important;
+    border-color:#b7dfd1!important;
+  }
+
+  /* Progress bars */
+  .pm-track,.skill-level-track,.report-progress{
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.06)!important;
+  }
+
+  /* Later page titles */
+  .full-section-title{
+    border-radius:12px!important;
+    background:linear-gradient(90deg,#0b3154,#164478 65%,#2879ad)!important;
+    box-shadow:0 4px 11px rgba(15,51,82,.10)!important;
+  }
+
+  /* Course cards on detail pages */
+  .report-card-head{
+    background:linear-gradient(90deg,#eef4f8,#f8fbfd)!important;
+    border-bottom:2px solid #d3e0e9!important;
+  }
+
+  .report-table th,
+  .pdf-report-table th,
+  .pdf-alert-table th,
+  .pdf-attendance-table th,
+  .pdf-grades-table th,
+  .pdf-skills-table th,
+  .pdf-comments-table th,
+  .trainer-progress-table th,
+  .pdf-score-table th{
+    background:linear-gradient(180deg,#164478,#123b62)!important;
+    color:#fff!important;
+    border-color:#315f82!important;
+    font-weight:900!important;
+  }
+
+  .report-table tbody tr:nth-child(even),
+  .pdf-report-table tbody tr:nth-child(even),
+  .pdf-score-table tbody tr:nth-child(even),
+  .trainer-progress-table tbody tr:nth-child(even){
+    background:#f6fafc!important;
+  }
+
+  /* Score boxes */
+  .pdf-score-section{
+    border-radius:10px!important;
+    border-color:#cedce6!important;
+    box-shadow:0 2px 7px rgba(15,51,82,.04)!important;
+  }
+  .pdf-score-title{
+    background:linear-gradient(90deg,#eaf2f7,#f6f9fb)!important;
+    border-bottom:1px solid #d4e0e8!important;
+    color:#123e62!important;
+    font-weight:900!important;
+  }
+
+  /* Status pills */
+  .rstatus{
+    font-weight:900!important;
+    border-radius:12px!important;
+  }
+
+  /* Trainer progress */
+  .trainer-progress-head{
+    background:linear-gradient(90deg,#0d355a,#1f6b9e)!important;
+    border-radius:10px 10px 0 0!important;
+  }
+
+  /* Footer */
+  .print-footer{
+    margin-top:7px!important;
+    padding-top:4px!important;
+    border-top:1px solid #cfdae3!important;
+    color:#8294a2!important;
+  }
+
+  /* Prevent ugly title/card splitting */
+  .premium-block-head,
+  .full-section-title,
+  .report-card-head,
+  .pdf-score-title,
+  .trainer-progress-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+  .premium-table tr,
+  .report-table tr,
+  .pdf-score-table tr,
+  .trainer-progress-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -8990,7 +9270,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         const att=exactAttendanceMetric(c);
         const act=exactTaskMetric(c.id,"نشاط");
         const quiz=exactTaskMetric(c.id,"كويز");
-        const hw=exactTaskMetric(c.id,"واجب");
 
         const mid=exactGradeMetric(c,"midterm");
         const fin=exactGradeMetric(c,"final");
@@ -9348,7 +9627,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             </td>
             <td>${premiumMetricView(act)}</td>
             <td>${premiumMetricView(quiz)}</td>
-            <td>${premiumMetricView(hw)}</td>
             <td>${premiumMetricView(comments)}</td>
           </tr>
         `;
@@ -9519,7 +9797,6 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               <th style="width:10%">التحضير</th>
               <th>الأنشطة</th>
               <th>الكويزات</th>
-              <th>الواجبات</th>
               <th>التعليقات</th>
             </tr>
           </thead>
