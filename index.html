@@ -1989,6 +1989,64 @@
   }
 }
 
+
+/* =========================================================
+   PDF FIX — ALERT TITLE MUST STAY WITH ITS DATA
+   ========================================================= */
+@media print{
+
+  /*
+    يبدأ قسم التنبيهات من صفحة جديدة دائماً.
+    بهذا لا يظهر عنوان "التنبيهات العاجلة" منفرداً
+    أسفل صفحة ثم تبدأ البيانات في الصفحة التالية.
+  */
+  .alerts-report-block{
+    break-before:page!important;
+    page-break-before:always!important;
+    margin-top:0!important;
+  }
+
+  .alerts-report-title{
+    margin:0 0 9px!important;
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .alerts-report-title + .report-alerts{
+    break-before:avoid!important;
+    page-break-before:avoid!important;
+  }
+
+  /*
+    كل قسم مثل Reading / Listening / Speaking يبقى متماسكاً.
+    إذا لم توجد مساحة كافية له في الصفحة، ينتقل كاملاً للصفحة التالية.
+  */
+  .pdf-alert-group{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    margin-bottom:11px!important;
+  }
+
+  .pdf-alert-group-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .pdf-alert-group-head + .pdf-alert-table{
+    break-before:avoid!important;
+    page-break-before:avoid!important;
+  }
+
+  .pdf-alert-table thead{
+    display:table-header-group!important;
+  }
+
+  .pdf-alert-table tr{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -7289,13 +7347,17 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         </table>
       </div>
 
-      <div class="full-section-title" style="margin-top:7px">
-        <h2>التنبيهات العاجلة</h2>
-        <span>${visibleReportAlerts.length} تنبيه · فرز تلقائي حسب الفترة والدورة</span>
-      </div>
+      <div class="alerts-report-block">
 
-      <div class="report-alerts">
-        ${alertCards}
+        <div class="full-section-title alerts-report-title">
+          <h2>التنبيهات العاجلة</h2>
+          <span>${visibleReportAlerts.length} تنبيه · فرز تلقائي حسب الفترة ثم الدورة</span>
+        </div>
+
+        <div class="report-alerts">
+          ${alertCards}
+        </div>
+
       </div>
 
     </section>
