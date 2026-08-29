@@ -2838,228 +2838,290 @@
 
 
 /* =========================================================
-   PRUDLE PDF — FINAL FIRST-PAGE MATRIX + PAGE FLOW FIX
+   PRUDLE — DETAILED EXECUTIVE PDF BY BRANCH
    ========================================================= */
 @media print{
+  @page{size:A4 landscape;margin:7mm}
 
-  /* ---------- PAGE 1 detailed matrix ---------- */
-  .pdf-first-matrix-wrap{
-    border:1px solid #cddae4;
-    border-radius:9px;
-    overflow:hidden;
-    background:#fff;
-    margin-top:6px;
+  .exec-detailed-page{
+    break-after:page!important;
+    page-break-after:always!important;
   }
 
-  .pdf-first-matrix-head{
+  .exec-title-band{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
-    padding:7px 9px;
-    background:linear-gradient(90deg,#123d66,#164478 62%,#2b78b2);
+    gap:12px;
+    padding:8px 11px;
+    margin:0 0 6px;
+    border-radius:9px;
+    background:linear-gradient(90deg,#0d365d,#164478 60%,#2b78b2);
     color:#fff;
   }
 
-  .pdf-first-matrix-head h3{
+  .exec-title-band h2{
+    margin:0!important;
+    color:#fff!important;
+    background:none!important;
+    padding:0!important;
+    font-size:13px!important;
+  }
+
+  .exec-title-band p{
+    margin:2px 0 0;
+    font-size:6.3px;
+    color:#dce9f4;
+  }
+
+  .exec-title-band .meta{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .exec-title-band .meta span{
+    padding:3px 6px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.13);
+    font-size:5.7px;
+    font-weight:900;
+    color:#fff;
+    white-space:nowrap;
+  }
+
+  .exec-kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:4px;
+    margin-bottom:6px;
+  }
+
+  .exec-kpi{
+    position:relative;
+    min-height:46px;
+    padding:6px 7px;
+    border:1px solid #d8e3eb;
+    border-radius:8px;
+    background:#fff;
+    overflow:hidden;
+  }
+
+  .exec-kpi:before{
+    content:"";
+    position:absolute;
+    right:0;top:0;bottom:0;width:4px;
+    background:#164478;
+  }
+
+  .exec-kpi.green:before{background:#149b70}
+  .exec-kpi.amber:before{background:#dc9413}
+  .exec-kpi.red:before{background:#dc4d57}
+  .exec-kpi.violet:before{background:#7357c5}
+
+  .exec-kpi span{
+    display:block;
+    font-size:5.5px;
+    color:#74869a;
+    font-weight:800;
+  }
+
+  .exec-kpi b{
+    display:block;
+    margin-top:1px;
+    font-size:12px;
+    color:#123a5e;
+  }
+
+  .exec-kpi small{
+    display:block;
+    margin-top:1px;
+    font-size:4.7px;
+    color:#95a3af;
+  }
+
+  .exec-grid-3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:6px;
+    margin-bottom:6px;
+  }
+
+  .exec-grid-2{
+    display:grid;
+    grid-template-columns:1.25fr .75fr;
+    gap:6px;
+    margin-bottom:6px;
+  }
+
+  .exec-panel{
+    border:1px solid #d5e1ea;
+    border-radius:9px;
+    overflow:hidden;
+    background:#fff;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .exec-panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:6px 8px;
+    background:#164478;
+    color:#fff;
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .exec-panel-head h3{
     margin:0;
     color:#fff;
-    font-size:9px;
+    font-size:8px;
   }
 
-  .pdf-first-matrix-head span{
-    font-size:5.8px;
-    color:#d9e8f4;
+  .exec-panel-head span{
+    font-size:5.5px;
+    color:#dce9f3;
   }
 
-  .pdf-first-matrix{
+  .exec-table{
     width:100%;
     border-collapse:collapse;
     table-layout:fixed;
   }
 
-  .pdf-first-matrix thead{
-    display:table-header-group;
-  }
+  .exec-table thead{display:table-header-group!important}
 
-  .pdf-first-matrix th{
-    padding:4px 2px;
-    background:#e8f1f7;
-    color:#123a5e;
-    border:1px solid #cbd8e3;
-    font-size:5.1px;
+  .exec-table th{
+    padding:4px 3px;
+    background:#eaf2f7;
+    color:#153d60;
+    border:1px solid #d1dde6;
+    font-size:5.4px;
     font-weight:900;
     text-align:center;
-    line-height:1.2;
   }
 
-  .pdf-first-matrix td{
-    padding:4px 2px;
-    border:1px solid #dde6ed;
-    font-size:5.2px;
+  .exec-table td{
+    padding:4px 3px;
+    border:1px solid #e0e7ed;
+    font-size:5.5px;
     text-align:center;
     vertical-align:middle;
-    line-height:1.25;
+    line-height:1.35;
   }
 
-  .pdf-first-matrix tbody tr:nth-child(even){
-    background:#f8fbfd;
+  .exec-table tbody tr:nth-child(even){background:#f8fbfd}
+  .exec-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  .exec-table .text-right{text-align:right}
+
+  .exec-bar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
   }
 
-  .pdf-first-matrix tr{
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
-  }
-
-  .pdf-first-matrix .course-cell-first{
-    text-align:right;
-  }
-
-  .pdf-first-matrix .course-cell-first b{
-    display:block;
-    font-size:6.4px;
-    color:#123b60;
-  }
-
-  .pdf-first-matrix .course-cell-first small{
-    display:block;
-    margin-top:1px;
-    font-size:4.7px;
-    color:#7c8d9d;
-    line-height:1.25;
-  }
-
-  .pdf-progress-cell{
-    min-width:50px;
-  }
-
-  .pdf-progress-cell b{
-    display:block;
-    margin-bottom:2px;
-    font-size:5.6px;
-    color:#173d5e;
-  }
-
-  .pdf-progress-cell .mini-track{
+  .exec-bar i{
+    position:relative;
+    width:35px;
     height:4px;
-    border-radius:6px;
-    background:#e4ebf0;
+    border-radius:5px;
+    background:#e5ebf0;
     overflow:hidden;
-    margin:0 auto;
-    width:86%;
   }
 
-  .pdf-progress-cell .mini-track i{
-    display:block;
-    height:100%;
-    border-radius:6px;
+  .exec-bar i:after{
+    content:"";
+    position:absolute;
+    right:0;top:0;bottom:0;
+    width:var(--p);
     background:linear-gradient(90deg,#dc9413,#149b70);
   }
 
-  .pdf-progress-cell.low .mini-track i{
-    background:linear-gradient(90deg,#dc4d57,#dc9413);
+  .exec-badge{
+    display:inline-block;
+    padding:2px 5px;
+    border-radius:9px;
+    font-size:5px;
+    font-weight:900;
+    white-space:nowrap;
   }
 
-  .pdf-progress-cell.good .mini-track i{
-    background:linear-gradient(90deg,#2b78b2,#149b70);
+  .exec-badge.good{background:#e5f7ef;color:#0f7d59}
+  .exec-badge.warn{background:#fff5df;color:#a86a08}
+  .exec-badge.bad{background:#fff0f1;color:#b83d47}
+  .exec-badge.info{background:#eaf3fa;color:#21669b}
+
+  .branch-title{
+    display:flex;
+    align-items:center;
+    gap:7px;
   }
 
-  .pdf-progress-cell.na{
-    color:#9aa8b5;
-    font-weight:800;
+  .branch-icon{
+    width:25px;
+    height:25px;
+    border-radius:7px;
+    background:#eaf3fa;
+    color:#164478;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    font-weight:900;
   }
 
-  .pdf-first-matrix-note{
+  .exec-recs{
+    margin:0;
+    padding:8px 20px 8px 10px;
+    font-size:5.8px;
+    color:#28475f;
+    line-height:1.65;
+  }
+
+  .exec-note{
     padding:5px 7px;
     background:#f7fafc;
-    border-top:1px solid #dce5ec;
+    border:1px solid #dce5ec;
+    border-radius:7px;
     color:#6e8192;
-    font-size:5.1px;
-    line-height:1.45;
+    font-size:5.2px;
+    line-height:1.5;
   }
 
-  /* Keep executive first page compact enough to fit the matrix */
-  .pdf-executive-page .pdf-course-summary-grid,
-  .pdf-executive-page .pdf-exec-bottom-grid{
-    display:none!important;
-  }
-
-  .pdf-executive-page .pdf-executive-kpis{
-    margin-bottom:4px!important;
-  }
-
-  /* ---------- PAGE BREAK FIX ---------- */
-  /*
-    Important:
-    A section heading must never stay alone at the bottom of a page.
-    The heading + first table rows move together to the next page.
-  */
-  .pdf-alert-group{
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
-    margin-bottom:8px!important;
-  }
-
-  .pdf-alert-group-head{
-    break-after:avoid!important;
-    page-break-after:avoid!important;
-  }
-
-  .pdf-alert-group-head + .pdf-alert-table{
-    break-before:avoid!important;
-    page-break-before:avoid!important;
-  }
-
-  .pdf-alert-table thead{
-    display:table-header-group!important;
-  }
-
-  .pdf-alert-table tr{
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
-  }
-
-  /* General section headings stay with data */
-  .pdf-section-band,
-  .full-section-title,
-  .report-card-head,
-  .pdf-score-title,
-  .trainer-progress-head,
-  .trainer-subtitle{
-    break-after:avoid!important;
-    page-break-after:avoid!important;
-  }
-
-  .pdf-section-band + *,
-  .full-section-title + *,
-  .report-card-head + *,
-  .pdf-score-title + *,
-  .trainer-progress-head + *,
-  .trainer-subtitle + *{
-    break-before:avoid!important;
-    page-break-before:avoid!important;
-  }
-
-  /* A long table can continue to next page; table header repeats */
+  /* Keep detailed pages well-flowed */
+  .pdf-alert-group,
   .report-card,
   .pdf-score-section,
-  .trainer-progress-course,
-  .trainer-course-report{
+  .trainer-progress-course{
     break-inside:auto!important;
     page-break-inside:auto!important;
   }
 
+  .pdf-alert-group-head,
+  .full-section-title,
+  .report-card-head,
+  .pdf-score-title,
+  .trainer-progress-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .pdf-alert-table thead,
   .report-table thead,
   .pdf-score-table thead,
-  .trainer-progress-table thead,
-  .trainer-mini-table thead{
+  .trainer-progress-table thead{
     display:table-header-group!important;
   }
 
+  .pdf-alert-table tr,
   .report-table tr,
   .pdf-score-table tr,
-  .trainer-progress-table tr,
-  .trainer-mini-table tr{
+  .trainer-progress-table tr{
     break-inside:avoid!important;
     page-break-inside:avoid!important;
   }
@@ -8397,475 +8459,530 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     ملخص إداري مفصل + كل الدورات على هيئة بطاقات واضحة.
     لا يبدأ جدول متابعة الدورات في هذه الصفحة.
   */
-  const firstPageMetricPct=(done,missing)=>{
-    const d=Number(done||0);
-    const m=Number(missing||0);
-    const total=d+m;
-    return total>0
-      ? Math.round(d/total*100)
-      : null;
+  const metricResult=(done,total)=>{
+    const d=Math.max(0,Number(done||0));
+    const t=Math.max(0,Number(total||0));
+    if(!t)return {done:0,total:0,pct:0};
+    return {done:d,total:t,pct:Math.round(d/t*100)};
   };
 
-  const firstPageTaskPct=(courseId,kind)=>{
+  const taskMetricForCourses=(courseIds,kind)=>{
     const items=
       displayedTasks.filter(
-        t=>t.courseId===courseId && t.kind===kind
+        t=>courseIds.has(t.courseId) && t.kind===kind
       );
 
-    if(!items.length)return null;
-
-    const total=
-      items.reduce(
-        (s,t)=>s+Number(t.total||0),
-        0
-      );
-
-    const done=
-      items.reduce(
-        (s,t)=>s+Number(t.completed||0),
-        0
-      );
-
-    return total>0
-      ? Math.round(done/total*100)
-      : null;
+    const total=items.reduce((s,t)=>s+Number(t.total||0),0);
+    const done=items.reduce((s,t)=>s+Number(t.completed||0),0);
+    return metricResult(done,total);
   };
 
-  const firstPageGradePct=(c,key)=>{
-    const item=
-      c.gradeSummary?.[key];
-
-    if(!item)return null;
-
-    return firstPageMetricPct(
-      item.done,
-      item.missing
-    );
-  };
-
-  const firstPageSkillsPct=(c)=>{
+  const skillMetricForCourses=(courses,skill)=>{
     const done=
-      SUPERVISION_SKILLS.reduce(
-        (s,skill)=>
-          s+
-          Number(
-            c.skillSummary?.[skill]?.done||
-            0
-          ),
+      courses.reduce(
+        (s,c)=>s+Number(c.skillSummary?.[skill]?.done||0),
         0
       );
 
     const missing=
-      SUPERVISION_SKILLS.reduce(
-        (s,skill)=>
-          s+
-          Number(
-            c.skillSummary?.[skill]?.missing||
-            0
-          ),
+      courses.reduce(
+        (s,c)=>s+Number(c.skillSummary?.[skill]?.missing||0),
         0
       );
 
-    return firstPageMetricPct(done,missing);
+    return metricResult(done,done+missing);
   };
 
-  const firstPagePlanPct=(c)=>{
-    const rows=
-      buildAllCourseDays(c);
-
-    if(!rows.length)return null;
-
+  const gradeMetricForCourses=(courses,key)=>{
     const done=
-      rows.filter(row=>
-        getProgressRecord(
-          c.id,
-          row.week,
-          row.day
-        )?.completed===true
-      ).length;
-
-    return Math.round(
-      done/
-      rows.length*
-      100
-    );
-  };
-
-  const progressCell=(value)=>{
-    if(
-      value===null ||
-      value===undefined ||
-      !Number.isFinite(Number(value))
-    ){
-      return `
-        <div class="pdf-progress-cell na">
-          —
-        </div>
-      `;
-    }
-
-    const p=
-      Math.max(
-        0,
-        Math.min(
-          100,
-          Math.round(Number(value))
-        )
+      courses.reduce(
+        (s,c)=>s+Number(c.gradeSummary?.[key]?.done||0),
+        0
       );
 
-    const cls=
-      p>=85
-        ? "good"
-        : p>=60
-          ? ""
-          : "low";
+    const missing=
+      courses.reduce(
+        (s,c)=>s+Number(c.gradeSummary?.[key]?.missing||0),
+        0
+      );
 
+    return metricResult(done,done+missing);
+  };
+
+  const attendanceMetricForCourses=(courses)=>{
+    let total=0;
+    let missing=0;
+
+    courses.forEach(c=>{
+      const students=Number(c.students||0);
+      const days=Array.isArray(c.expectedAttendanceDates)
+        ? c.expectedAttendanceDates.length
+        : 0;
+
+      total+=students*days;
+      missing+=Number(c.missingAttendanceStudentsTotal||0);
+    });
+
+    return metricResult(Math.max(0,total-missing),total);
+  };
+
+  const commentsMetricForCourses=(courses)=>{
+    const ids=new Set(courses.map(c=>c.id));
+    const students=DATA.students.filter(s=>ids.has(s.courseId));
+    const done=students.filter(s=>clean(s.trainerComment)).length;
+    return metricResult(done,students.length);
+  };
+
+  const progressHtml=(m)=>{
+    const p=Math.max(0,Math.min(100,Number(m.pct||0)));
     return `
-      <div class="pdf-progress-cell ${cls}">
+      <div class="exec-bar">
+        <i style="--p:${p}%"></i>
         <b>${p}%</b>
-        <div class="mini-track">
-          <i style="width:${p}%"></i>
-        </div>
       </div>
     `;
   };
 
-  const firstPageRows=
-    [...pdfCourses]
-      .sort((a,b)=>
-        periodSortValue(a.period)-
-        periodSortValue(b.period) ||
-        clean(a.name).localeCompare(
-          clean(b.name),
-          "ar",
-          {numeric:true}
-        ) ||
-        clean(a.trainer).localeCompare(
-          clean(b.trainer),
-          "ar",
-          {numeric:true}
-        )
-      )
-      .map((c,index)=>{
+  const branchGroups=(()=>{
+    const map=new Map();
 
-        const attendance=
-          Number(c.attendance||0);
+    pdfCourses.forEach(c=>{
+      const branch=clean(c.branch)||"غير محدد";
 
-        const activitiesPct=
-          firstPageTaskPct(
-            c.id,
-            "نشاط"
-          );
+      if(!map.has(branch)){
+        map.set(branch,{
+          name:branch,
+          courses:[],
+          students:0,
+          trainers:new Set(),
+          periods:new Set()
+        });
+      }
 
-        const quizzesPct=
-          firstPageTaskPct(
-            c.id,
-            "كويز"
-          );
+      const g=map.get(branch);
+      g.courses.push(c);
+      g.students+=Number(c.students||0);
 
-        const homeworkPct=
-          firstPageTaskPct(
-            c.id,
-            "واجب"
-          );
+      if(clean(c.trainer))g.trainers.add(clean(c.trainer));
+      if(clean(c.period))g.periods.add(clean(c.period));
+    });
 
-        const midtermPct=
-          firstPageGradePct(
-            c,
-            "midterm"
-          );
+    return [...map.values()]
+      .sort((a,b)=>a.name.localeCompare(b.name,"ar",{numeric:true}));
+  })();
 
-        const finalPct=
-          firstPageGradePct(
-            c,
-            "final"
-          );
+  const totalTrainers=
+    new Set(
+      pdfCourses.map(c=>clean(c.trainer)).filter(Boolean)
+    ).size;
 
-        const listeningPct=
-          firstPageGradePct(
-            c,
-            "listening"
-          );
+  const overallAttendance=
+    attendanceMetricForCourses(pdfCourses);
 
-        const speakingPct=
-          firstPageGradePct(
-            c,
-            "speaking"
-          );
+  const overallComments=
+    commentsMetricForCourses(pdfCourses);
 
-        const homeworkGradePct=
-          firstPageGradePct(
-            c,
-            "homework"
-          );
+  const overallActivities=
+    taskMetricForCourses(
+      new Set(pdfCourses.map(c=>c.id)),
+      "نشاط"
+    );
 
-        const skillsPct=
-          firstPageSkillsPct(c);
+  const overallQuizzes=
+    taskMetricForCourses(
+      new Set(pdfCourses.map(c=>c.id)),
+      "كويز"
+    );
 
-        const commentsPct=
-          Number(c.comments||0);
+  const overallHomework=
+    taskMetricForCourses(
+      new Set(pdfCourses.map(c=>c.id)),
+      "واجب"
+    );
 
-        const planPct=
-          firstPagePlanPct(c);
+  const generalBranchRows=
+    branchGroups.map(g=>{
 
-        return `
-          <tr>
-            <td>${index+1}</td>
+      const ids=new Set(g.courses.map(c=>c.id));
+      const attendance=attendanceMetricForCourses(g.courses);
+      const activities=taskMetricForCourses(ids,"نشاط");
+      const quizzes=taskMetricForCourses(ids,"كويز");
+      const homework=taskMetricForCourses(ids,"واجب");
+      const comments=commentsMetricForCourses(g.courses);
 
-            <td class="course-cell-first">
-              <b>${esc(c.name)}</b>
-              <small>
-                ${esc(c.branch)}
-                · ${esc(c.section)}
-              </small>
-            </td>
+      return `
+        <tr>
+          <td class="text-right">
+            <div class="branch-title">
+              <span class="branch-icon">⌂</span>
+              <b>${esc(g.name)}</b>
+            </div>
+          </td>
+          <td>${g.courses.length}</td>
+          <td>${g.students}</td>
+          <td>${g.trainers.size}</td>
+          <td>${[...g.periods].sort((a,b)=>periodSortValue(a)-periodSortValue(b)).map(esc).join(" · ")||"—"}</td>
+          <td>${progressHtml(attendance)}</td>
+          <td>${progressHtml(activities)}</td>
+          <td>${progressHtml(quizzes)}</td>
+          <td>${progressHtml(homework)}</td>
+          <td>${progressHtml(comments)}</td>
+        </tr>
+      `;
+    }).join("");
 
-            <td>
-              <b>${esc(c.trainer)}</b>
-            </td>
+  const generalSkillRows=
+    SUPERVISION_SKILLS.map(skill=>{
+      const m=skillMetricForCourses(pdfCourses,skill);
+      return `
+        <tr>
+          <td><b>${esc(skill)}</b></td>
+          <td>${m.done}</td>
+          <td>${m.total-m.done}</td>
+          <td>${m.total}</td>
+          <td>${progressHtml(m)}</td>
+          <td>
+            <span class="exec-badge ${m.pct>=85?"good":m.pct>=60?"warn":"bad"}">
+              ${m.pct>=85?"جيد":m.pct>=60?"متوسط":"يحتاج متابعة"}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join("");
 
-            <td>
-              ${esc(c.period||"—")}
-            </td>
+  const generalGradeRows=
+    [
+      ["midterm","Midterm"],
+      ["final","Final"],
+      ["listening","Listening"],
+      ["speaking","Speaking"],
+      ["homework","Homework"]
+    ].map(([key,label])=>{
+      const m=gradeMetricForCourses(pdfCourses,key);
+      return `
+        <tr>
+          <td><b>${label}</b></td>
+          <td>${m.done}</td>
+          <td>${m.total-m.done}</td>
+          <td>${m.total}</td>
+          <td>${progressHtml(m)}</td>
+        </tr>
+      `;
+    }).join("");
 
-            <td>${progressCell(attendance)}</td>
-            <td>${progressCell(activitiesPct)}</td>
-            <td>${progressCell(quizzesPct)}</td>
-            <td>${progressCell(homeworkPct)}</td>
-            <td>${progressCell(midtermPct)}</td>
-            <td>${progressCell(finalPct)}</td>
-            <td>${progressCell(listeningPct)}</td>
-            <td>${progressCell(speakingPct)}</td>
-            <td>${progressCell(homeworkGradePct)}</td>
-            <td>${progressCell(skillsPct)}</td>
-            <td>${progressCell(commentsPct)}</td>
-            <td>${progressCell(planPct)}</td>
-          </tr>
-        `;
-      }).join("");
+  const generalPage=`
+    <section class="exec-detailed-page">
 
-  /*
-    PAGE 1
-    Detailed administrative matrix by course and period.
-    Every major trainer duty appears with a progress bar + percentage.
-  */
-  const overviewSection=`
-    <section class="pdf-executive-page">
+      <div class="exec-title-band">
+        <div>
+          <h2>1. التقرير التنفيذي العام المفصل</h2>
+          <p>
+            بيان شامل للفروع والدورات والمدربين والطلاب والمهام الأكاديمية
+          </p>
+        </div>
 
-      <div class="pdf-executive-title">
-        <h2>1. الملخص التنفيذي التفصيلي للمهام</h2>
-        <span>
-          جميع المهام حسب الدورة والفترة والمدرب
-        </span>
+        <div class="meta">
+          <span>${branchGroups.length} فرع</span>
+          <span>${pdfCourses.length} دورة</span>
+          <span>${totalStudents} طالب</span>
+          <span>${totalTrainers} مدرب</span>
+        </div>
       </div>
 
-      <div class="pdf-executive-kpis">
-
-        <div class="pdf-exec-kpi">
-          <span>الدورات</span>
-          <b>${pdfCourses.length}</b>
-          <small>الدورات المحددة</small>
-        </div>
-
-        <div class="pdf-exec-kpi violet">
-          <span>الطلاب</span>
-          <b>${totalStudents}</b>
-          <small>إجمالي الطلاب</small>
-        </div>
-
-        <div class="pdf-exec-kpi">
-          <span>العناصر الأكاديمية</span>
-          <b>${displayedTasks.length}</b>
-          <small>أنشطة وكويزات وواجبات</small>
-        </div>
-
-        <div class="pdf-exec-kpi green">
-          <span>متوسط الإنجاز</span>
-          <b>${overallCompletion}%</b>
-          <small>متوسط عام</small>
-        </div>
-
-        <div class="pdf-exec-kpi red">
-          <span>درجات ناقصة</span>
-          <b>${gradeMissing}</b>
-          <small>جميع الدرجات</small>
-        </div>
-
-        <div class="pdf-exec-kpi amber">
-          <span>مهارات ناقصة</span>
-          <b>${skillMissing}</b>
-          <small>المهارات الست</small>
-        </div>
-
-        <div class="pdf-exec-kpi red">
-          <span>تحضير ناقص</span>
-          <b>${attendanceMissingCases}</b>
-          <small>حالات غير مرصودة</small>
-        </div>
-
-        <div class="pdf-exec-kpi amber">
-          <span>تعليقات ناقصة</span>
-          <b>${commentMissing}</b>
-          <small>طلاب دون تعليق</small>
-        </div>
-
+      <div class="exec-kpi-grid">
+        <div class="exec-kpi"><span>الفروع</span><b>${branchGroups.length}</b><small>الفروع المشمولة</small></div>
+        <div class="exec-kpi"><span>الدورات</span><b>${pdfCourses.length}</b><small>الدورات المحددة</small></div>
+        <div class="exec-kpi violet"><span>الطلاب</span><b>${totalStudents}</b><small>إجمالي الطلاب</small></div>
+        <div class="exec-kpi"><span>المدربون</span><b>${totalTrainers}</b><small>إجمالي المدربين</small></div>
+        <div class="exec-kpi green"><span>الحضور</span><b>${overallAttendance.pct}%</b><small>${overallAttendance.done}/${overallAttendance.total}</small></div>
+        <div class="exec-kpi amber"><span>الأنشطة</span><b>${overallActivities.pct}%</b><small>${overallActivities.done}/${overallActivities.total}</small></div>
+        <div class="exec-kpi amber"><span>الكويزات</span><b>${overallQuizzes.pct}%</b><small>${overallQuizzes.done}/${overallQuizzes.total}</small></div>
+        <div class="exec-kpi green"><span>الواجبات</span><b>${overallHomework.pct}%</b><small>${overallHomework.done}/${overallHomework.total}</small></div>
       </div>
 
-      <div class="pdf-first-matrix-wrap">
+      <div class="exec-grid-3">
 
-        <div class="pdf-first-matrix-head">
-          <h3>
-            حالة جميع المهام الأكاديمية حسب الدورة والفترة
-          </h3>
+        <div class="exec-panel">
+          <div class="exec-panel-head">
+            <h3>ملخص الفروع</h3>
+            <span>عدد الطلاب والدورات والمدربين والفترات</span>
+          </div>
 
-          <span>
-            شريط التقدم يوضح نسبة الإنجاز لكل مهمة
-          </span>
+          <table class="exec-table">
+            <thead>
+              <tr>
+                <th>الفرع</th>
+                <th>الدورات</th>
+                <th>الطلاب</th>
+                <th>المدربون</th>
+                <th>الفترات</th>
+                <th>الحضور</th>
+                <th>الأنشطة</th>
+                <th>الكويزات</th>
+                <th>الواجبات</th>
+                <th>التعليقات</th>
+              </tr>
+            </thead>
+            <tbody>${generalBranchRows}</tbody>
+          </table>
         </div>
 
-        <table class="pdf-first-matrix">
-          <thead>
-            <tr>
-              <th style="width:2.5%">#</th>
-              <th style="width:9%">الدورة / المستوى</th>
-              <th style="width:6.5%">المدرب</th>
-              <th style="width:8%">الفترة</th>
+        <div class="exec-panel">
+          <div class="exec-panel-head">
+            <h3>المهارات — تقرير عام</h3>
+            <span>تم الرصد / الناقص / الإجمالي</span>
+          </div>
 
-              <th>الحضور</th>
-              <th>الأنشطة</th>
-              <th>الكويزات</th>
-              <th>الواجبات</th>
+          <table class="exec-table">
+            <thead>
+              <tr>
+                <th>المهارة</th>
+                <th>مرصود</th>
+                <th>ناقص</th>
+                <th>الإجمالي</th>
+                <th>الإنجاز</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>${generalSkillRows}</tbody>
+          </table>
+        </div>
 
-              <th>Midterm</th>
-              <th>Final</th>
-              <th>Listening</th>
-              <th>Speaking</th>
-              <th>درجة الواجب</th>
+        <div class="exec-panel">
+          <div class="exec-panel-head">
+            <h3>الدرجات — تقرير عام</h3>
+            <span>جميع الدورات</span>
+          </div>
 
-              <th>المهارات</th>
-              <th>التعليقات</th>
-              <th>تقدم الخطة</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${firstPageRows}
-          </tbody>
-        </table>
-
-        <div class="pdf-first-matrix-note">
-          <b>ملاحظة:</b>
-          الرمز (—) يعني عدم وجود عنصر أو بيانات قابلة للحساب في الدورة الحالية.
-          يتم ترتيب الدورات تلقائياً حسب الفترة ثم اسم الدورة ثم المدرب.
-          المهارات تمثل متوسط اكتمال Listening وSpeaking وReading وWriting وGrammar وVocabulary.
+          <table class="exec-table">
+            <thead>
+              <tr>
+                <th>البند</th>
+                <th>مرصود</th>
+                <th>ناقص</th>
+                <th>الإجمالي</th>
+                <th>الإنجاز</th>
+              </tr>
+            </thead>
+            <tbody>${generalGradeRows}</tbody>
+          </table>
         </div>
 
       </div>
 
-    </section>
-
-    <section class="pdf-course-monitoring-page">
-
-      <div class="pdf-section-band">
-        <h2>2. متابعة الدورات</h2>
-        <span>
-          الإنجاز والحضور والتعليقات والتنبيهات · فرز تلقائي حسب الفترة ثم الدورة
-        </span>
-      </div>
-
-      <div class="report-card">
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>الدورة / المستوى</th>
-              <th>المدرب</th>
-              <th>الفترة</th>
-              <th>الطلاب</th>
-              <th>المهام</th>
-              <th>الإنجاز</th>
-              <th>الحضور</th>
-              <th>التعليقات</th>
-              <th>التنبيهات</th>
-              <th>الحالة</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              [...pdfCourses]
-                .sort((a,b)=>
-                  periodSortValue(a.period)-periodSortValue(b.period) ||
-                  clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true}) ||
-                  clean(a.trainer).localeCompare(clean(b.trainer),"ar",{numeric:true})
-                )
-                .map((c,index)=>{
-
-                  const taskCount=
-                    displayedTasks.filter(
-                      t=>t.courseId===c.id
-                    ).length;
-
-                  const status=
-                    Number(c.alerts||0)>0 ||
-                    Number(
-                      c.missingAttendanceStudentsTotal||
-                      0
-                    )>0
-                      ? "يحتاج متابعة"
-                      : "مستقر";
-
-                  return `
-                    <tr class="${status==="مستقر"?"success-row":"warning-row"}">
-                      <td>${index+1}</td>
-
-                      <td class="text-right">
-                        <b>${esc(c.name)}</b>
-                        <small style="display:block;color:#71839a;margin-top:2px">
-                          ${esc(c.branch)} · ${esc(c.section)}
-                        </small>
-                      </td>
-
-                      <td>${esc(c.trainer)}</td>
-                      <td>${esc(c.period)}</td>
-                      <td>${c.students}</td>
-                      <td>${taskCount}</td>
-                      <td>${c.completion===null?"—":c.completion+"%"}</td>
-                      <td>${c.attendance}%</td>
-                      <td>${c.comments}%</td>
-                      <td>${c.alerts||0}</td>
-
-                      <td>
-                        <span class="rstatus ${status==="مستقر"?"ok":"warn"}">
-                          ${status}
-                        </span>
-                      </td>
-                    </tr>
-                  `;
-                }).join("")
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <div class="alerts-report-block">
-
-        <div class="pdf-section-band alerts-report-title">
-          <h2>التنبيهات العاجلة</h2>
-          <span>
-            ${visibleReportAlerts.length} تنبيه · مجمعة حسب القسم
-          </span>
-        </div>
-
-        <div class="report-alerts">
-          ${alertCards}
-        </div>
-
+      <div class="exec-note">
+        هذا الملخص يعرض الأعداد الفعلية ونسب الإنجاز لجميع الفروع.
+        تبدأ الصفحات التالية بتقرير مستقل لكل فرع، ثم بقية التفاصيل الأكاديمية الكاملة.
       </div>
 
     </section>
   `;
 
-      /* =====================================================
+  const branchPages=
+    branchGroups.map((g,branchIndex)=>{
+
+      const ids=new Set(g.courses.map(c=>c.id));
+      const branchStudents=DATA.students.filter(s=>ids.has(s.courseId));
+      const attendance=attendanceMetricForCourses(g.courses);
+      const activities=taskMetricForCourses(ids,"نشاط");
+      const quizzes=taskMetricForCourses(ids,"كويز");
+      const homework=taskMetricForCourses(ids,"واجب");
+      const comments=commentsMetricForCourses(g.courses);
+
+      const courseRows=
+        [...g.courses]
+          .sort((a,b)=>
+            periodSortValue(a.period)-periodSortValue(b.period) ||
+            clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+          )
+          .map((c,index)=>{
+
+            const courseStudents=DATA.students.filter(s=>s.courseId===c.id);
+
+            const att=attendanceMetricForCourses([c]);
+            const act=taskMetricForCourses(new Set([c.id]),"نشاط");
+            const quiz=taskMetricForCourses(new Set([c.id]),"كويز");
+            const hw=taskMetricForCourses(new Set([c.id]),"واجب");
+            const comm=commentsMetricForCourses([c]);
+
+            return `
+              <tr>
+                <td>${index+1}</td>
+                <td class="text-right"><b>${esc(c.name)}</b></td>
+                <td>${esc(c.trainer)}</td>
+                <td>${esc(c.period)}</td>
+                <td>${courseStudents.length}</td>
+                <td>${progressHtml(att)}</td>
+                <td>${progressHtml(act)}</td>
+                <td>${progressHtml(quiz)}</td>
+                <td>${progressHtml(hw)}</td>
+                <td>${progressHtml(comm)}</td>
+                <td>${c.alerts||0}</td>
+              </tr>
+            `;
+          }).join("");
+
+      const skillRows=
+        SUPERVISION_SKILLS.map(skill=>{
+          const m=skillMetricForCourses(g.courses,skill);
+          return `
+            <tr>
+              <td><b>${esc(skill)}</b></td>
+              <td>${m.done}</td>
+              <td>${m.total-m.done}</td>
+              <td>${m.total}</td>
+              <td>${progressHtml(m)}</td>
+            </tr>
+          `;
+        }).join("");
+
+      const trainerRows=(()=>{
+        const map=new Map();
+
+        g.courses.forEach(c=>{
+          const trainer=clean(c.trainer)||"غير محدد";
+          if(!map.has(trainer)){
+            map.set(trainer,{
+              trainer,
+              courses:[],
+              students:0,
+              periods:new Set()
+            });
+          }
+
+          const t=map.get(trainer);
+          t.courses.push(c);
+          t.students+=Number(c.students||0);
+          if(clean(c.period))t.periods.add(clean(c.period));
+        });
+
+        return [...map.values()]
+          .sort((a,b)=>a.trainer.localeCompare(b.trainer,"ar",{numeric:true}))
+          .map((t,index)=>{
+            const att=attendanceMetricForCourses(t.courses);
+            return `
+              <tr>
+                <td>${index+1}</td>
+                <td class="text-right"><b>${esc(t.trainer)}</b></td>
+                <td>${t.courses.length}</td>
+                <td>${t.students}</td>
+                <td>${[...t.periods].sort((a,b)=>periodSortValue(a)-periodSortValue(b)).map(esc).join(" · ")||"—"}</td>
+                <td>${progressHtml(att)}</td>
+              </tr>
+            `;
+          }).join("");
+      })();
+
+      return `
+        <section class="exec-detailed-page">
+
+          <div class="exec-title-band">
+            <div>
+              <h2>التقرير التنفيذي التفصيلي — فرع ${esc(g.name)}</h2>
+              <p>
+                بيان الدورات والمدربين والطلاب والفترات والمهام والمهارات
+              </p>
+            </div>
+
+            <div class="meta">
+              <span>${g.courses.length} دورة</span>
+              <span>${g.students} طالب</span>
+              <span>${g.trainers.size} مدرب</span>
+              <span>${g.periods.size} فترة</span>
+            </div>
+          </div>
+
+          <div class="exec-kpi-grid">
+            <div class="exec-kpi"><span>الطلاب</span><b>${g.students}</b><small>في الفرع</small></div>
+            <div class="exec-kpi"><span>الدورات</span><b>${g.courses.length}</b><small>في الفرع</small></div>
+            <div class="exec-kpi"><span>المدربون</span><b>${g.trainers.size}</b><small>مدرب مختلف</small></div>
+            <div class="exec-kpi green"><span>الحضور</span><b>${attendance.pct}%</b><small>${attendance.done}/${attendance.total}</small></div>
+            <div class="exec-kpi amber"><span>الأنشطة</span><b>${activities.pct}%</b><small>${activities.done}/${activities.total}</small></div>
+            <div class="exec-kpi amber"><span>الكويزات</span><b>${quizzes.pct}%</b><small>${quizzes.done}/${quizzes.total}</small></div>
+            <div class="exec-kpi green"><span>الواجبات</span><b>${homework.pct}%</b><small>${homework.done}/${homework.total}</small></div>
+            <div class="exec-kpi violet"><span>التعليقات</span><b>${comments.pct}%</b><small>${comments.done}/${comments.total}</small></div>
+          </div>
+
+          <div class="exec-grid-2">
+
+            <div class="exec-panel">
+              <div class="exec-panel-head">
+                <h3>الدورات في الفرع</h3>
+                <span>فرز تلقائي حسب الفترة ثم الدورة</span>
+              </div>
+
+              <table class="exec-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>الدورة / المستوى</th>
+                    <th>المدرب</th>
+                    <th>الفترة</th>
+                    <th>الطلاب</th>
+                    <th>الحضور</th>
+                    <th>الأنشطة</th>
+                    <th>الكويزات</th>
+                    <th>الواجبات</th>
+                    <th>التعليقات</th>
+                    <th>التنبيهات</th>
+                  </tr>
+                </thead>
+                <tbody>${courseRows}</tbody>
+              </table>
+            </div>
+
+            <div class="exec-panel">
+              <div class="exec-panel-head">
+                <h3>المدربون في الفرع</h3>
+                <span>عدد الدورات والطلاب والفترات</span>
+              </div>
+
+              <table class="exec-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>المدرب</th>
+                    <th>الدورات</th>
+                    <th>الطلاب</th>
+                    <th>الفترات</th>
+                    <th>الحضور</th>
+                  </tr>
+                </thead>
+                <tbody>${trainerRows}</tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <div class="exec-panel">
+            <div class="exec-panel-head">
+              <h3>المهارات — تفصيل الفرع</h3>
+              <span>عدد الطلاب المرصود لهم والناقص والإجمالي</span>
+            </div>
+
+            <table class="exec-table">
+              <thead>
+                <tr>
+                  <th>المهارة</th>
+                  <th>مرصود</th>
+                  <th>ناقص</th>
+                  <th>الإجمالي</th>
+                  <th>نسبة الإنجاز</th>
+                </tr>
+              </thead>
+              <tbody>${skillRows}</tbody>
+            </table>
+          </div>
+
+        </section>
+      `;
+    }).join("");
+
+  const overviewSection=
+    generalPage+
+    branchPages;
+
+    /* =====================================================
      2) TASKS / COURSES
      ===================================================== */
 
