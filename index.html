@@ -2246,6 +2246,304 @@
   .attendance-days{display:block;font-size:3.8px!important;margin-top:2px}
 }
 
+
+/* =========================================================
+   PRUDLE PDF — EXECUTIVE FIRST PAGE / NO DUPLICATED ATTENDANCE
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:6mm}
+
+  .same-counts-page{
+    break-after:page!important;
+    page-break-after:always!important;
+  }
+
+  .exec-first-hero{
+    position:relative;
+    overflow:hidden;
+    border-radius:10px;
+    padding:8px 11px;
+    margin:0 0 5px;
+    background:linear-gradient(110deg,#0b3155,#164478 58%,#2b78b2);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .exec-first-hero:after{
+    content:"";
+    position:absolute;
+    width:130px;height:130px;border-radius:50%;
+    left:-45px;top:-72px;
+    background:rgba(255,255,255,.07);
+  }
+
+  .exec-first-hero h2{
+    margin:0!important;
+    padding:0!important;
+    background:none!important;
+    color:#fff!important;
+    font-size:11px!important;
+  }
+
+  .exec-first-hero p{
+    margin:2px 0 0;
+    font-size:5px;
+    color:#d9e7f2;
+  }
+
+  .exec-first-tags{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    position:relative;
+    z-index:1;
+  }
+
+  .exec-first-tags span{
+    display:inline-block;
+    padding:3px 6px;
+    border-radius:12px;
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.18);
+    font-size:4.6px;
+    font-weight:900;
+    color:#fff;
+    white-space:nowrap;
+  }
+
+  .exec-kpi-strip{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:4px;
+    margin-bottom:5px;
+  }
+
+  .exec-kpi-card{
+    position:relative;
+    overflow:hidden;
+    min-height:39px;
+    padding:5px 7px;
+    border:1px solid #d7e2ea;
+    border-radius:8px;
+    background:#fff;
+  }
+
+  .exec-kpi-card:before{
+    content:"";
+    position:absolute;right:0;top:0;bottom:0;width:4px;
+    background:#164478;
+  }
+
+  .exec-kpi-card.green:before{background:#149b70}
+  .exec-kpi-card.amber:before{background:#dc9413}
+  .exec-kpi-card.red:before{background:#dc4d57}
+  .exec-kpi-card.violet:before{background:#7357c5}
+
+  .exec-kpi-card span{
+    display:block;
+    font-size:4.4px;
+    color:#71839a;
+    font-weight:800;
+  }
+
+  .exec-kpi-card b{
+    display:block;
+    margin-top:1px;
+    font-size:9px;
+    color:#113a5d;
+  }
+
+  .exec-kpi-card small{
+    display:block;
+    margin-top:1px;
+    font-size:3.8px;
+    color:#94a2ae;
+  }
+
+  .exec-section-card{
+    margin-top:5px;
+    border:1px solid #cedbe5;
+    border-radius:9px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 2px 7px rgba(15,51,82,.045);
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .exec-section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 7px;
+    color:#fff;
+  }
+
+  .exec-section-head.operations{background:linear-gradient(90deg,#164478,#2b78b2)}
+  .exec-section-head.exams{background:linear-gradient(90deg,#4c3c89,#7357c5)}
+  .exec-section-head.skills{background:linear-gradient(90deg,#08765d,#149b70)}
+
+  .exec-section-head h3{
+    margin:0;
+    font-size:6.4px;
+    color:#fff;
+  }
+
+  .exec-section-head span{
+    font-size:4.3px;
+    color:rgba(255,255,255,.82);
+  }
+
+  .exec-pro-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  .exec-pro-table thead{display:table-header-group!important}
+
+  .exec-pro-table th{
+    padding:3.2px 2px;
+    background:#eaf2f7;
+    color:#153d60;
+    border:1px solid #cedbe5;
+    font-size:4.3px;
+    font-weight:900;
+    text-align:center;
+    line-height:1.15;
+  }
+
+  .exec-pro-table td{
+    padding:3.3px 2px;
+    border:1px solid #dde6ed;
+    font-size:4.4px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:1.2;
+  }
+
+  .exec-pro-table tbody tr:nth-child(even){background:#f8fbfd}
+  .exec-pro-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+
+  .exec-course-cell{text-align:right!important}
+  .exec-course-cell b{display:block;font-size:5.4px;color:#123b60}
+  .exec-course-cell small{display:block;margin-top:1px;font-size:3.6px;color:#7c8e9d}
+
+  .exec-metric{
+    min-width:46px;
+  }
+
+  .exec-metric b{
+    display:block;
+    font-size:4.8px;
+    color:#173d5e;
+    white-space:nowrap;
+  }
+
+  .exec-metric small{
+    display:block;
+    font-size:3.5px;
+    margin-top:1px;
+    color:#7f91a0;
+    white-space:nowrap;
+  }
+
+  .exec-metric-track{
+    width:84%;
+    height:3px;
+    margin:2px auto 0;
+    border-radius:5px;
+    background:#e4ebf0;
+    overflow:hidden;
+  }
+
+  .exec-metric-track i{
+    display:block;
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg,#dc9413,#149b70);
+  }
+
+  .exec-att-status{
+    position:relative;
+    min-width:55px;
+    border-radius:8px;
+    padding:4px 4px;
+    overflow:hidden;
+    font-weight:900;
+  }
+
+  .exec-att-status:before{
+    content:"";
+    position:absolute;
+    right:0;top:0;bottom:0;width:3px;
+  }
+
+  .exec-att-status.bad{
+    background:#fff0f1;
+    border:1px solid #efc3c8;
+    color:#bd3944;
+  }
+  .exec-att-status.bad:before{background:#dc4d57}
+
+  .exec-att-status.ok{
+    background:#eaf8f2;
+    border:1px solid #bee5d7;
+    color:#0f7b58;
+  }
+  .exec-att-status.ok:before{background:#149b70}
+
+  .exec-att-status b{
+    display:block;
+    font-size:6.3px;
+  }
+  .exec-att-status small{
+    display:block;
+    margin-top:1px;
+    font-size:3.6px;
+    color:inherit;
+  }
+
+  .exec-bottom-grid{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:5px;
+    margin-top:5px;
+  }
+
+  .exec-skill-name{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    justify-content:flex-start;
+    text-align:right;
+  }
+
+  .exec-skill-dot{
+    width:11px;height:11px;border-radius:4px;
+    display:grid;place-items:center;
+    background:#e9f8f2;color:#0f7b58;
+    font-size:4px;font-weight:900;
+  }
+
+  .exec-note-line{
+    margin-top:4px;
+    padding:4px 6px;
+    border-radius:7px;
+    background:#f7fafc;
+    border:1px solid #dce5ec;
+    color:#6c8192;
+    font-size:4px;
+    line-height:1.4;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -7743,97 +8041,305 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         </tr>`;
       }).join("");
 
+
+  const firstOperationsRows=
+    [...pdfCourses]
+      .sort((a,b)=>
+        clean(a.branch).localeCompare(clean(b.branch),"ar",{numeric:true}) ||
+        periodSortValue(a.period)-periodSortValue(b.period) ||
+        clean(a.name).localeCompare(clean(b.name),"ar",{numeric:true})
+      )
+      .map((c,index)=>{
+
+        const att=exactAttendanceMetric(c);
+        const act=exactTaskMetric(c.id,"نشاط");
+        const quiz=exactTaskMetric(c.id,"كويز");
+        const hw=exactTaskMetric(c.id,"واجب");
+
+        const commentStudents=
+          DATA.students.filter(s=>s.courseId===c.id);
+
+        const commentDone=
+          commentStudents.filter(s=>clean(s.trainerComment)).length;
+
+        const comments=
+          exactMetric(
+            commentDone,
+            commentStudents.length
+          );
+
+        const metricView=(m)=>{
+
+          if(!m.total){
+            return `<div class="exec-metric"><b>—</b><small>لا توجد بيانات</small></div>`;
+          }
+
+          return `
+            <div class="exec-metric">
+              <b>${m.done}/${m.total}</b>
+              <small>ناقص ${m.missing} · ${m.pct}%</small>
+              <div class="exec-metric-track">
+                <i style="width:${m.pct}%"></i>
+              </div>
+            </div>
+          `;
+        };
+
+        return `
+          <tr>
+            <td>${index+1}</td>
+
+            <td class="exec-course-cell">
+              <b>${esc(c.name)}</b>
+              <small>${esc(c.branch)} · ${esc(c.section)}</small>
+            </td>
+
+            <td>${esc(c.trainer)}</td>
+            <td>${esc(c.period)}</td>
+            <td><b>${c.students}</b></td>
+
+            <td>
+              <div class="exec-att-status ${att.missing ? "bad" : "ok"}">
+                <b>${att.missing ? att.missing : "✓"}</b>
+                <small>
+                  ${
+                    att.missing
+                      ? `خانة غير محضّرة · ${att.incompleteDays} يوم`
+                      : "مكتمل"
+                  }
+                </small>
+              </div>
+            </td>
+
+            <td>${metricView(act)}</td>
+            <td>${metricView(quiz)}</td>
+            <td>${metricView(hw)}</td>
+            <td>${metricView(comments)}</td>
+          </tr>
+        `;
+      }).join("");
+
+  const executiveMissingAttendance=
+    pdfCourses.reduce(
+      (sum,c)=>sum+Number(c.missingAttendanceStudentsTotal||0),
+      0
+    );
+
+  const executiveCompletedAttendanceCourses=
+    pdfCourses.filter(
+      c=>Number(c.missingAttendanceStudentsTotal||0)===0
+    ).length;
+
+  const executiveTrainerCount=
+    new Set(
+      pdfCourses
+        .map(c=>clean(c.trainer))
+        .filter(Boolean)
+    ).size;
+
+  const executiveBranchCount=
+    new Set(
+      pdfCourses
+        .map(c=>clean(c.branch))
+        .filter(Boolean)
+    ).size;
+
   const overviewSection=`
     <section class="same-counts-page">
 
-      <div class="same-counts-head">
-        <h2>1. التقرير العام — نفس أعداد لوحة الإشراف</h2>
-        <span>
-          التحضير يعرض فقط عدد الخانات التي لم يتم تحضيرها في كل دورة
-        </span>
+      <div class="exec-first-hero">
+
+        <div>
+          <h2>1. الملخص التنفيذي الأكاديمي</h2>
+          <p>
+            متابعة الدورات والطلاب والتحضير والمهام والاختبارات والمهارات
+          </p>
+        </div>
+
+        <div class="exec-first-tags">
+          <span>${executiveBranchCount} فرع</span>
+          <span>${pdfCourses.length} دورة</span>
+          <span>${totalStudents} طالب</span>
+          <span>${executiveTrainerCount} مدرب</span>
+        </div>
+
       </div>
 
-      <table class="same-counts-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>الدورة / المستوى</th>
-            <th>المدرب</th>
-            <th>الفترة</th>
-            <th>الطلاب</th>
+      <div class="exec-kpi-strip">
 
-            <th>التحضير<br><small>أحمر = نقص · أخضر = مكتمل</small></th>
-            <th>الأنشطة</th>
-            <th>الكويزات</th>
-            <th>الواجبات</th>
-
-            <th>Midterm</th>
-            <th>Final</th>
-            <th>Listening Grade</th>
-            <th>Speaking Grade</th>
-            <th>Homework Grade</th>
-
-            <th>Reading</th>
-            <th>Listening</th>
-            <th>Speaking</th>
-            <th>Writing</th>
-            <th>Grammar</th>
-            <th>Vocabulary</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          ${firstRows}
-        </tbody>
-      </table>
-
-      <div class="first-academic-grid">
-
-        <div class="first-academic-card attendance">
-          <h3>
-            <span>متابعة التحضير</span>
-            <small>بدون تكرار — الخانات غير المرصودة فقط</small>
-          </h3>
-          <table class="first-mini-table">
-            <thead>
-              <tr>
-                <th>#</th><th>الدورة</th><th>المدرب</th><th>الطلاب</th><th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>${firstAttendanceCompactRows}</tbody>
-          </table>
+        <div class="exec-kpi-card">
+          <span>إجمالي الدورات</span>
+          <b>${pdfCourses.length}</b>
+          <small>ضمن التقرير الحالي</small>
         </div>
 
-        <div class="first-academic-card exam">
-          <h3>
-            <span>الاختبارات والدرجات الأساسية</span>
-            <small>جدول مستقل</small>
-          </h3>
-          <table class="first-mini-table">
-            <thead>
-              <tr>
-                <th>#</th><th>الدورة</th><th>الطلاب</th><th>الرصد الفعلي</th><th>الاكتمال</th>
-              </tr>
-            </thead>
-            <tbody>${firstExamRows}</tbody>
-          </table>
+        <div class="exec-kpi-card violet">
+          <span>إجمالي الطلاب</span>
+          <b>${totalStudents}</b>
+          <small>الطلاب المرتبطون بالدورات</small>
         </div>
 
-        <div class="first-academic-card skills" style="grid-column:1/-1">
-          <h3>
-            <span>تقرير المهارات العام</span>
-            <small>Listening · Speaking · Reading · Writing · Grammar · Vocabulary</small>
-          </h3>
-          <table class="first-mini-table">
-            <thead>
-              <tr>
-                <th>المهارة</th><th>مرصود</th><th>ناقص</th><th>الإجمالي</th><th>نسبة الإنجاز</th>
-              </tr>
-            </thead>
-            <tbody>${firstSkillReportRows}</tbody>
-          </table>
+        <div class="exec-kpi-card">
+          <span>المدربون</span>
+          <b>${executiveTrainerCount}</b>
+          <small>مدرب مختلف</small>
         </div>
 
+        <div class="exec-kpi-card green">
+          <span>دورات التحضير المكتمل</span>
+          <b>${executiveCompletedAttendanceCourses}</b>
+          <small>لا توجد خانات ناقصة</small>
+        </div>
+
+        <div class="exec-kpi-card red">
+          <span>خانات التحضير الناقصة</span>
+          <b>${executiveMissingAttendance}</b>
+          <small>الخانات غير المرصودة فقط</small>
+        </div>
+
+        <div class="exec-kpi-card amber">
+          <span>متوسط إنجاز المهام</span>
+          <b>${overallCompletion}%</b>
+          <small>أنشطة · كويزات · واجبات</small>
+        </div>
+
+      </div>
+
+
+      <!-- ONE attendance view only: inside this operational table -->
+      <div class="exec-section-card">
+
+        <div class="exec-section-head operations">
+          <h3>متابعة الدورات والمهام اليومية</h3>
+          <span>
+            التحضير يظهر هنا مرة واحدة فقط · الأحمر نقص · الأخضر مكتمل
+          </span>
+        </div>
+
+        <table class="exec-pro-table">
+
+          <thead>
+            <tr>
+              <th style="width:3%">#</th>
+              <th style="width:12%">الدورة / المستوى</th>
+              <th style="width:8%">المدرب</th>
+              <th style="width:9%">الفترة</th>
+              <th style="width:5%">الطلاب</th>
+              <th style="width:10%">التحضير</th>
+              <th>الأنشطة</th>
+              <th>الكويزات</th>
+              <th>الواجبات</th>
+              <th>التعليقات</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${firstOperationsRows}
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="exec-bottom-grid">
+
+        <!-- EXAMS: unique purple identity -->
+        <div class="exec-section-card" style="margin-top:0">
+
+          <div class="exec-section-head exams">
+            <h3>الاختبارات والدرجات الأساسية</h3>
+            <span>Midterm · Final · Listening · Speaking · Homework</span>
+          </div>
+
+          <table class="exec-pro-table">
+            <thead>
+              <tr>
+                <th style="width:5%">#</th>
+                <th style="width:24%">الدورة</th>
+                <th style="width:9%">الطلاب</th>
+                <th style="width:47%">الرصد الفعلي</th>
+                <th style="width:15%">الاكتمال</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${firstExamRows}
+            </tbody>
+          </table>
+
+        </div>
+
+
+        <!-- SKILLS: unique green identity -->
+        <div class="exec-section-card" style="margin-top:0">
+
+          <div class="exec-section-head skills">
+            <h3>الأداء العام للمهارات</h3>
+            <span>تقرير مستقل عن الاختبارات</span>
+          </div>
+
+          <table class="exec-pro-table">
+            <thead>
+              <tr>
+                <th>المهارة</th>
+                <th>مرصود</th>
+                <th>ناقص</th>
+                <th>الإجمالي</th>
+                <th>الإنجاز</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${
+                SUPERVISION_SKILLS.map(skill=>{
+
+                  let done=0,total=0;
+
+                  pdfCourses.forEach(c=>{
+                    const m=exactSkillMetric(c,skill);
+                    done+=m.done;
+                    total+=m.total;
+                  });
+
+                  const missing=Math.max(0,total-done);
+                  const p=total?Math.round(done/total*100):0;
+
+                  return `
+                    <tr>
+                      <td>
+                        <div class="exec-skill-name">
+                          <span class="exec-skill-dot">✓</span>
+                          <b>${esc(skill)}</b>
+                        </div>
+                      </td>
+                      <td>${done}</td>
+                      <td>${missing}</td>
+                      <td>${total}</td>
+                      <td>
+                        <div class="exec-metric">
+                          <b>${p}%</b>
+                          <div class="exec-metric-track">
+                            <i style="width:${p}%"></i>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")
+              }
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <div class="exec-note-line">
+        ملاحظة: تم حذف جدول التحضير الإضافي من الصفحة الأولى لمنع التكرار.
+        حالة التحضير تظهر فقط داخل جدول متابعة الدورات أعلاه، بينما تبقى صفحة
+        الحضور التفصيلية لاحقًا مخصصة للتواريخ وأسماء الطلاب غير المرصودين.
       </div>
 
     </section>
