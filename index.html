@@ -2165,6 +2165,186 @@
   }
 }
 
+
+@media print{
+  /* ===== Professional attendance status design ===== */
+  .count-box.attendance-alert,
+  .count-box.attendance-ok{
+    position:relative;
+    overflow:hidden;
+    min-height:31px;
+    padding:4px 5px 4px 7px;
+    border-radius:8px;
+    text-align:center;
+  }
+
+  .count-box.attendance-alert{
+    background:linear-gradient(180deg,#fff7f8,#fff0f1);
+    border:1px solid #efc5ca;
+    box-shadow:inset 0 0 0 1px rgba(220,77,87,.04);
+  }
+
+  .count-box.attendance-alert:before{
+    content:"";
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:4px;
+    background:#dc4d57;
+  }
+
+  .count-box.attendance-ok{
+    background:linear-gradient(180deg,#f4fcf8,#eaf8f2);
+    border:1px solid #c4e8db;
+    box-shadow:inset 0 0 0 1px rgba(20,155,112,.04);
+  }
+
+  .count-box.attendance-ok:before{
+    content:"";
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:4px;
+    background:#149b70;
+  }
+
+  .attendance-main-line{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    margin-bottom:2px;
+  }
+
+  .attendance-icon{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    display:inline-grid;
+    place-items:center;
+    font-size:4.8px;
+    font-weight:900;
+  }
+
+  .attendance-alert .attendance-icon{
+    background:#dc4d57;
+    color:#fff;
+  }
+
+  .attendance-ok .attendance-icon{
+    background:#149b70;
+    color:#fff;
+  }
+
+  .attendance-value{
+    font-size:7px!important;
+    font-weight:900!important;
+    line-height:1!important;
+  }
+
+  .attendance-alert .attendance-value{
+    color:#c43e49!important;
+  }
+
+  .attendance-ok .attendance-value{
+    color:#0e7d58!important;
+  }
+
+  .attendance-label{
+    display:block;
+    font-size:4.1px!important;
+    font-weight:900!important;
+    line-height:1.2;
+  }
+
+  .attendance-alert .attendance-label{
+    color:#a9343e!important;
+  }
+
+  .attendance-ok .attendance-label{
+    color:#0f7656!important;
+  }
+
+  .attendance-days{
+    display:inline-block;
+    margin-top:2px;
+    padding:1px 4px;
+    border-radius:7px;
+    font-size:3.7px!important;
+    font-weight:800!important;
+  }
+
+  .attendance-alert .attendance-days{
+    background:#fff;
+    border:1px solid #f0c9cd;
+    color:#a9343e!important;
+  }
+
+  .attendance-summary-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    min-width:42px;
+    padding:3px 6px;
+    border-radius:12px;
+    font-weight:900;
+    font-size:4.5px;
+    white-space:nowrap;
+  }
+
+  .attendance-summary-pill.bad{
+    background:#fff0f1;
+    border:1px solid #efc4c9;
+    color:#bd3944;
+  }
+
+  .attendance-summary-pill.good{
+    background:#eaf8f2;
+    border:1px solid #bfe5d7;
+    color:#0f7b58;
+  }
+
+  .attendance-summary-pill i{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-style:normal;
+    font-size:3.7px;
+    color:#fff;
+  }
+
+  .attendance-summary-pill.bad i{background:#dc4d57}
+  .attendance-summary-pill.good i{background:#149b70}
+
+  /* improve the whole first table slightly */
+  .same-counts-table th{
+    background:linear-gradient(180deg,#edf4f8,#dfeaf2)!important;
+    color:#123a5e!important;
+    border-color:#c9d7e2!important;
+  }
+
+  .same-counts-table tbody tr:nth-child(even){
+    background:#f7fafc!important;
+  }
+
+  .same-counts-table tbody tr:hover{
+    background:inherit!important;
+  }
+
+  .same-counts-head{
+    box-shadow:0 3px 8px rgba(15,51,82,.08);
+  }
+
+  .same-summary-box{
+    box-shadow:0 2px 6px rgba(15,51,82,.05);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -7439,21 +7619,21 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
     هذا لا يغير العدد الناقص؛ فقط يبين "تم من الإجمالي".
   */
   const exactAttendanceMetric=(c)=>{
-    const students=Number(c.students||0);
-    const days=Array.isArray(c.expectedAttendanceDates)
-      ? c.expectedAttendanceDates.length
-      : 0;
 
-    const total=students*days;
-    const missing=Number(c.missingAttendanceStudentsTotal||0);
-    const done=Math.max(0,total-missing);
+    /*
+      المطلوب في التقرير:
+      لا نحسب إجمالي التحضير ولا نضرب عدد الطلاب في الأيام.
+      نعرض فقط نفس عدد الخانات غير المحضرة المحسوب مسبقاً
+      في missingAttendanceStudentsTotal.
+    */
+    const missing=
+      Number(
+        c.missingAttendanceStudentsTotal||
+        0
+      );
 
     return {
-      done,
-      total,
       missing,
-      pct:total?Math.round(done/total*100):0,
-      days,
       incompleteDays:Number(c.attendanceMissing||0)
     };
   };
@@ -7520,22 +7700,23 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td><b>${c.students}</b></td>
 
             <td>
-              <div class="count-box">
-                <b>${att.done} من ${att.total} حالة تحضير</b>
-                <small>
-                  عدد الطلاب: ${c.students}
-                  ·
-                  الأيام: ${att.days}
-                </small>
-                <small>
-                  <span class="good">مرصود ${att.done}</span>
-                  ·
-                  <span class="bad">غير مرصود ${att.missing}</span>
-                </small>
-                <div class="same-progress">
-                  <i style="width:${att.pct}%"></i>
+              <div class="count-box ${att.missing ? "attendance-alert" : "attendance-ok"}">
+                <div class="attendance-main-line">
+                  <span class="attendance-icon">
+                    ${att.missing ? "!" : "✓"}
+                  </span>
+                  <b class="attendance-value">${att.missing}</b>
                 </div>
-                <small>${att.pct}% · ${att.incompleteDays} يوم غير مكتمل</small>
+
+                <span class="attendance-label">
+                  ${att.missing ? "خانة غير محضّرة" : "التحضير مكتمل"}
+                </span>
+
+                ${
+                  att.incompleteDays
+                    ? `<span class="attendance-days">${att.incompleteDays} يوم غير مكتمل</span>`
+                    : ""
+                }
               </div>
             </td>
 
@@ -7600,12 +7781,13 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <td>${esc(c.trainer)}</td>
             <td>${esc(c.period)}</td>
             <td>${c.students}</td>
-            <td>${m.days}</td>
-            <td>${m.done}</td>
-            <td>${m.missing}</td>
+            <td>
+              <span class="attendance-summary-pill ${m.missing ? "bad" : "good"}">
+                <i>${m.missing ? "!" : "✓"}</i>
+                ${m.missing}
+              </span>
+            </td>
             <td>${m.incompleteDays}</td>
-            <td>${m.total}</td>
-            <td>${m.pct}%</td>
           </tr>
         `;
       }).join("");
@@ -7616,7 +7798,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       <div class="same-counts-head">
         <h2>1. التقرير العام — نفس أعداد لوحة الإشراف</h2>
         <span>
-          ملاحظة: التحضير يُحسب كحالات رصد = عدد الطلاب × عدد الأيام، وليس كعدد طلاب
+          التحضير يعرض فقط عدد الخانات التي لم يتم تحضيرها في كل دورة
         </span>
       </div>
 
@@ -7629,7 +7811,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             <th>الفترة</th>
             <th>الطلاب</th>
 
-            <th>التحضير<br><small>حالات الرصد وليس عدد الطلاب</small></th>
+            <th>التحضير<br><small>الخانات غير المرصودة</small></th>
             <th>الأنشطة</th>
             <th>الكويزات</th>
             <th>الواجبات</th>
@@ -7657,7 +7839,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       <div class="same-summary-grid">
 
         <div class="same-summary-box">
-          <h3>تفصيل التحضير حسب الدورة — نفس التنبيهات الموجودة في الكود</h3>
+          <h3>متابعة التحضير حسب الدورة — الخانات غير المرصودة</h3>
 
           <table class="same-summary-table">
             <thead>
@@ -7667,12 +7849,8 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                 <th>المدرب</th>
                 <th>الفترة</th>
                 <th>الطلاب</th>
-                <th>الأيام المطلوبة</th>
-                <th>حالات التحضير المرصودة</th>
-                <th>حالات غير مرصودة</th>
-                <th>أيام غير مكتملة</th>
-                <th>إجمالي حالات التحضير</th>
-                <th>النسبة</th>
+                <th>الخانات غير المحضرة</th>
+                <th>أيام التحضير غير المكتمل</th>
               </tr>
             </thead>
             <tbody>${generalAttendanceRows}</tbody>
