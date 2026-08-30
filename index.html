@@ -9021,7 +9021,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
         const att=exactAttendanceMetric(c);
         const act=exactTaskMetric(c.id,"نشاط");
         const quiz=exactTaskMetric(c.id,"كويز");
-        const hw=exactTaskMetric(c.id,"واجب");
+        
 
         const mid=exactGradeMetric(c,"midterm");
         const fin=exactGradeMetric(c,"final");
@@ -9379,7 +9379,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
             </td>
             <td>${premiumMetricView(act)}</td>
             <td>${premiumMetricView(quiz)}</td>
-            <td>${premiumMetricView(hw)}</td>
+           
             <td>${premiumMetricView(comments)}</td>
           </tr>
         `;
@@ -9550,7 +9550,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               <th style="width:10%">التحضير</th>
               <th>الأنشطة</th>
               <th>الكويزات</th>
-              <th>الواجبات</th>
+             
               <th>التعليقات</th>
             </tr>
           </thead>
