@@ -1289,6 +1289,8 @@
 .low-grade-note{display:block;margin-top:5px;color:#bf3340;font-size:10px;font-weight:900}
 .student-wa-btn{border:0;border-radius:9px;padding:7px 9px;background:#25d366;color:#fff;font:inherit;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap}
 .student-wa-btn:hover{background:#1db957}
+.low-grade-badge{background:#fff0f1!important;color:#bd3440!important;animation:prudleLowGradeBlink 1.15s ease-in-out infinite}
+.low-grade-skill{border:2px solid #e74c3c!important;background:#fff5f5!important;animation:prudleLowGradeBlink 1.15s ease-in-out infinite}
 @keyframes prudleLowGradeBlink{50%{border-color:#ffbd38!important;box-shadow:0 0 0 4px rgba(231,76,60,.16)}}
 .grade-benchmark-form{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:0 0 16px;padding:13px;border:1px solid #d6e4ef;border-radius:14px;background:#f5faff}
 .grade-benchmark-form strong{width:100%;font-size:12px;color:#164478}
@@ -3858,6 +3860,7 @@ let ACTIVE_LIST="pending";
 let TASK_SORT_MODE="period";
 let ACTIVITY_MODE_FILTER="all";
 let GRADE_BENCHMARKS=(()=>{try{return {...{midterm:40,final:100,listening:10,speaking:10,homework:10},...JSON.parse(localStorage.getItem("prudleGradeBenchmarks")||"{}")} }catch{return{midterm:40,final:100,listening:10,speaking:10,homework:10}}})();
+let SKILL_BENCHMARKS=(()=>{try{return {...Object.fromEntries(SUPERVISION_SKILLS.map(skill=>[skill,10])),...JSON.parse(localStorage.getItem("prudleSkillBenchmarks")||"{}")} }catch{return Object.fromEntries(SUPERVISION_SKILLS.map(skill=>[skill,10]))}})();
 
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -3870,6 +3873,8 @@ function sendStudentWhatsApp(student,message){const phone=whatsappNumber(student
 function isLowGrade(score,total){const mark=Number(score),maximum=Number(total);return Number.isFinite(mark)&&maximum>0&&(maximum-mark>=12||mark<=maximum/2)}
 function gradeMaximum(key){return Number(GRADE_BENCHMARKS[key])||0}
 function saveGradeBenchmarks(){["midterm","final","listening","speaking","homework"].forEach(key=>{const value=Number($("gradeBenchmark_"+key)?.value);if(Number.isFinite(value)&&value>0)GRADE_BENCHMARKS[key]=value});localStorage.setItem("prudleGradeBenchmarks",JSON.stringify(GRADE_BENCHMARKS));render()}
+function skillMaximum(skill){return Number(SKILL_BENCHMARKS[skill])||10}
+function saveSkillBenchmarks(){SUPERVISION_SKILLS.forEach(skill=>{const value=Number($("skillBenchmark_"+skill)?.value);if(Number.isFinite(value)&&value>0)SKILL_BENCHMARKS[skill]=value});localStorage.setItem("prudleSkillBenchmarks",JSON.stringify(SKILL_BENCHMARKS));render()}
 function notifyLowGrade(studentId){const student=DATA.students.find(s=>s.id===studentId),result=ACTIVE_TASK?.studentResults?.[studentId],course=DATA.courses.find(c=>c.id===ACTIVE_TASK?.courseId);if(!student||!result)return;sendStudentWhatsApp(student,`عزيزي الطالب ${student.name}، نود تنبيهك بأنك حصلت على ${result.score} من ${result.total} في ${ACTIVE_TASK.title} بدورة ${course?.name||""}. وعليه نرجو مراجعة قسم الإشراف.`)}
 function notifyPendingTask(studentId){const student=DATA.students.find(s=>s.id===studentId),course=DATA.courses.find(c=>c.id===ACTIVE_TASK?.courseId);if(!student)return;sendStudentWhatsApp(student,`عزيزي الطالب ${student.name}، نود تنبيهك بأنك لم تحل ${ACTIVE_TASK.kind} (${ACTIVE_TASK.title}) في دورة ${course?.name||""}. نرجو الدخول وحله في أقرب وقت، ومراجعة قسم الإشراف عند الحاجة.`)}
 function isoDate(value){if(!value)return"";const d=value?.toDate?value.toDate():value?.seconds?new Date(value.seconds*1000):new Date(value);if(!Number.isNaN(d?.getTime?.()))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;return clean(value).slice(0,10)}
@@ -4874,6 +4879,8 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
       gradeSummary[key]={
         field,
         done:doneStudents.length,
+        weak:doneStudents.filter(s=>isLowGrade(s[field],gradeMaximum(key))).length,
+        weakIds:doneStudents.filter(s=>isLowGrade(s[field],gradeMaximum(key))).map(s=>s.id),
         missing:
           Math.max(
             0,
@@ -4896,6 +4903,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
       );
 
       const scoredStudentIds=new Set();
+      const weakStudentIds=new Set();
 
       records.forEach(r=>{
         const recordStudentId=
@@ -4912,6 +4920,9 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
 
         if(matched){
           scoredStudentIds.add(matched.id);
+          if(isLowGrade(r.score,skillMaximum(skill))){
+            weakStudentIds.add(matched.id);
+          }
         }
       });
 
@@ -4925,7 +4936,9 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
         total:courseStudents.length,
         missing:missingStudents.length,
         completedIds:[...scoredStudentIds],
-        pendingIds:missingStudents.map(s=>s.id)
+        pendingIds:missingStudents.map(s=>s.id),
+        weak:weakStudentIds.size,
+        weakIds:[...weakStudentIds]
       };
 
       if(
@@ -6129,6 +6142,15 @@ function renderSkillsView(){
         </div>
       </div>
 
+      <div class="grade-benchmark-form">
+        <strong>اكتب الدرجة الكاملة للمقارنة لكل مهارة — تُطبّق على جميع الدورات الظاهرة</strong>
+        ${SUPERVISION_SKILLS.map(skill=>`
+          <label class="grade-benchmark-field">${esc(skill)}
+            <input id="skillBenchmark_${esc(skill)}" type="number" min="1" value="${skillMaximum(skill)}">
+          </label>`).join("")}
+        <button class="grade-benchmark-save" type="button" onclick="saveSkillBenchmarks()">تطبيق على الدورات الظاهرة</button>
+      </div>
+
       <div class="skill-course-grid">
 
         ${
@@ -6204,10 +6226,12 @@ function renderSkillsView(){
                             ? "لم يُرصد"
                             : `${item.missing} ناقص`;
 
+                      const weakCount=Number(item.weak||0);
+
                       return `
                         <button
                           type="button"
-                          class="skill-item skill-item-btn"
+                          class="skill-item skill-item-btn ${weakCount?"low-grade-skill":""}"
                           onclick="openSkill('${esc(c.id)}','${esc(skill)}')"
                           title="عرض الطلاب الذين تم رصدهم والذين لم يتم رصدهم"
                         >
@@ -6219,6 +6243,8 @@ function renderSkillsView(){
                               ${statusText}
                             </span>
                           </div>
+
+                          <small class="grade-total-label">الدرجة الكاملة: ${skillMaximum(skill)}${weakCount?` · ⚠ ${weakCount} طالب ضعيف`:""}</small>
 
                           <small>
                             تم الرصد:
@@ -6678,17 +6704,15 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
                     </span>
                     <button
                       class="badge ${
-                        item.missing
-                          ? "bad"
-                          : "good"
+                        item.weak
+                          ? "low-grade-badge"
+                          : item.missing
+                            ? "bad"
+                            : "good"
                       }"
                       onclick="openGrade('${esc(c.id)}','${key}')"
                     >
-                      ${
-                        item.missing
-                          ? `${item.missing} ناقص`
-                          : `✓ ${item.done}/${c.students}`
-                      }
+                      ${item.weak?`⚠ ${item.weak} ضعيف`:item.missing?`${item.missing} ناقص`:`✓ ${item.done}/${c.students}`}
                     </button>
                     <span class="grade-mini">
                       مرصود ${item.done||0} من ${c.students}
@@ -7086,8 +7110,7 @@ function openSkill(courseId,skill){
       const matched=students.find(s=>s.id===clean(r.studentId)||(s.iqama&&clean(r.studentIqama)===s.iqama));
       if(!matched)return;
       const score=Number(r.score);
-      let total=[r.total,r.maxScore,r.totalScore,r.outOf].map(Number).find(v=>Number.isFinite(v)&&v>0);
-      if(!Number.isFinite(total))total=10;
+      const total=skillMaximum(skill);
       studentResults[matched.id]={score:Number.isFinite(score)?score:'',total,percentage:Number.isFinite(score)?Math.round(Math.max(0,Math.min(100,score/total*100))):''};
     });
   ACTIVE_TASK={
@@ -7288,7 +7311,7 @@ function renderStudentList(type){
 
       const lowGrade=
         type==="done" &&
-        ACTIVE_TASK.kind==="درجات" &&
+        ["درجات","مهارة"].includes(ACTIVE_TASK.kind) &&
         result &&
         isLowGrade(result.score,result.total);
 
