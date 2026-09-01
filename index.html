@@ -1284,6 +1284,17 @@
   font-size:8px;
   color:#71839a;
 }
+.grade-total-label{display:block;margin:0 0 6px;color:#164478;font-size:10px;font-weight:900}
+.student-row.low-grade-alert{border:2px solid #e74c3c!important;background:#fff5f5!important;animation:prudleLowGradeBlink 1.15s ease-in-out infinite}
+.low-grade-note{display:block;margin-top:5px;color:#bf3340;font-size:10px;font-weight:900}
+.student-wa-btn{border:0;border-radius:9px;padding:7px 9px;background:#25d366;color:#fff;font:inherit;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap}
+.student-wa-btn:hover{background:#1db957}
+@keyframes prudleLowGradeBlink{50%{border-color:#ffbd38!important;box-shadow:0 0 0 4px rgba(231,76,60,.16)}}
+.grade-benchmark-form{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:0 0 16px;padding:13px;border:1px solid #d6e4ef;border-radius:14px;background:#f5faff}
+.grade-benchmark-form strong{width:100%;font-size:12px;color:#164478}
+.grade-benchmark-field{display:grid;gap:4px;font-size:10px;font-weight:900;color:#536b81}
+.grade-benchmark-field input{width:92px;border:1px solid #bcd0e0;border-radius:8px;padding:8px;background:#fff;font:inherit;font-size:13px;color:#164478}
+.grade-benchmark-save{border:0;border-radius:9px;padding:9px 13px;background:#164478;color:#fff;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
 
 /* ===== Strong phone/tablet compatibility ===== */
 @media(max-width:850px){
@@ -3846,6 +3857,7 @@ let ACTIVE_TASK=null;
 let ACTIVE_LIST="pending";
 let TASK_SORT_MODE="period";
 let ACTIVITY_MODE_FILTER="all";
+let GRADE_BENCHMARKS=(()=>{try{return {...{midterm:40,final:100,listening:10,speaking:10,homework:10},...JSON.parse(localStorage.getItem("prudleGradeBenchmarks")||"{}")} }catch{return{midterm:40,final:100,listening:10,speaking:10,homework:10}}})();
 
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -3853,6 +3865,13 @@ const clean=value=>String(value??"").trim();
 const first=(object,fields,fallback="")=>{for(const field of fields){const value=object?.[field];if(value!==undefined&&value!==null&&String(value).trim()!=="")return value}return fallback};
 const hasValue=value=>value!==undefined&&value!==null&&String(value).trim()!=="";
 const pct=(done,total)=>total?Math.round(done/total*100):0;
+function whatsappNumber(phone){let number=String(phone||"").replace(/\D/g,"");if(number.startsWith("00"))number=number.slice(2);if(number.startsWith("0"))number=`966${number.slice(1)}`;return number}
+function sendStudentWhatsApp(student,message){const phone=whatsappNumber(student?.phone);if(!phone||phone.length<8){alert(`لا يوجد رقم جوال محفوظ للطالب: ${student?.name||""}`);return}window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,"_blank","noopener")}
+function isLowGrade(score,total){const mark=Number(score),maximum=Number(total);return Number.isFinite(mark)&&maximum>0&&(maximum-mark>=12||mark<=maximum/2)}
+function gradeMaximum(key){return Number(GRADE_BENCHMARKS[key])||0}
+function saveGradeBenchmarks(){["midterm","final","listening","speaking","homework"].forEach(key=>{const value=Number($("gradeBenchmark_"+key)?.value);if(Number.isFinite(value)&&value>0)GRADE_BENCHMARKS[key]=value});localStorage.setItem("prudleGradeBenchmarks",JSON.stringify(GRADE_BENCHMARKS));render()}
+function notifyLowGrade(studentId){const student=DATA.students.find(s=>s.id===studentId),result=ACTIVE_TASK?.studentResults?.[studentId],course=DATA.courses.find(c=>c.id===ACTIVE_TASK?.courseId);if(!student||!result)return;sendStudentWhatsApp(student,`عزيزي الطالب ${student.name}، نود تنبيهك بأنك حصلت على ${result.score} من ${result.total} في ${ACTIVE_TASK.title} بدورة ${course?.name||""}. وعليه نرجو مراجعة قسم الإشراف.`)}
+function notifyPendingTask(studentId){const student=DATA.students.find(s=>s.id===studentId),course=DATA.courses.find(c=>c.id===ACTIVE_TASK?.courseId);if(!student)return;sendStudentWhatsApp(student,`عزيزي الطالب ${student.name}، نود تنبيهك بأنك لم تحل ${ACTIVE_TASK.kind} (${ACTIVE_TASK.title}) في دورة ${course?.name||""}. نرجو الدخول وحله في أقرب وقت، ومراجعة قسم الإشراف عند الحاجة.`)}
 function isoDate(value){if(!value)return"";const d=value?.toDate?value.toDate():value?.seconds?new Date(value.seconds*1000):new Date(value);if(!Number.isNaN(d?.getTime?.()))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;return clean(value).slice(0,10)}
 function todayIso(){
   const d=new Date();
@@ -4455,6 +4474,7 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     id:s.id,
     name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),
     iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),
+    phone:clean(first(s,["phone","Phone","mobile","Mobile","phoneNumber","PhoneNumber","studentPhone","StudentPhone"])),
     courseId:clean(first(s,["courseId","CourseId"])),
     records:Array.isArray(s.records)?s.records:[],
     trainerComment:clean(s.trainerComment),
@@ -6607,6 +6627,15 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
         </div>
       </div>
 
+      <div class="grade-benchmark-form">
+        <strong>اكتب الدرجة الكاملة للمقارنة مرة واحدة — تُطبّق على جميع الدورات الظاهرة</strong>
+        ${[["midterm","Midterm"],["final","Final"],["listening","Listening"],["speaking","Speaking"],["homework","Homework"]].map(([key,label])=>`
+          <label class="grade-benchmark-field">${label}
+            <input id="gradeBenchmark_${key}" type="number" min="1" value="${gradeMaximum(key)}">
+          </label>`).join("")}
+        <button class="grade-benchmark-save" type="button" onclick="saveGradeBenchmarks()">تطبيق على الدورات الظاهرة</button>
+      </div>
+
       <div class="table-wrap">
         <table class="data-table grades-table">
           <thead>
@@ -6635,6 +6664,8 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
                   label
                 )=>{
 
+                  const maximum=gradeMaximum(key);
+
                   const item=
                     g[key] || {
                       done:0,
@@ -6642,6 +6673,9 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
                     };
 
                   return `
+                    <span class="grade-total-label">
+                      الدرجة الكاملة: ${maximum}
+                    </span>
                     <button
                       class="badge ${
                         item.missing
@@ -7082,31 +7116,31 @@ function openGrade(courseId,type){
     midterm:{
       field:"midterm",
       title:"رصد درجات Midterm",
-      total:40,
+      total:gradeMaximum("midterm"),
       due:c?.midtermDue || ""
     },
     final:{
       field:"finalExam",
       title:"رصد درجات Final",
-      total:100,
+      total:gradeMaximum("final"),
       due:c?.finalDue || ""
     },
     listening:{
       field:"listening",
       title:"رصد درجة Listening",
-      total:10,
+      total:gradeMaximum("listening"),
       due:""
     },
     speaking:{
       field:"speaking",
       title:"رصد درجة Speaking",
-      total:10,
+      total:gradeMaximum("speaking"),
       due:""
     },
     homework:{
       field:"hwScore",
       title:"رصد درجة Homework",
-      total:10,
+      total:gradeMaximum("homework"),
       due:""
     }
   };
@@ -7252,8 +7286,22 @@ function renderStudentList(type){
         }
       }
 
+      const lowGrade=
+        type==="done" &&
+        ACTIVE_TASK.kind==="درجات" &&
+        result &&
+        isLowGrade(result.score,result.total);
+
+      const notifyPending=
+        type==="pending" &&
+        ["نشاط","كويز"].includes(ACTIVE_TASK.kind);
+
+      if(lowGrade){
+        scoreHtml+=`<small class="low-grade-note">تنبيه: أقل من المطلوب بـ 12 درجة أو أكثر / 50% فأقل</small>`;
+      }
+
       return`
-        <div class="student-row selectable">
+        <div class="student-row selectable ${lowGrade?"low-grade-alert":""}">
           <input
             type="checkbox"
             class="student-pdf-check"
@@ -7270,6 +7318,8 @@ function renderStudentList(type){
           <span class="student-state ${type}">
             ${type==="done"?"✓ مكتمل":"! لم يكمل"}
           </span>
+          ${lowGrade?`<button class="student-wa-btn" type="button" onclick="notifyLowGrade('${esc(s.id)}')">واتساب تنبيه الدرجة</button>`:""}
+          ${notifyPending?`<button class="student-wa-btn" type="button" onclick="notifyPendingTask('${esc(s.id)}')">واتساب تذكير الحل</button>`:""}
         </div>
       `;
     }).join("") ||
