@@ -2994,73 +2994,6 @@ grid-template-columns:repeat(2,minmax(0,1fr))!important;
 
 }
 
-/* ===== Mobile sidebar toggle ===== */
-.sidebar-toggle,.sidebar-overlay{display:none}
-
-@media(max-width:850px){
-  body.sidebar-open{overflow:hidden!important}
-
-  .sidebar-toggle{
-    display:grid;
-    place-items:center;
-    flex:0 0 42px;
-    width:42px;
-    height:42px;
-    margin-left:9px;
-    padding:0!important;
-    border:0;
-    border-radius:12px;
-    background:#edf4f9;
-    color:var(--blue);
-    font-size:24px!important;
-    font-weight:900;
-    line-height:1;
-    cursor:pointer;
-  }
-
-  .sidebar{
-    display:flex!important;
-    width:min(290px,86vw)!important;
-    z-index:1002!important;
-    transform:translateX(110%);
-    visibility:hidden;
-    transition:transform .28s ease,visibility .28s ease;
-    box-shadow:-20px 0 45px rgba(5,27,46,.28)!important;
-    overflow-y:auto;
-  }
-
-  .sidebar.mobile-open{
-    transform:translateX(0);
-    visibility:visible;
-  }
-
-  .sidebar-overlay{
-    display:block;
-    position:fixed;
-    inset:0;
-    z-index:1001;
-    border:0;
-    padding:0;
-    background:rgba(5,27,46,.52);
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-    transition:opacity .28s ease,visibility .28s ease;
-  }
-
-  .sidebar-overlay.show{
-    opacity:1;
-    visibility:visible;
-    pointer-events:auto;
-  }
-
-  .topbar{justify-content:flex-start!important}
-  .page-title{flex:1;min-width:0}
-  .top-actions{flex:0 0 auto}
-  .mobile-nav{display:none!important}
-  .content{padding-bottom:24px!important}
-}
-
 
 /* ===== Clickable skill cards ===== */
 
@@ -7228,17 +7161,10 @@ id="connectionText">يتم تحميل
 
 </aside>
 
-<button class="sidebar-overlay" id="sidebarOverlay" type="button"
-aria-label="إغلاق القائمة الجانبية"></button>
-
 <section class="workspace">
 
   <header
 class="topbar">
-
-    <button class="sidebar-toggle" id="sidebarToggle" type="button"
-    aria-label="فتح القائمة الجانبية" aria-controls="sideNav"
-    aria-expanded="false">☰</button>
 
     <div
 class="page-title"><p>مرحبًا
@@ -20691,41 +20617,107 @@ $("printTables").innerHTML=
 
 }
 
-/* Mobile sidebar controls */
-(function initMobileSidebar(){
-  const sidebar=document.querySelector(".sidebar");
-  const toggle=document.getElementById("sidebarToggle");
-  const overlay=document.getElementById("sidebarOverlay");
-  if(!sidebar || !toggle || !overlay) return;
-
-  function setSidebar(open){
-    sidebar.classList.toggle("mobile-open",open);
-    overlay.classList.toggle("show",open);
-    document.body.classList.toggle("sidebar-open",open);
-    toggle.setAttribute("aria-expanded",String(open));
-    toggle.setAttribute("aria-label",open ? "إغلاق القائمة الجانبية" : "فتح القائمة الجانبية");
-    toggle.textContent=open ? "×" : "☰";
-  }
-
-  toggle.addEventListener("click",function(){
-    setSidebar(!sidebar.classList.contains("mobile-open"));
-  });
-  overlay.addEventListener("click",function(){setSidebar(false)});
-  sidebar.querySelectorAll("[data-view]").forEach(function(button){
-    button.addEventListener("click",function(){
-      if(window.innerWidth<=850) setSidebar(false);
-    });
-  });
-  document.addEventListener("keydown",function(event){
-    if(event.key==="Escape") setSidebar(false);
-  });
-  window.addEventListener("resize",function(){
-    if(window.innerWidth>850) setSidebar(false);
-  });
-})();
-
 loadAll();
 
+</script>
+
+<!-- Mobile top menu: keeps the desktop layout unchanged -->
+<style>
+  .mobile-menu-toggle,.mobile-sidebar-overlay{display:none}
+
+  @media screen and (max-width:850px){
+    .mobile-menu-toggle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      flex:0 0 auto;
+      min-width:88px;
+      height:42px;
+      padding:0 12px;
+      border:0;
+      border-radius:11px;
+      background:#164478;
+      color:#fff;
+      font-family:inherit;
+      font-size:12px;
+      font-weight:900;
+      box-shadow:0 6px 16px rgba(22,68,120,.2);
+    }
+    .mobile-menu-toggle .menu-lines{font-size:20px;line-height:1}
+
+    .sidebar{
+      display:flex!important;
+      width:min(290px,84vw)!important;
+      transform:translateX(110%);
+      visibility:hidden;
+      transition:transform .28s ease,visibility .28s ease;
+      z-index:1002!important;
+      box-shadow:-18px 0 45px rgba(5,27,46,.25)!important;
+    }
+    .sidebar.mobile-open{
+      transform:translateX(0);
+      visibility:visible;
+    }
+    .mobile-sidebar-overlay{
+      position:fixed;
+      inset:0;
+      z-index:1001;
+      background:rgba(5,27,46,.52);
+      backdrop-filter:blur(2px);
+    }
+    .mobile-sidebar-overlay.show{display:block}
+    body.mobile-menu-open{overflow:hidden!important}
+  }
+
+  @media print{
+    .mobile-menu-toggle,.mobile-sidebar-overlay{display:none!important}
+  }
+</style>
+
+<script>
+(function(){
+  const topbar=document.querySelector('.topbar');
+  const sidebar=document.querySelector('.sidebar');
+  if(!topbar || !sidebar) return;
+
+  const toggle=document.createElement('button');
+  toggle.type='button';
+  toggle.className='mobile-menu-toggle';
+  toggle.setAttribute('aria-label','فتح القائمة الجانبية');
+  toggle.setAttribute('aria-expanded','false');
+  toggle.innerHTML='<span class="menu-lines">☰</span><span>القائمة</span>';
+
+  const overlay=document.createElement('div');
+  overlay.className='mobile-sidebar-overlay';
+  document.body.appendChild(overlay);
+  topbar.prepend(toggle);
+
+  function setMenu(open){
+    sidebar.classList.toggle('mobile-open',open);
+    overlay.classList.toggle('show',open);
+    document.body.classList.toggle('mobile-menu-open',open);
+    toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open?'إغلاق القائمة الجانبية':'فتح القائمة الجانبية');
+    toggle.querySelector('.menu-lines').textContent=open?'✕':'☰';
+  }
+
+  toggle.addEventListener('click',function(){
+    setMenu(!sidebar.classList.contains('mobile-open'));
+  });
+  overlay.addEventListener('click',function(){setMenu(false)});
+  sidebar.querySelectorAll('.side-nav button').forEach(function(button){
+    button.addEventListener('click',function(){
+      if(window.innerWidth<=850) setMenu(false);
+    });
+  });
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape') setMenu(false);
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth>850) setMenu(false);
+  });
+})();
 </script>
 
 </body>
