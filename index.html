@@ -3618,6 +3618,23 @@
   .premium-att strong{font-size:7.5px!important}
   .premium-att small{font-size:4.4px!important}
 
+  /* Larger, clearer PDF operational table */
+  .premium-table th{font-size:6.2px!important;padding:5.4px 3.2px!important}
+  .premium-table td{font-size:6.1px!important;padding:5.4px 3.2px!important}
+  .premium-course b{font-size:7.1px!important}
+  .premium-course small{font-size:4.9px!important}
+  .pm b{font-size:6.5px!important}
+  .pm small{font-size:4.7px!important}
+
+  .premium-class-activity{
+    min-height:31px;padding:4px 5px;border-radius:8px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .premium-class-activity.good{background:#e8f7f1;border:1px solid #bce5d5;color:#0c7a57}
+  .premium-class-activity.bad{background:#fff0f1;border:1px solid #efc3c8;color:#ba3944}
+  .premium-class-activity strong{font-size:7.5px;font-weight:900}
+  .premium-class-activity small{margin-top:2px;font-size:4.8px;color:inherit;font-weight:800}
+
   /* First-page skills */
   .skill-level b{font-size:5.2px!important}
   .skill-level small{font-size:4px!important}
@@ -9086,7 +9103,30 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       .map((c,index)=>{
 
         const att=exactAttendanceMetric(c);
-        const act=exactTaskMetric(c.id,"نشاط");
+        const courseActivities=displayedTasks.filter(
+          t=>t.courseId===c.id&&t.kind==="نشاط"
+        );
+
+        /*
+          الأنشطة الفصلية تُحسب بعدد الأنشطة المرتبطة بالدورة،
+          ولا تعتمد على إكمال الطلاب. ويشمل ذلك النوع القديم "غير محدد".
+        */
+        const classroomActivities=courseActivities.filter(
+          t=>t.activityMode!=="individual"
+        );
+
+        /* عمود الأنشطة الحالي يبقى للأنشطة الفردية المفتوحة للطلاب. */
+        const individualActivities=courseActivities.filter(
+          t=>t.activityMode==="individual"||t.activityMode==="both"
+        );
+
+        const individualDone=individualActivities.reduce(
+          (sum,t)=>sum+Number(t.completed||0),0
+        );
+        const individualTotal=individualActivities.reduce(
+          (sum,t)=>sum+Number(t.total||0),0
+        );
+        const act=exactMetric(individualDone,individualTotal);
         const quiz=exactTaskMetric(c.id,"كويز");
         const hw=exactTaskMetric(c.id,"واجب");
 
@@ -9413,7 +9453,27 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
       .map((c,index)=>{
 
         const att=exactAttendanceMetric(c);
-        const act=exactTaskMetric(c.id,"نشاط");
+        const courseActivities=displayedTasks.filter(
+          t=>t.courseId===c.id&&t.kind==="نشاط"
+        );
+
+        const classroomActivities=courseActivities.filter(
+          t=>t.activityMode!=="individual"
+        );
+
+        const individualActivities=courseActivities.filter(
+          t=>t.activityMode==="individual"||t.activityMode==="both"
+        );
+
+        const individualDone=individualActivities.reduce(
+          (sum,t)=>sum+Number(t.completed||0),0
+        );
+
+        const individualTotal=individualActivities.reduce(
+          (sum,t)=>sum+Number(t.total||0),0
+        );
+
+        const act=exactMetric(individualDone,individualTotal);
         const quiz=exactTaskMetric(c.id,"كويز");
 
         const students=
@@ -9440,6 +9500,16 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
                 <strong>${att.missing?att.missing:"✓"}</strong>
                 <small>
                   ${att.missing?`خانة ناقصة · ${att.incompleteDays} يوم`:"مكتمل"}
+                </small>
+              </div>
+            </td>
+            <td>
+              <div class="premium-class-activity ${classroomActivities.length?"good":"bad"}">
+                <strong>${classroomActivities.length?"✓ مكتمل":"✕ لم يكتمل"}</strong>
+                <small>
+                  ${classroomActivities.length
+                    ? `${classroomActivities.length} نشاط فصلي`
+                    : "لا يوجد نشاط فصلي"}
                 </small>
               </div>
             </td>
@@ -9613,6 +9683,7 @@ function preparePrintReport(pdfCourses=getPdfCourses()){
               <th style="width:9%">الفترة</th>
               <th style="width:5%">الطلاب</th>
               <th style="width:10%">التحضير</th>
+              <th style="width:10%">الأنشطة الفصلية</th>
               <th>الأنشطة</th>
               <th>الكويزات</th>
               <th>التعليقات</th>
