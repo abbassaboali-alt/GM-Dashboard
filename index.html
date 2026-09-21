@@ -1,222 +1,1661 @@
-<script>
-(function(){
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>PRUDLE | Attendance View (Read-Only)</title>
 
-  const LOGIN_URL =
-    "https://www.prudle-education.com/log-in-out";
-
-  function goLogin(){
-
-    localStorage.removeItem("username");
-    localStorage.removeItem("role");
-    localStorage.removeItem("loginDate");
-
-    sessionStorage.clear();
-
-    window.location.replace(LOGIN_URL);
-  }
-
-  function checkTrainer(){
-
-    const user =
-      localStorage.getItem("username");
-
-    const role =
-      String(
-        localStorage.getItem("role") || ""
-      )
-      .trim()
-      .toLowerCase();
-
-    const last =
-      localStorage.getItem("loginDate");
-
-    const today =
-      new Date().toDateString();
-
-    if(
-      !user ||
-      role !== "admin" ||
-      last !== today
-    ){
-      goLogin();
-      return false;
-    }
-
-    return true;
-  }
-
-  window.logoutPrudle = function(){
-
-    const frame =
-      document.getElementById("quizFrame");
-
-    if(
-      frame &&
-      frame.contentWindow
-    ){
-      frame.contentWindow.postMessage(
-        "PRUDLE_LOGOUT",
-        "*"
-      );
-    }
-
-    goLogin();
-  };
-
-  window.addEventListener(
-    "message",
-    function(event){
-
-      if(
-        event.data === "PRUDLE_LOGOUT"
-      ){
-        goLogin();
-      }
-    }
-  );
-
-  if(!checkTrainer()){
-    return;
-  }
-
-  window.addEventListener(
-    "pageshow",
-    function(){
-      checkTrainer();
-    }
-  );
-
-  window.sendPrudleAuth =
-    function(){
-
-      const frame =
-        document.getElementById(
-          "quizFrame"
-        );
-
-      if(
-        !frame ||
-        !frame.contentWindow
-      ){
-        return;
-      }
-
-      frame.contentWindow.postMessage(
-        {
-          type:"PRUDLE_AUTH",
-
-          username:
-            localStorage.getItem(
-              "username"
-            ) || "",
-
-          role:
-            localStorage.getItem(
-              "role"
-            ) || "",
-
-          loginDate:
-            localStorage.getItem(
-              "loginDate"
-            ) || ""
-        },
-        "*"
-      );
-    };
-
-})();
-</script>
+<!-- FontAwesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<!-- Tajawal -->
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
 
 <style>
-html,
-body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
+/* ===============================
+   FULL WIDTH / FULL SCREEN FIX
+   + NARROW MARGINS
+=============================== */
+html, body{
+  margin:0 !important;
+  padding:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+*,
+*::before,
+*::after{ box-sizing:border-box !important; }
+
+.container,.section,.wrapper,.content,.main-content,
+div, section, header, footer, table{ max-width:100% !important; }
+
+.container,.section,.wrapper,.content,.main-content{
+  width:100% !important;
+  margin:0 auto !important;
+  padding-left:8px;
+  padding-right:8px;
 }
 
-.prudle-frame-wrapper{
-  position:relative;
-  width:100%;
-  height:100vh;
-  overflow:hidden;
-  background:#f3f7fb;
+/* ===== Base ===== */
+html,body{
+  font-family:'Tajawal',sans-serif;
+  background:#f4f6fb;
+  overflow-x:hidden;
 }
 
-.prudle-logout-btn{
-  position:fixed;
-  top:14px;
-  right:125px;
-  z-index:999999;
-
-  border:none;
-  border-radius:12px;
-
-  padding:11px 17px;
-
-  background:#e74c3c;
+/* ===== Logout Badge ===== */
+.logout-badge{
+  background:#164478;
   color:#fff;
-
-  font-family:Arial,sans-serif;
+  padding:7px 18px;
+  border-radius:30px;
+  border:none;
   font-size:14px;
-  font-weight:800;
-
+  font-weight:700;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.18);
+  transition:.25s;
+  margin:8px 8px 0;
+}
+.logout-badge i{font-size:15px}
+.logout-badge:hover{background:#1e5799;transform:translateY(-2px)}
 
+/* ===== Header ===== */
+.header{
+  background:#164478;
+  color:#fff;
+  text-align:center;
+  padding:12px;
+  font-size:20px;
+  font-weight:900;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:7px;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:8px 8px 0;
+  border-radius:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
+}
+.header img{
+  width:70px;height:70px;
+  border-radius:14px;
+  background:#fff;padding:4px;
+}
 
-  box-shadow:
-    0 5px 16px
-    rgba(0,0,0,.22);
-
+/* ===== Actions ===== */
+.actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin:0 8px 8px;
+}
+.badge-info{
+  background:#fff;
+  border:1px dashed #cfd6e6;
+  color:#164478;
+  padding:8px 12px;
+  border-radius:12px;
+  font-weight:900;
+}
+.btn{
+  background:#164478;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(22,68,120,.18);
   transition:.2s;
 }
+.btn:hover{transform:translateY(-1px)}
+.btn.purple{background:#8e44ad}
+.btn.gray{background:#7f8c8d}
+.btn.green{background:#27ae60}
+.btn.red{background:#c0392b}
 
-.prudle-logout-btn:hover{
-  background:#c0392b;
-  transform:translateY(-2px);
+/* ===== Stats Bar ===== */
+.stats{
+  margin:0 8px 8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.stat-chip{
+  background:#fff;
+  border:1px solid #e6ecfb;
+  border-radius:12px;
+  padding:8px 12px;
+  font-weight:900;
+  color:#164478;
+  box-shadow:0 10px 24px rgba(0,0,0,.04);
+}
+.stat-chip b{color:#0b2b52}
+.stat-chip.green{border-color:#b7f0cf;color:#1f7a3d}
+.stat-chip.red{border-color:#f4b7b7;color:#a32727}
+.stat-chip.orange{border-color:#ffd9a8;color:#b45309}
+.stat-chip.gray{border-color:#e3e7ef;color:#586074}
+
+/* ===== Filters ===== */
+.filters{
+  background:#fff;
+  margin:8px;
+  padding:12px;
+  border-radius:14px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(175px,1fr));
+  gap:10px;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
+}
+.filters input,.filters select{
+  padding:9px 10px;
+  border-radius:10px;
+  border:1px solid #ccd3e2;
+  font-weight:900;
+  outline:none;
+  background:#fff;
+}
+.filters input:focus,.filters select:focus{border-color:#164478}
+
+/* ===== Wrap ===== */
+.wrap{
+  width:calc(100% - 16px);
+  margin:8px;
+  background:#fff;
+  padding:10px;
+  border-radius:14px;
+  overflow:auto;
+  max-height:78vh;
+  display:none;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
 }
 
-#quizFrame{
-  width:100%;
-  height:100vh;
+/* ===== Course Block ===== */
+.course-block{
+  border:1px solid #e6ecfb;
+  border-radius:14px;
+  overflow:hidden;
+  margin:10px 0;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+.course-head{
+  background:#164478;
+  color:#fff;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  font-weight:900;
+}
+.course-head small{
+  opacity:.95;
+  font-weight:800;
+}
+.course-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.mini-btn{
+  background:#fff;
+  color:#164478;
   border:none;
-  display:block;
+  padding:6px 10px;
+  border-radius:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.mini-btn:hover{opacity:.92}
+.course-body{padding:10px;background:#fff}
+
+/* ===== Table Wrapper (Horizontal Scroll) ===== */
+.course-body{
+  padding:10px;
+  background:#fff;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
 }
 
-@media(max-width:650px){
+/* ===== Table ===== */
+table{
+  border-collapse:collapse;
+  font-size:12px;
+  direction:ltr;
+  min-width:max-content;
+  width:max-content;
+}
 
-  .prudle-logout-btn{
-    top:10px;
-    right:105px;
-    padding:9px 12px;
-    font-size:12px;
-  }
+/* ===== Cells ===== */
+th,td{
+  padding:5px 4px;
+  border:1px solid #e1e6f2;
+  text-align:center;
+  white-space:nowrap;
+  direction:rtl;
+  vertical-align:middle;
+}
+
+/* ===== Sticky Header ===== */
+thead th{
+  background:#164478;
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+/* =========================
+   ✅ STICKY NAME COLUMN + Arabic/English full display
+========================= */
+:root{
+  --nameW: 380px;   /* عرض عمود الاسم */
+  --checkW: 60px;   /* عرض عمود التحديد */
+  --numW: 60px;     /* عرض عمود الرقم */
+}
+
+/* ✅ عمود الاسم: ثابت + يظهر كامل */
+th:nth-child(3),
+td:nth-child(3){
+  position:sticky;
+  right:0;                 /* RTL */
+  z-index:40;
+  min-width:var(--nameW);
+  max-width:520px;
+  text-align:right;
+  font-weight:900;
+  background:#fff;
+  box-shadow:-6px 0 14px rgba(0,0,0,.10);
+
+  /* ✅ إظهار الاسم كامل */
+  white-space:normal !important;
+  word-break:break-word;
+  line-height:1.35;
+  padding:8px 10px !important;
+}
+
+/* هيدر الاسم يبقى أزرق */
+th:nth-child(3){
+  background:#164478 !important;
+  color:#fff !important;
+  z-index:60;
+}
+
+/* ✅ عمود التحديد ثابت بعد الاسم */
+th:nth-child(2),
+td:nth-child(2){
+  position:sticky;
+  right:var(--nameW);
+  z-index:55;
+  background:#fff;
+  box-shadow:-3px 0 10px rgba(0,0,0,.06);
+}
+
+/* ✅ عمود الرقم ثابت بعد التحديد */
+th:nth-child(1),
+td:nth-child(1){
+  position:sticky;
+  right:calc(var(--nameW) + var(--checkW));
+  z-index:56;
+  background:#fff;
+  box-shadow:-3px 0 10px rgba(0,0,0,.06);
+}
+
+/* ✅ تنسيق الاسم EN/AR داخل العمود */
+.name-en{
+  font-weight:900;
+  font-size:12px;
+  direction:ltr;
+  text-align:left;
+}
+.name-ar{
+  font-size:11px;
+  font-weight:800;
+  color:#444;
+  direction:rtl;
+  text-align:right;
+  margin-top:2px;
+}
+
+/* Zebra */
+tbody tr:nth-child(even){ background:#f3f6fc; }
+
+/* Mobile */
+@media (max-width:768px){
+  :root{ --nameW: 280px; }
+  .name-en{font-size:11px}
+  .name-ar{font-size:10px}
+}
+
+/* Attendance cells */
+.cell{
+  width:22px;height:22px;
+  border-radius:6px;
+  font-weight:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:default;
+  pointer-events:none;
+}
+.cell.none{background:#eee}
+.cell.present{background:#1abc9c;color:#fff}
+.cell.late{background:#f39c12;color:#fff}
+.cell.absent{background:#e74c3c;color:#fff}
+
+/* Weekend */
+.weekend{background:#fff1e6!important}
+
+/* WhatsApp per row */
+.wa-row-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid #16a34a;
+  background:#ecfdf5;
+  color:#065f46;
+  font-weight:900;
+  cursor:pointer;
+  font-size:12px;
+  box-shadow:0 6px 16px rgba(16,185,129,.12);
+  transition:.2s;
+}
+.wa-row-btn i{color:#16a34a}
+.wa-row-btn:hover{background:#16a34a;color:#fff;transform:translateY(-1px)}
+.wa-row-btn:hover i{color:#fff}
+.wa-row-btn.disabled{opacity:.45;pointer-events:none}
+
+/* ✅ تمييز زر واتس حسب "اليوم المختار" */
+.wa-row-btn.day-absent{background:#e74c3c;border-color:#c0392b;color:#fff}
+.wa-row-btn.day-absent i{color:#fff}
+.wa-row-btn.day-absent:hover{background:#c0392b;color:#fff}
+.wa-row-btn.day-present{background:#27ae60;border-color:#1e874b;color:#fff}
+.wa-row-btn.day-present i{color:#fff}
+.wa-row-btn.day-present:hover{background:#1e874b;color:#fff}
+
+/* ✅ تمييز الاسم حسب "اليوم المختار" */
+.name-day-absent{
+  background:#e74c3c !important;
+  color:#fff !important;
+  border-radius:8px;
+  padding:6px 8px !important;
+}
+.name-day-present{
+  background:#27ae60 !important;
+  color:#fff !important;
+  border-radius:8px;
+  padding:6px 8px !important;
+}
+
+/* ✅ تلوين العمود المختار */
+.col-selected{
+  outline:2px solid rgba(22,68,120,.25);
+  background:#eef6ff !important;
+}
+th.col-selected{
+  background:#0f3563 !important;
+}
+
+/* ✅ جعل عنوان اليوم قابل للنقر */
+.th-day{
+  cursor:pointer;
+  user-select:none;
+}
+.th-day:hover{filter:brightness(1.05)}
+
+/* Hidden chart canvas for PDF */
+#chartCanvasWrap{
+  position:fixed;
+  left:-9999px;
+  top:-9999px;
+  width:900px;
+  height:380px;
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
 }
 </style>
+</head>
 
-<div class="prudle-frame-wrapper">
+<body>
 
-  <button
-    class="prudle-logout-btn"
-    type="button"
-    onclick="logoutPrudle()">
+<button class="logout-badge" onclick="logout()">
+  <i class="fa-solid fa-right-from-bracket"></i> Logout
+</button>
 
-    <span>↪</span>
-    Logout
-
-  </button>
-
-  <iframe
-    id="quizFrame"
-    src="https://abbassaboali-alt.github.io/Grades-Report/"
-    allow="microphone; camera"
-    onload="sendPrudleAuth()">
-  </iframe>
-
+<div class="header">
+  Student Attendance – View Only
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJprpZXU4pTSCYXKhzWCpqdZ_mnPHMwqsACA&amp;s" />
 </div>
+
+<div class="actions">
+  <span class="badge-info" id="infoBox">⚠ اختر فلترة أولاً لعرض البيانات</span>
+
+  <button class="btn" onclick="selectAll()">تحديد الكل</button>
+  <button class="btn gray" onclick="clearSelection()">إلغاء التحديد</button>
+
+  <button class="btn green" onclick="selectByDay('present')">تحديد (حاضر) اليوم المختار</button>
+  <button class="btn red" onclick="selectByDay('absent')">تحديد (غائب) اليوم المختار</button>
+
+  <button class="btn purple" onclick="exportSelectedPDF()">PDF المحدد فقط</button>
+  <button class="btn green" onclick="exportAllDisplayedPDF()">PDF جميع المعروض</button>
+
+  <button class="btn green" onclick="exportBySelectedDayPDF('present','Prudle_Day_Present.pdf')">PDF (حاضر) اليوم المختار</button>
+  <button class="btn red" onclick="exportBySelectedDayPDF('absent','Prudle_Day_Absent.pdf')">PDF (غائب) اليوم المختار</button>
+</div>
+
+<div class="stats" id="statsBox">
+  <div class="stat-chip">الدورات: <b id="stCourses">0</b></div>
+  <div class="stat-chip gray">الطلاب: <b id="stStudents">0</b></div>
+  <div class="stat-chip">المحدد: <b id="stSelected">0</b></div>
+
+  <div class="stat-chip gray">اليوم المختار: <b id="stDay">—</b></div>
+  <div class="stat-chip green">حاضر: <b id="stDayPresent">0</b></div>
+  <div class="stat-chip orange">متأخر: <b id="stDayLate">0</b></div>
+  <div class="stat-chip red">غائب: <b id="stDayAbsent">0</b></div>
+  <div class="stat-chip gray">بدون رصد: <b id="stDayNone">0</b></div>
+  <div class="stat-chip">نسبة الحضور: <b id="stDayRate">0%</b></div>
+</div>
+
+<div class="filters">
+  <!-- ✅ البحث الفوري (عربي/انجليزي/هوية) -->
+  <input id="searchInput" oninput="renderAllCourses()" placeholder="بحث بالهوية أو الاسم عربي / English" />
+
+  <select id="branchFilter" onchange="applyFilter()"><option value="">الفرع</option></select>
+  <select id="sectionFilter" onchange="applyFilter()"><option value="">القسم</option></select>
+  <select id="trainerFilter" onchange="applyFilter()"><option value="">المدرب</option></select>
+  <select id="courseFilter" onchange="applyFilter()"><option value="">الدورة</option></select>
+  <select id="periodFilter" onchange="applyFilter()"><option value="">الفترة</option></select>
+  <select id="startDateFilter" onchange="applyFilter()"><option value="">تاريخ البدء</option></select>
+
+  <!-- ✅ اختيار عمود اليوم (اختياري) -->
+  <select id="dayColumnFilter" onchange="renderAllCourses()">
+    <option value="">اليوم (اختياري)</option>
+  </select>
+</div>
+
+<div class="wrap" id="tableWrap">
+  <div id="coursesContainer"></div>
+</div>
+
+<div id="chartCanvasWrap">
+  <canvas id="pdfChart" width="900" height="380"></canvas>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+/* =========================
+   Logout + Protection
+   Fixed for Weebly iframe + GitHub
+========================= */
+
+let AUTH_RECEIVED = false;
+
+window.addEventListener("message", function(e){
+  const d = e.data || {};
+
+  if(d.type === "PRUDLE_AUTH"){
+    localStorage.setItem("username", d.username || "");
+    localStorage.setItem("role", d.role || "");
+    localStorage.setItem("loginDate", d.loginDate || "");
+    AUTH_RECEIVED = true;
+    checkAdminAccess();
+  }
+
+  if(e.data === "PRUDLE_LOGOUT"){
+    goLogin();
+  }
+});
+
+function goLogin(){
+  localStorage.clear();
+  sessionStorage.clear();
+
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage("PRUDLE_LOGOUT","*");
+  }
+
+  location.replace("https://www.prudle-education.com/log-in-out");
+}
+
+function logout(){
+  goLogin();
+}
+
+function checkAdminAccess(){
+  const user = localStorage.getItem("username");
+  const role = String(localStorage.getItem("role") || "").trim().toLowerCase();
+  const last = localStorage.getItem("loginDate");
+  const today = new Date().toDateString();
+
+  if(!user || role !== "admin" || last !== today){
+    goLogin();
+    return false;
+  }
+
+  return true;
+}
+
+(function(){
+
+  if(location.hostname.includes("editmysite") || location.hostname.includes("weebly")) return;
+
+  /* إذا الصفحة داخل iframe ننتظر بيانات الدخول من Weebly */
+  if(window.parent && window.parent !== window){
+    setTimeout(function(){
+      if(!AUTH_RECEIVED){
+        checkAdminAccess();
+      }
+    }, 1500);
+    return;
+  }
+
+  if(!checkAdminAccess()){
+    throw new Error("Access Denied");
+  }
+
+})();
+
+window.addEventListener("pageshow", function(){
+  if(window.parent && window.parent !== window && !AUTH_RECEIVED) return;
+  checkAdminAccess();
+});
+
+/* =========================
+   CONFIG
+========================= */
+const LOGO_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2cRc2rxfALVprygCmO_V7cJra9eZF1MUzpuJ3NnWd&s";
+const DIRECTOR_NAME = "Prudle Institute Administration";
+
+/* =========================
+   Firebase
+========================= */
+firebase.initializeApp({
+  apiKey:"AIzaSyCCFBvZosI8dwShZjxvZzI-SU5igEbcOKk",
+  projectId:"prudle-system"
+});
+const db = firebase.firestore();
+
+/* =========================
+   State
+========================= */
+let COURSES = [];
+let STUDENTS = [];
+let ACTIVE_COURSES = [];
+let SELECTED_IDS = new Set();
+let chartInstance = null;
+
+/* =========================
+   Helpers
+========================= */
+const normalize = s => (s||"").toString().toLowerCase()
+  .replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/\s+/g," ").trim();
+
+const isWeekend = d => [5,6].includes(new Date(d).getDay());
+const dayNameAr = d => new Date(d).toLocaleDateString("ar",{weekday:"short"});
+const dayNameEn = d => new Date(d).toLocaleDateString("en-US",{weekday:"short"});
+
+function dateRange(s,e){
+  let a=[],d=new Date(s),x=new Date(e);
+  if(isNaN(d.getTime()) || isNaN(x.getTime())) return a;
+  while(d<=x){
+    a.push(d.toISOString().split("T")[0]);
+    d.setDate(d.getDate()+1);
+  }
+  return a;
+}
+function getRec(s,d){
+  return (s.records||[]).filter(r=>r.date===d).pop() || {};
+}
+function safePhone(p){
+  let x=String(p||"").trim();
+  if(!x) return "";
+  x=x.replace(/\s+/g,"");
+  if(x.startsWith("0")) x=x.slice(1);
+  if(!x.startsWith("966")) x="966"+x;
+  return x;
+}
+
+/* ===== Period smart sort ===== */
+function periodRank(v){
+  const s = String(v||"").toLowerCase();
+  if(s.includes("صباح") || s.includes("am") || s.includes("morning")) return 1;
+  if(s.includes("ظهر") || s.includes("noon")) return 2;
+  if(s.includes("عصر")) return 3;
+  if(s.includes("مساء") || s.includes("pm") || s.includes("evening") || s.includes("night")) return 4;
+  const num = (s.match(/\d+/)||[])[0];
+  if(num) return 10 + Number(num);
+  return 99;
+}
+function sortSmart(arr){
+  return (arr||[]).slice().sort((a,b)=>{
+    const ra = periodRank(a);
+    const rb = periodRank(b);
+    if(ra !== rb) return ra - rb;
+    return String(a||"").localeCompare(String(b||""), "ar", {numeric:true, sensitivity:"base"});
+  });
+}
+const uniq = a => [...new Set((a||[]).filter(Boolean))];
+
+/* =========================
+   PDF: English Name Only
+========================= */
+function pdfStudentName(s){
+  // ✅ مطابق للواجهة لكن إنجليزي فقط
+  return String(s?.name || "-").trim();
+}
+
+/* =========================
+   Load Data
+========================= */
+(async()=>{
+  const cSnap = await db.collection("Courses").get();
+  cSnap.forEach(d=>{
+    const x = d.data() || {};
+    if(x.status === "open"){
+      COURSES.push({id:d.id, ...x});
+    }
+  });
+
+  const sSnap = await db.collection("students").get();
+  sSnap.forEach(d=>STUDENTS.push({id:d.id, ...d.data()}));
+
+  fillFilters();
+  applyFilter();
+})();
+
+/* =========================
+   Fill Filters
+========================= */
+function fillFilters(){
+  const fill = (el, values, sorter=null) => {
+    const first = el.options[0]?.text || "";
+    let list = uniq(values);
+    if(sorter) list = sorter(list);
+    else list = list.sort((a,b)=> String(a).localeCompare(String(b),"ar",{numeric:true,sensitivity:"base"}));
+    el.innerHTML = `<option value="">${first}</option>` + list.map(v=>`<option value="${v}">${v}</option>`).join("");
+  };
+
+  fill(branchFilter,  COURSES.map(c=>c.Branch));
+  fill(sectionFilter, COURSES.map(c=>c.Section));
+  fill(trainerFilter, COURSES.map(c=>c.Trainer));
+  fill(courseFilter,  COURSES.map(c=>c.TrainingCourse));
+  fill(periodFilter,  COURSES.map(c=>c.Period), sortSmart);
+  fill(startDateFilter,COURSES.map(c=>c.StartingDate), (x)=>x.sort((a,b)=> new Date(b)-new Date(a)));
+}
+
+/* =========================
+   Apply Filter
+========================= */
+function applyFilter(){
+  const hasFilter =
+    branchFilter.value ||
+    sectionFilter.value ||
+    trainerFilter.value ||
+    courseFilter.value ||
+    periodFilter.value ||
+    startDateFilter.value;
+
+  if(!hasFilter){
+    tableWrap.style.display="none";
+    coursesContainer.innerHTML="";
+    infoBox.textContent="⚠ اختر فلترة أولاً لعرض البيانات";
+    ACTIVE_COURSES = [];
+    SELECTED_IDS.clear();
+    fillDayColumnFilter();
+    updateStats(0,0,0,"",0,0,0,0,"0%");
+    return;
+  }
+
+  ACTIVE_COURSES = COURSES.filter(c =>
+    (!branchFilter.value   || c.Branch === branchFilter.value) &&
+    (!sectionFilter.value  || c.Section === sectionFilter.value) &&
+    (!trainerFilter.value  || c.Trainer === trainerFilter.value) &&
+    (!courseFilter.value   || c.TrainingCourse === courseFilter.value) &&
+    (!periodFilter.value   || c.Period === periodFilter.value) &&
+    (!startDateFilter.value|| c.StartingDate === startDateFilter.value)
+  );
+
+  ACTIVE_COURSES = ACTIVE_COURSES.slice().sort((a,b)=>{
+    const ra = periodRank(a.Period);
+    const rb = periodRank(b.Period);
+    if(ra !== rb) return ra - rb;
+
+    const ca = String(a.TrainingCourse||"");
+    const cb = String(b.TrainingCourse||"");
+    const cc = ca.localeCompare(cb, "ar", {numeric:true, sensitivity:"base"});
+    if(cc !== 0) return cc;
+
+    const ta = String(a.Trainer||"");
+    const tb = String(b.Trainer||"");
+    return ta.localeCompare(tb, "ar", {numeric:true, sensitivity:"base"});
+  });
+
+  SELECTED_IDS.clear();
+
+  if(!ACTIVE_COURSES.length){
+    tableWrap.style.display="none";
+    coursesContainer.innerHTML="";
+    infoBox.textContent="لا توجد نتائج مطابقة للفلترة";
+    fillDayColumnFilter();
+    updateStats(0,0,0,"",0,0,0,0,"0%");
+    return;
+  }
+
+  fillDayColumnFilter();
+  tableWrap.style.display="block";
+  renderAllCourses();
+}
+
+/* =========================
+   Fill Day Column Filter
+========================= */
+function fillDayColumnFilter(){
+  const select = document.getElementById("dayColumnFilter");
+  const keep = select.value || "";
+
+  let allDays = [];
+  ACTIVE_COURSES.forEach(c=>{
+    const days = dateRange(c.StartingDate, c.EndingDate);
+    allDays = allDays.concat(days);
+  });
+
+  allDays = [...new Set(allDays)].sort((a,b)=> new Date(a) - new Date(b));
+
+  select.innerHTML =
+    `<option value="">اليوم (اختياري)</option>` +
+    allDays.map(d=>`<option value="${d}">${d} - ${dayNameAr(d)}</option>`).join("");
+
+  if(keep && allDays.includes(keep)) select.value = keep;
+  else select.value = "";
+}
+
+function setSelectedDay(d){
+  const sel = document.getElementById("dayColumnFilter");
+  if(!d) return;
+  const opt = [...sel.options].some(o=>o.value===d);
+  if(!opt) return;
+  sel.value = d;
+  renderAllCourses();
+}
+
+/* =========================
+   Stats
+========================= */
+function updateStats(totalCourses, totalStudents, selectedCount, day, p,l,a,n, rateStr){
+  stCourses.textContent = String(totalCourses||0);
+  stStudents.textContent = String(totalStudents||0);
+  stSelected.textContent = String(selectedCount||0);
+
+  stDay.textContent = day ? `${day} (${dayNameAr(day)})` : "—";
+  stDayPresent.textContent = String(p||0);
+  stDayLate.textContent = String(l||0);
+  stDayAbsent.textContent = String(a||0);
+  stDayNone.textContent = String(n||0);
+  stDayRate.textContent = rateStr || "0%";
+}
+
+/* =========================
+   ✅ Selection Helpers + ✅ Instant Search (AR/EN/ID)
+========================= */
+function getVisibleStudentsForCourse(course, q){
+  const students = STUDENTS.filter(s=>s.courseId === course.id);
+  const qq = normalize(q||"");
+  return students.filter(s=>{
+    if(!qq) return true;
+
+    const fields = [
+      s.iqama,
+      s.identity,
+      s.name,
+      s.name_ar,
+      s.name_en
+    ];
+
+    return fields.some(v => normalize(v).includes(qq));
+  });
+}
+
+function selectAll(){
+  if(!ACTIVE_COURSES.length){
+    alert("اختر فلترة أولاً");
+    return;
+  }
+  SELECTED_IDS.clear();
+  const q = normalize(searchInput.value);
+  ACTIVE_COURSES.forEach(course=>{
+    const list = getVisibleStudentsForCourse(course, q);
+    list.forEach(s=>SELECTED_IDS.add(s.id));
+  });
+  renderAllCourses();
+}
+function clearSelection(){
+  SELECTED_IDS.clear();
+  renderAllCourses();
+}
+function toggleCourseAll(courseId, checked){
+  const course = ACTIVE_COURSES.find(c=>c.id===courseId);
+  if(!course) return;
+  const q = normalize(searchInput.value);
+  const list = getVisibleStudentsForCourse(course, q);
+  if(checked) list.forEach(s=>SELECTED_IDS.add(s.id));
+  else list.forEach(s=>SELECTED_IDS.delete(s.id));
+  renderAllCourses();
+}
+
+function selectByDay(statusNeed){
+  if(!ACTIVE_COURSES.length){
+    alert("اختر فلترة أولاً");
+    return;
+  }
+  const selectedDay = dayColumnFilter.value;
+  if(!selectedDay){
+    alert("اختر اليوم من القائمة (اليوم اختياري لكن للتحديد لازم تختاره)");
+    return;
+  }
+
+  SELECTED_IDS.clear();
+  const q = normalize(searchInput.value);
+
+  ACTIVE_COURSES.forEach(course=>{
+    const days = dateRange(course.StartingDate, course.EndingDate);
+    if(!days.includes(selectedDay)) return;
+
+    const visible = getVisibleStudentsForCourse(course, q);
+    visible.forEach(s=>{
+      const st = (getRec(s,selectedDay).status||"").toLowerCase();
+      if(st===statusNeed){
+        SELECTED_IDS.add(s.id);
+      }
+    });
+  });
+
+  renderAllCourses();
+}
+
+/* =========================
+   ✅ Render ALL courses blocks
+   ✅ عمود الاسم: EN فوق + AR تحت
+========================= */
+function renderAllCourses(){
+  if(!ACTIVE_COURSES.length){
+    tableWrap.style.display="none";
+    updateStats(0,0,0,"",0,0,0,0,"0%");
+    return;
+  }
+
+  const q = normalize(searchInput.value);
+  const selectedDay = dayColumnFilter.value || "";
+  coursesContainer.innerHTML = "";
+
+  let totalStudentsShown = 0;
+  let totalCoursesShown  = 0;
+
+  let dayP=0, dayL=0, dayA=0, dayN=0, dayTotal=0;
+
+  ACTIVE_COURSES.forEach(course=>{
+    const days = dateRange(course.StartingDate, course.EndingDate);
+    const visibleStudents = getVisibleStudentsForCourse(course, q);
+
+    totalCoursesShown++;
+    totalStudentsShown += visibleStudents.length;
+
+    const dayInCourse = selectedDay && days.includes(selectedDay);
+
+    if(dayInCourse){
+      visibleStudents.forEach(s=>{
+        const st = (getRec(s,selectedDay).status||"none").toLowerCase();
+        if(st==="present") dayP++;
+        else if(st==="late") dayL++;
+        else if(st==="absent") dayA++;
+        else dayN++;
+        dayTotal++;
+      });
+    }
+
+    const title = `${course.TrainingCourse||"-"} | ${course.Period||"-"} | ${course.Trainer||"-"}`;
+    const meta  = `الفرع: ${course.Branch||"-"} | القسم: ${course.Section||"-"} | ${course.StartingDate||"-"} → ${course.EndingDate||"-"} | طلاب: ${visibleStudents.length} | أيام: ${days.length}`;
+
+    const allChecked = visibleStudents.length
+      ? visibleStudents.every(s=>SELECTED_IDS.has(s.id))
+      : false;
+
+    const theadHTML = `
+      <thead>
+        <tr>
+          <th style="min-width:44px">#</th>
+          <th style="min-width:52px">
+            <input type="checkbox" ${allChecked?"checked":""}
+              onclick="toggleCourseAll('${course.id}', this.checked)">
+          </th>
+
+          <!-- ✅ هيدر الاسم -->
+          <th style="min-width:300px;text-align:right">الطالب</th>
+
+          ${days.map(d=>`
+            <th class="th-day ${isWeekend(d)?'weekend':''} ${selectedDay===d?'col-selected':''}"
+                onclick="setSelectedDay('${d}')"
+                title="اضغط لاختيار هذا اليوم للتقرير والتحديد">
+              <div style="font-weight:900">${dayNameAr(d)}</div>
+              <div style="font-size:10px">${d}</div>
+            </th>
+          `).join("")}
+          <th style="min-width:100px">واتس</th>
+        </tr>
+      </thead>
+    `;
+
+    const bodyRows = visibleStudents.map((s,idx)=>{
+      let dayStatus = "";
+      if(selectedDay && days.includes(selectedDay)){
+        dayStatus = (getRec(s,selectedDay).status||"").toLowerCase();
+      }
+
+      const isDayAbsent = (dayStatus === "absent");
+      const isDayPresent = (dayStatus === "present");
+
+      const cells = days.map(d=>{
+        const r = getRec(s,d);
+        const st = (r.status||"none").toLowerCase();
+        const code = st==="present" ? "P" : st==="late" ? "L" : st==="absent" ? "A" : "";
+        const selClass = (selectedDay && d===selectedDay) ? "col-selected" : "";
+        return `
+          <td class="${isWeekend(d)?'weekend':''} ${selClass}">
+            <div class="cell ${st}">${code}</div>
+          </td>
+        `;
+      }).join("");
+
+      const phone = safePhone(s.phone);
+      let waClass = phone ? "wa-row-btn" : "wa-row-btn disabled";
+      if(phone && isDayAbsent) waClass += " day-absent";
+      if(phone && isDayPresent) waClass += " day-present";
+
+      const nameClass =
+        isDayAbsent ? "name-day-absent" :
+        isDayPresent ? "name-day-present" : "";
+
+      // ✅ SAME AS FINANCIAL CODE EXACTLY
+      const nameEN = (s.name || "");
+      const nameAR = (s.name_ar || "");
+
+      return `
+        <tr>
+          <td>${idx+1}</td>
+          <td>
+            <input type="checkbox"
+              ${SELECTED_IDS.has(s.id)?"checked":""}
+              onclick="this.checked?SELECTED_IDS.add('${s.id}'):SELECTED_IDS.delete('${s.id}')">
+          </td>
+
+          <!-- ✅ الاسم EN فوق + AR تحت + إظهار كامل -->
+          <td class="${nameClass}" style="text-align:right;font-weight:900">
+            <div class="name-en">${nameEN}</div>
+            <div class="name-ar">${nameAR}</div>
+
+            <div style="font-weight:800;font-size:11px;margin-top:4px;opacity:.95">
+              ${s.iqama||s.identity||""}
+              ${selectedDay && days.includes(selectedDay) && isDayAbsent ? ` | غائب: ${selectedDay}` : ""}
+              ${selectedDay && days.includes(selectedDay) && isDayPresent ? ` | حاضر: ${selectedDay}` : ""}
+            </div>
+          </td>
+
+          ${cells}
+          <td>
+            <button class="${waClass}" onclick="sendWhatsAppOne('${course.id}','${s.id}')">
+              <i class="fa-brands fa-whatsapp"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    const block = document.createElement("div");
+    block.className = "course-block";
+    block.innerHTML = `
+      <div class="course-head">
+        <div>
+          ${title}
+          <div><small>${meta}</small></div>
+        </div>
+        <div class="course-actions">
+          <button class="mini-btn" onclick="exportPDFSingleCourse('${course.id}')">PDF لهذه الدورة</button>
+        </div>
+      </div>
+      <div class="course-body">
+        <table>
+          ${theadHTML}
+          <tbody>${bodyRows || `<tr><td colspan="${days.length+4}" style="padding:14px;font-weight:900;color:#666">لا يوجد طلاب مطابقين للبحث</td></tr>`}</tbody>
+        </table>
+      </div>
+    `;
+
+    coursesContainer.appendChild(block);
+  });
+
+  const selCount = SELECTED_IDS.size;
+
+  infoBox.textContent =
+    `الدورات المعروضة: ${totalCoursesShown} | إجمالي الطلاب المعروضين: ${totalStudentsShown}` +
+    (searchInput.value ? " | (نتائج البحث مفعّلة)" : "") +
+    (selCount ? ` | المحدد: ${selCount}` : "") +
+    (dayColumnFilter.value ? ` | اليوم المختار: ${dayColumnFilter.value}` : "");
+
+  const rate = dayTotal ? (((dayP + dayL) / dayTotal) * 100).toFixed(1) : "0.0";
+  updateStats(totalCoursesShown, totalStudentsShown, selCount, selectedDay, dayP, dayL, dayA, dayN, `${rate}%`);
+}
+
+/* =========================
+   WhatsApp per row
+========================= */
+function sendWhatsAppOne(courseId, studentId){
+  const course = ACTIVE_COURSES.find(c=>c.id===courseId) || COURSES.find(c=>c.id===courseId) || {};
+  const students = STUDENTS.filter(s=>s.courseId===courseId);
+  const s = students.find(x=>x.id===studentId);
+  if(!s){ alert("لم يتم العثور على الطالب"); return; }
+
+  const phone = safePhone(s.phone);
+  if(!phone){ alert("لا يوجد رقم جوال لهذا الطالب"); return; }
+
+  const selectedDay = dayColumnFilter.value || "";
+  const days = dateRange(course.StartingDate, course.EndingDate);
+
+  let note = "متابعة الحضور";
+  let d = "";
+
+  if(selectedDay && days.includes(selectedDay)){
+    const st = (getRec(s,selectedDay).status||"").toLowerCase();
+    d = selectedDay;
+    if(st==="absent") note = `تنبيه: غياب في اليوم المحدد (${selectedDay})`;
+    else if(st==="present") note = `تأكيد: حضور في اليوم المحدد (${selectedDay})`;
+    else if(st==="late") note = `تنبيه: تأخر في اليوم المحدد (${selectedDay})`;
+    else note = `متابعة رصد اليوم المحدد (${selectedDay})`;
+  }else{
+    const lastDay = days.length ? days[days.length-1] : "";
+    if(lastDay){
+      const st = (getRec(s,lastDay).status||"").toLowerCase();
+      d = lastDay;
+      if(st==="absent") note = `تنبيه: غياب في آخر يوم رصد (${lastDay})`;
+      else if(st==="present") note = `تأكيد: حضور في آخر يوم رصد (${lastDay})`;
+      else if(st==="late") note = `تنبيه: تأخر في آخر يوم رصد (${lastDay})`;
+      else note = `متابعة رصد آخر يوم (${lastDay})`;
+    }
+  }
+
+  const msg =
+`السلام عليكم
+
+${note}
+
+الطالب: ${s.name_ar || s.name_en || s.name || "-"}
+الهوية: ${s.iqama || s.identity || "-"}
+
+الدورة: ${course.TrainingCourse || "-"}
+المدرب: ${course.Trainer || "-"}
+الفترة: ${course.Period || "-"}
+الفرع: ${course.Branch || "-"}
+القسم: ${course.Section || "-"}
+اليوم: ${d || "-"}
+
+نرجو الإفادة / العذر إن وجد.
+
+شاكرين تعاونكم
+إدارة معهد برودل`;
+
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+/* =========================
+   Chart image for PDF
+========================= */
+async function buildPieChartImage(totals){
+  const canvas = document.getElementById("pdfChart");
+  const ctx = canvas.getContext("2d");
+  if(chartInstance) chartInstance.destroy();
+
+  chartInstance = new Chart(ctx,{
+    type:"doughnut",
+    data:{
+      labels:["Present","Late","Absent","No Record"],
+      datasets:[{ data:[totals.present, totals.late, totals.absent, totals.none] }]
+    },
+    options:{
+      responsive:false,
+      animation:false,
+      cutout:"62%",
+      plugins:{
+        legend:{ position:"right" },
+        title:{
+          display:true,
+          text:"Attendance Summary",
+          font:{ size:18, weight:"bold" }
+        }
+      }
+    }
+  });
+
+  await new Promise(res=>setTimeout(res,80));
+  return canvas.toDataURL("image/png", 1.0);
+}
+
+/* =========================
+   PDF Buttons (Selected / All Displayed)
+========================= */
+async function exportSelectedPDF(){
+  if(!ACTIVE_COURSES.length){
+    alert("يجب اختيار فلترة أولاً");
+    return;
+  }
+  if(!SELECTED_IDS.size){
+    alert("لم يتم تحديد أي سجل");
+    return;
+  }
+
+  const q = normalize(searchInput.value);
+
+  const exportGroups = ACTIVE_COURSES.map(course=>{
+    const visible = getVisibleStudentsForCourse(course, q);
+    const selected = visible.filter(s=>SELECTED_IDS.has(s.id));
+    return { course, students:selected };
+  }).filter(g=>g.students.length);
+
+  if(!exportGroups.length){
+    alert("لا يوجد طلاب محددين ضمن الفلترة الحالية");
+    return;
+  }
+
+  await exportPDFGroupsExecutive(exportGroups, "Prudle_Selected_Executive.pdf");
+}
+
+async function exportAllDisplayedPDF(){
+  if(!ACTIVE_COURSES.length){
+    alert("يجب اختيار فلترة أولاً");
+    return;
+  }
+
+  const q = normalize(searchInput.value);
+
+  const exportGroups = ACTIVE_COURSES.map(course=>{
+    const visible = getVisibleStudentsForCourse(course, q);
+    return { course, students:visible };
+  }).filter(g=>g.students.length);
+
+  if(!exportGroups.length){
+    alert("لا توجد بيانات معروضة للتصدير");
+    return;
+  }
+
+  await exportPDFGroupsExecutive(exportGroups, "Prudle_AllDisplayed_Executive.pdf");
+}
+
+/* Single course PDF */
+async function exportPDFSingleCourse(courseId){
+  if(!ACTIVE_COURSES.length){
+    alert("يجب اختيار فلترة أولاً");
+    return;
+  }
+
+  const course = ACTIVE_COURSES.find(c=>c.id===courseId);
+  if(!course){ alert("الدورة غير موجودة ضمن الفلترة"); return; }
+
+  const q = normalize(searchInput.value);
+  const visible = getVisibleStudentsForCourse(course, q);
+
+  let list = [];
+  if(SELECTED_IDS.size){
+    list = visible.filter(s=>SELECTED_IDS.has(s.id));
+    if(!list.length) list = visible;
+  }else{
+    list = visible;
+  }
+
+  if(!list.length){
+    alert("لا توجد سجلات للتصدير لهذه الدورة");
+    return;
+  }
+
+  const safeName = (course.TrainingCourse||"Course").replace(/[^\w\u0600-\u06FF]+/g,"_");
+  const safePeriod = (course.Period||"Period").replace(/[^\w\u0600-\u06FF]+/g,"_");
+  await exportPDFGroupsExecutive([{course, students:list}], `Prudle_Attendance_${safeName}_${safePeriod}.pdf`);
+}
+
+/* =========================
+   PROFESSIONAL DAILY REPORT PDF
+   ✅ الاسم في PDF: EN فوق + AR تحت + التفاف أسطر
+========================= */
+async function exportBySelectedDayPDF(statusNeed, filename){
+  if(!ACTIVE_COURSES.length){
+    alert("يجب اختيار فلترة أولاً");
+    return;
+  }
+
+  const selectedDay = dayColumnFilter.value;
+  if(!selectedDay){
+    alert("اختر اليوم من القائمة أولاً");
+    return;
+  }
+
+  const q = normalize(searchInput.value);
+  const rows = [];
+
+  ACTIVE_COURSES.forEach(course=>{
+    const days = dateRange(course.StartingDate, course.EndingDate);
+    if(!days.includes(selectedDay)) return;
+
+    let list = getVisibleStudentsForCourse(course, q);
+
+    if(SELECTED_IDS.size){
+      const sub = list.filter(s=>SELECTED_IDS.has(s.id));
+      if(sub.length) list = sub;
+    }
+
+    list.forEach(s=>{
+      const st = (getRec(s,selectedDay).status||"").toLowerCase();
+      if(st===statusNeed){
+        rows.push([
+          rows.length+1,
+          pdfStudentName(s),                  // ✅ FIX
+          (s.iqama || s.identity || ""),
+          safePhone(s.phone)||"",
+          course.TrainingCourse||"-",
+          course.Trainer||"-",
+          course.Period||"-",
+          selectedDay,
+          statusNeed.toUpperCase()
+        ]);
+      }
+    });
+  });
+
+  if(!rows.length){
+    alert("لا توجد نتائج مطابقة");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+
+  doc.setFillColor(22,68,120);
+  doc.rect(0,0,W,70,"F");
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(20);
+  doc.text("PRUDLE – DAILY ATTENDANCE REPORT", W/2, 42, {align:"center"});
+
+  try{
+    const logoData = await fetch(LOGO_URL)
+      .then(r=>r.blob())
+      .then(b=>new Promise(res=>{
+        const fr=new FileReader();
+        fr.onload=()=>res(fr.result);
+        fr.readAsDataURL(b);
+      }));
+    doc.addImage(logoData,"PNG",20,12,100,45);
+  }catch(e){}
+
+  doc.setDrawColor(22,68,120);
+  doc.setFillColor(245,248,253);
+  doc.roundedRect(20,85,W-40,85,12,12,"FD");
+
+  doc.setTextColor(22,68,120);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(13);
+  doc.text("Report Details",40,110);
+
+  doc.setFont("helvetica","normal");
+  doc.setTextColor(0);
+  doc.setFontSize(11);
+  doc.text(`Selected Date: ${selectedDay}`,40,135);
+  doc.text(`Total Records: ${rows.length}`,40,155);
+
+  const now = new Date();
+  const formattedDate =
+    now.getDate().toString().padStart(2,'0') + " " +
+    now.toLocaleString("en-US",{month:"short"}) + " " +
+    now.getFullYear();
+  const formattedTime =
+    now.getHours().toString().padStart(2,'0') + ":" +
+    now.getMinutes().toString().padStart(2,'0');
+  const printDate = formattedDate + " | " + formattedTime;
+
+  doc.text(`Printed On: ${printDate}`, W-280, 135);
+
+  doc.autoTable({
+    startY:190,
+    head:[["#","Student","ID","Phone","Course","Trainer","Period","Date","Status"]],
+    body:rows,
+    theme:"grid",
+    margin:{left:20,right:20},
+    styles:{
+      fontSize:9,
+      cellPadding:6,
+      halign:"center",
+      valign:"middle",
+      overflow:"linebreak"     // ✅ مهم لعرض سطرين
+    },
+    headStyles:{
+      fillColor:[22,68,120],
+      textColor:255,
+      fontStyle:"bold"
+    },
+    alternateRowStyles:{
+      fillColor:[245,248,252]
+    },
+    columnStyles:{
+      0:{cellWidth:28},
+      1:{cellWidth:140, halign:"left"},  // ✅ عمود الاسم أوسع + سطرين
+      2:{cellWidth:90},
+      3:{cellWidth:95}
+    },
+    didParseCell(data){
+      if(data.section==="body" && data.column.index===8){
+        if(statusNeed==="absent"){
+          data.cell.styles.fillColor=[231,76,60];
+        }else{
+          data.cell.styles.fillColor=[39,174,96];
+        }
+        data.cell.styles.textColor=255;
+        data.cell.styles.fontStyle="bold";
+      }
+    }
+  });
+
+  const pages = doc.getNumberOfPages();
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text(`Prudle Education System | Page ${i} of ${pages}`,W/2,H-15,{align:"center"});
+  }
+
+  doc.save(filename);
+}
+
+/* =========================================================
+   EXECUTIVE PDF BUILDER (Landscape A4)
+   ✅ Page 1: Executive Summary (chart only here)
+   ✅ Next pages: Detailed per course (NO chart)
+   ✅ الاسم في التفاصيل: EN فوق + AR تحت
+========================================================= */
+function countAttendanceForStudent(s, days){
+  let present=0, late=0, absent=0, none=0;
+  days.forEach(d=>{
+    const st=(getRec(s,d).status||"none").toLowerCase();
+    if(st==="present") present++;
+    else if(st==="late") late++;
+    else if(st==="absent") absent++;
+    else none++;
+  });
+  return {present,late,absent,none,total:days.length};
+}
+function totalsForStudents(students, days){
+  let P=0,L=0,A=0,N=0;
+  students.forEach(s=>{
+    const c=countAttendanceForStudent(s,days);
+    P+=c.present; L+=c.late; A+=c.absent; N+=c.none;
+  });
+  return {present:P,late:L,absent:A,none:N,totalCells:students.length*days.length};
+}
+
+async function exportPDFGroupsExecutive(groups, filename){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:"landscape", unit:"pt", format:"a4" });
+
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = { left:12, right:12 };
+
+  let logoData = null;
+  try{
+    logoData = await fetch(LOGO_URL)
+      .then(r=>r.blob())
+      .then(b=>new Promise(res=>{
+        const fr=new FileReader();
+        fr.onload=()=>res(fr.result);
+        fr.readAsDataURL(b);
+      }));
+  }catch(e){}
+
+  const printDate = new Date().toLocaleString("en-US",{
+    year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit"
+  });
+
+  let grandStudents = 0;
+  let grandDaysSum = 0;
+  let grandCells = 0;
+  let grandPresent = 0;
+  let grandLate = 0;
+  let grandAbsent = 0;
+  let grandNone = 0;
+
+  groups.forEach(g=>{
+    const days = dateRange(g.course.StartingDate, g.course.EndingDate);
+    const totals = totalsForStudents(g.students, days);
+    grandStudents += g.students.length;
+    grandDaysSum += days.length;
+    grandCells += (g.students.length * days.length);
+    grandPresent += totals.present;
+    grandLate += totals.late;
+    grandAbsent += totals.absent;
+    grandNone += totals.none;
+  });
+
+  const attendanceRate = grandCells ? (((grandPresent + grandLate) / grandCells) * 100).toFixed(1) : "0.0";
+
+  doc.setFillColor(22,68,120);
+  doc.rect(0,0,W,62,"F");
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(18);
+  doc.text("PRUDLE – EXECUTIVE ATTENDANCE SUMMARY", W/2, 38, {align:"center"});
+
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9);
+  doc.text(`Printed: ${printDate}`, W-12, 18, {align:"right"});
+  doc.text(`Approved by: ${DIRECTOR_NAME}`, W-12, 34, {align:"right"});
+
+  if(logoData){
+    try{ doc.addImage(logoData,"PNG",M.left,10,78,42); }catch(e){}
+  }
+
+  let y = 82;
+
+  doc.setTextColor(22,68,120);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(14);
+  doc.text("Executive Overview", M.left, y);
+
+  y += 14;
+  doc.setDrawColor(210);
+  doc.setFillColor(245,248,253);
+  doc.roundedRect(M.left, y, W-M.left-M.right, 120, 12, 12, "FD");
+
+  doc.setFontSize(12);
+  doc.setTextColor(0);
+
+  const leftX = M.left + 16;
+  const midX  = M.left + 360;
+  const rightX= W - M.right - 220;
+
+  doc.setFont("helvetica","bold");
+  doc.text("Scope", leftX, y+26);
+  doc.setFont("helvetica","normal");
+  doc.text(`Courses: ${groups.length}`, leftX, y+48);
+  doc.text(`Total Students (sum): ${grandStudents}`, leftX, y+68);
+  doc.text(`Total Course Days (sum): ${grandDaysSum}`, leftX, y+88);
+  doc.text(`Total Attendance Cells: ${grandCells}`, leftX, y+108);
+
+  doc.setFont("helvetica","bold");
+  doc.text("Totals", midX, y+26);
+  doc.setFont("helvetica","normal");
+  doc.text(`Present (P): ${grandPresent}`, midX, y+48);
+  doc.text(`Late (L): ${grandLate}`, midX, y+68);
+  doc.text(`Absent (A): ${grandAbsent}`, midX, y+88);
+  doc.text(`No Record: ${grandNone}`, midX, y+108);
+
+  doc.setFont("helvetica","bold");
+  doc.text("KPIs", rightX, y+26);
+  doc.setFont("helvetica","normal");
+  doc.text(`Attendance Rate (P+L): ${attendanceRate}%`, rightX, y+52);
+
+  const summaryTotals = { present: grandPresent, late: grandLate, absent: grandAbsent, none: grandNone };
+  const chartImg = await buildPieChartImage(summaryTotals);
+
+  const chartBoxY = y + 140;
+  doc.setDrawColor(210);
+  doc.setFillColor(255,255,255);
+  doc.roundedRect(M.left, chartBoxY, W-M.left-M.right, 250, 12, 12, "FD");
+
+  doc.setTextColor(22,68,120);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(12);
+  doc.text("Global Distribution", M.left+16, chartBoxY+26);
+
+  doc.addImage(chartImg, "PNG", W/2 - 190, chartBoxY+38, 380, 190);
+
+  doc.setTextColor(110);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.text("Legend: P=Present, L=Late, A=Absent.", W/2, H-34, {align:"center"});
+
+  for(let gi=0; gi<groups.length; gi++){
+    const { course, students } = groups[gi];
+    const days = dateRange(course.StartingDate, course.EndingDate);
+
+    doc.addPage();
+
+    doc.setFillColor(22,68,120);
+    doc.rect(0,0,W,54,"F");
+
+    doc.setTextColor(255);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(15);
+    doc.text("PRUDLE – ATTENDANCE REPORT (DETAIL)", W/2, 34, {align:"center"});
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(9);
+    doc.text(`Printed: ${printDate}`, W-12, 18, {align:"right"});
+
+    if(logoData){
+      try{ doc.addImage(logoData,"PNG",M.left,8,78,40); }catch(e){}
+    }
+
+    let yy = 70;
+    doc.setDrawColor(22,68,120);
+    doc.setFillColor(245,248,253);
+    doc.roundedRect(M.left,yy, W-M.left-M.right, 82, 12, 12, "FD");
+
+    doc.setTextColor(22,68,120);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(11);
+
+    doc.text(`Course: ${course.TrainingCourse||"-"}`, M.left+14, yy+24);
+    doc.text(`Trainer: ${course.Trainer||"-"}`, M.left+14, yy+44);
+    doc.text(`Period: ${course.Period||"-"}`, M.left+14, yy+64);
+
+    doc.text(`Branch: ${course.Branch||"-"}`, M.left+310, yy+24);
+    doc.text(`Section: ${course.Section||"-"}`, M.left+310, yy+44);
+   const startDatePDF = course.StartingDate || "-";
+const endDatePDF   = course.EndingDate || "-";
+
+doc.setFont("helvetica","bold");
+doc.text("Dates:", M.left+310, yy+64);
+
+doc.setFont("helvetica","normal");
+doc.text(`${startDatePDF} - ${endDatePDF}`, M.left+355, yy+64);
+
+    doc.setTextColor(0);
+    doc.setFont("helvetica","bold");
+    doc.text(`Students: ${students.length}`, W-M.right-170, yy+28);
+    doc.text(`Days: ${days.length}`, W-M.right-170, yy+50);
+
+    const head = ["#","Student Name","ID","Phone", ...days.map(d=>dayNameEn(d))];
+    const body = students.map((s,i)=>{
+      const phone = safePhone(s.phone);
+      return [
+        i+1,
+        pdfStudentName(s),                 // ✅ FIX
+        (s.iqama || s.identity || ""),
+        phone || "",
+        ...days.map(d=>{
+          const st = (getRec(s,d).status||"").toLowerCase();
+          if(st==="present") return "P";
+          if(st==="late") return "L";
+          if(st==="absent") return "A";
+          return "";
+        })
+      ];
+    });
+
+    doc.autoTable({
+      startY: yy + 110,
+      head: [head],
+      body,
+      theme: "grid",
+      margin: { left:M.left, right:M.right },
+      styles: {
+        fontSize: 7.2,
+        cellPadding: 3,
+        halign:"center",
+        valign:"middle",
+        overflow:"linebreak",             // ✅ مهم لعرض سطرين
+        lineWidth:0.6,
+        lineColor:[190,190,190]
+      },
+      headStyles: { fillColor:[22,68,120], textColor:255, fontStyle:"bold", lineWidth:0.8 },
+      alternateRowStyles: { fillColor:[245,248,252] },
+      columnStyles: {
+        0:{cellWidth:26},
+        1:{cellWidth:175, halign:"left"},  // ✅ أوسع للـ EN+AR
+        2:{cellWidth:90},
+        3:{cellWidth:90}
+      },
+      didParseCell(data){
+        if(data.section==="body" && data.column.index>=4){
+          const v = String(data.cell.raw||"");
+          if(v==="P"){ data.cell.styles.fillColor=[26,188,156]; data.cell.styles.textColor=255; data.cell.styles.fontStyle="bold"; }
+          if(v==="L"){ data.cell.styles.fillColor=[243,156,18]; data.cell.styles.textColor=255; data.cell.styles.fontStyle="bold"; }
+          if(v==="A"){ data.cell.styles.fillColor=[231,76,60]; data.cell.styles.textColor=255; data.cell.styles.fontStyle="bold"; }
+          if(!v){ data.cell.styles.fillColor=[238,241,247]; data.cell.styles.textColor=70; }
+        }
+      }
+    });
+  }
+
+  const pages = doc.getNumberOfPages();
+  for(let p=1;p<=pages;p++){
+    doc.setPage(p);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text(`Page ${p} / ${pages}`, W/2, H-16, {align:"center"});
+  }
+
+  doc.save(filename);
+}
+</script>
+</body>
+</html>
