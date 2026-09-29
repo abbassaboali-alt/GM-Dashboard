@@ -24,6 +24,7 @@
 .task-sortbar span{font-size:8px;color:var(--muted);font-weight:900}
 .task-sortbar button{border:1px solid #dbe4ec;background:#f7fafc;color:var(--blue);border-radius:10px;padding:7px 10px;font-size:8px;font-weight:900}
 .task-sortbar button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.task-pdf-btn{background:#e7f7f1!important;color:#107a58!important;border-color:#bfe7d8!important}.task-pdf-btn:hover{background:#107a58!important;color:#fff!important}
 .course-task-groups{display:flex;flex-direction:column;gap:13px}
 .course-task-group{border:1px solid #dfe7ef;border-radius:15px;background:#fbfcfe;padding:12px}
 .course-task-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid #e7edf3}
@@ -5915,6 +5916,135 @@ function filterTasksByActivityMode(tasks){
   });
 }
 
+function exportVisibleTrainerActivitiesPDF(){
+
+  if(!FILTERED.length){
+    alert("اختر الفلاتر أولاً لعرض النشاطات المطلوبة.");
+    return;
+  }
+
+  const tasks=filterTasksByActivityMode(academicTasks());
+  const courseMap=new Map(FILTERED.map(c=>[c.id,c]));
+
+  const rows=tasks
+    .filter(t=>courseMap.has(t.courseId))
+    .map(t=>({task:t,course:courseMap.get(t.courseId)}))
+    .sort((a,b)=>
+      clean(a.course.trainer).localeCompare(clean(b.course.trainer),"ar",{numeric:true,sensitivity:"base"}) ||
+      periodSortValue(a.course.period)-periodSortValue(b.course.period) ||
+      clean(a.course.name).localeCompare(clean(b.course.name),"ar",{numeric:true,sensitivity:"base"}) ||
+      clean(a.task.title).localeCompare(clean(b.task.title),"ar",{numeric:true,sensitivity:"base"})
+    );
+
+  if(!rows.length){
+    alert("لا توجد أنشطة أو كويزات أو واجبات ظاهرة حاليًا للطباعة.");
+    return;
+  }
+
+  const trainerGroups=new Map();
+  rows.forEach(item=>{
+    const trainer=clean(item.course.trainer)||"مدرب غير محدد";
+    if(!trainerGroups.has(trainer))trainerGroups.set(trainer,[]);
+    trainerGroups.get(trainer).push(item);
+  });
+
+  const kindLabel=t=>t.kind||"—";
+  const modeLabel=t=>
+    t.kind!=="نشاط" ? "—" :
+    t.activityMode==="individual" ? "Individual" :
+    t.activityMode==="teams" ? "Teams" :
+    t.activityMode==="both" ? "Individual + Teams" : "غير محدد";
+
+  const trainersHtml=[...trainerGroups.entries()].map(([trainer,items],trainerIndex)=>{
+    const courseGroups=new Map();
+    items.forEach(item=>{
+      const key=`${item.course.id}`;
+      if(!courseGroups.has(key))courseGroups.set(key,{course:item.course,items:[]});
+      courseGroups.get(key).items.push(item.task);
+    });
+
+    const coursesHtml=[...courseGroups.values()]
+      .sort((a,b)=>
+        periodSortValue(a.course.period)-periodSortValue(b.course.period) ||
+        clean(a.course.name).localeCompare(clean(b.course.name),"ar",{numeric:true,sensitivity:"base"})
+      )
+      .map(({course,items})=>{
+        const totalStudents=Math.max(0,Number(course.students||0));
+        const activityCount=items.filter(t=>t.kind==="نشاط").length;
+        const quizCount=items.filter(t=>t.kind==="كويز").length;
+        const homeworkCount=items.filter(t=>t.kind==="واجب").length;
+
+        const body=items.map((t,i)=>{
+          const total=Math.max(0,Number(t.total||0));
+          const completed=Math.max(0,Number(t.completed||0));
+          const pending=Math.max(0,total-completed);
+          const pct=total?Math.round(completed/total*100):0;
+          return `<tr>
+            <td>${i+1}</td>
+            <td class="title-cell"><b>${esc(t.title||"—")}</b></td>
+            <td><span class="kind ${t.kind==="نشاط"?"activity":t.kind==="كويز"?"quiz":"homework"}">${esc(kindLabel(t))}</span></td>
+            <td>${esc(modeLabel(t))}</td>
+            <td>${completed}</td>
+            <td>${pending}</td>
+            <td>${total}</td>
+            <td><div class="pct"><span>${pct}%</span><i><b style="width:${pct}%"></b></i></div></td>
+          </tr>`;
+        }).join("");
+
+        return `<section class="course-block">
+          <div class="course-head">
+            <div>
+              <h3>${esc(course.name||"دورة غير محددة")}</h3>
+              <p>${esc(course.branch||"")} ${course.section?"· "+esc(course.section):""}</p>
+            </div>
+            <div class="course-meta">
+              <span>الفترة <b>${esc(course.period||"غير محددة")}</b></span>
+              <span>الطلاب <b>${totalStudents}</b></span>
+              <span>نشاط <b>${activityCount}</b></span>
+              <span>كويز <b>${quizCount}</b></span>
+              <span>واجب <b>${homeworkCount}</b></span>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>#</th><th>العنوان</th><th>النوع</th><th>النمط</th><th>أكمل</th><th>لم يكمل</th><th>الإجمالي</th><th>الإنجاز</th></tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        </section>`;
+      }).join("");
+
+    return `<section class="trainer-block ${trainerIndex?"new-trainer":""}">
+      <div class="trainer-head">
+        <div><small>المدرب</small><h2>${esc(trainer)}</h2></div>
+        <div class="trainer-count">${items.length} عنصر ظاهر</div>
+      </div>
+      ${coursesHtml}
+    </section>`;
+  }).join("");
+
+  const generatedAt=new Date().toLocaleString("ar-SA");
+  const visibleCourseCount=new Set(rows.map(x=>x.course.id)).size;
+  const trainerCount=trainerGroups.size;
+  const activityCount=rows.filter(x=>x.task.kind==="نشاط").length;
+  const quizCount=rows.filter(x=>x.task.kind==="كويز").length;
+  const homeworkCount=rows.filter(x=>x.task.kind==="واجب").length;
+  const filterMode=ACTIVITY_MODE_FILTER==="individual"?"Individual":ACTIVITY_MODE_FILTER==="teams"?"Teams":"الكل";
+
+  const w=window.open("","_blank","width=1300,height=900");
+  if(!w){alert("تعذر فتح نافذة PDF. اسمح بالنوافذ المنبثقة لهذا الموقع.");return;}
+
+  w.document.open();
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير النشاطات الظاهرة حسب المدرب</title>
+  <style>
+  @page{size:A4 landscape;margin:9mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{margin:0;font-family:Tajawal,"Segoe UI",Arial,sans-serif;color:#173650;background:#fff}.report{width:100%}.cover{background:linear-gradient(135deg,#0d365d,#164478 60%,#2b78b2);color:#fff;border-radius:15px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:10px}.cover h1{margin:0;font-size:21px}.cover p{margin:4px 0 0;font-size:10px;color:#d9e9f5}.meta{text-align:left;font-size:9px;line-height:1.8;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:8px 11px;border-radius:10px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:12px}.summary div{border:1px solid #d9e4ec;border-radius:9px;padding:7px 9px;background:#f8fbfd;border-right:4px solid #164478}.summary span{display:block;font-size:7px;color:#718397}.summary b{display:block;font-size:14px;color:#123b60;margin-top:2px}.trainer-block{margin-bottom:12px}.new-trainer{break-before:page;page-break-before:always}.trainer-head{display:flex;align-items:center;justify-content:space-between;background:#164478;color:#fff;padding:8px 11px;border-radius:9px 9px 0 0}.trainer-head small{font-size:6px;color:#d8e7f2}.trainer-head h2{margin:1px 0 0;font-size:12px}.trainer-count{font-size:7px;background:rgba(255,255,255,.14);padding:4px 8px;border-radius:12px}.course-block{border:1px solid #d4e0e9;border-top:0;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid}.course-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 9px;background:#eef5fa;border-bottom:1px solid #d7e2ea}.course-head h3{margin:0;color:#123b60;font-size:9px}.course-head p{margin:2px 0 0;color:#718397;font-size:6px}.course-meta{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.course-meta span{font-size:5.8px;background:#fff;border:1px solid #d7e2ea;border-radius:10px;padding:3px 6px;color:#667e91}.course-meta b{color:#164478}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}th{background:#dfeaf2;color:#123a5e;padding:5px 4px;border:1px solid #c8d7e2;font-size:6px}td{padding:5px 4px;border:1px solid #e0e7ed;font-size:6px;text-align:center;vertical-align:middle;word-break:break-word}tbody tr:nth-child(even){background:#f9fbfd}tr{break-inside:avoid;page-break-inside:avoid}.title-cell{text-align:right!important}.kind{display:inline-block;padding:2px 5px;border-radius:9px;font-weight:900;font-size:5.5px}.kind.activity{background:#e6f6ef;color:#0f7b58}.kind.quiz{background:#efeafb;color:#684bb4}.kind.homework{background:#e8f2f9;color:#256796}.pct{display:flex;align-items:center;justify-content:center;gap:4px}.pct>span{min-width:24px}.pct i{display:block;width:42px;height:5px;background:#e6edf2;border-radius:8px;overflow:hidden}.pct i b{display:block;height:100%;background:linear-gradient(90deg,#2b78b2,#149b70)}.footer{margin-top:8px;padding-top:5px;border-top:1px solid #d6e0e8;color:#8191a1;font-size:6px;display:flex;justify-content:space-between}
+  </style></head><body><main class="report">
+  <header class="cover"><div><h1>تقرير النشاطات الظاهرة حسب المدرب</h1><p>فرز تلقائي: المدرب ← الفترة ← الدورة</p></div><div class="meta"><b>تاريخ التقرير:</b> ${esc(generatedAt)}<br><b>فلتر نوع النشاط:</b> ${esc(filterMode)}</div></header>
+  <section class="summary"><div><span>المدربون</span><b>${trainerCount}</b></div><div><span>الدورات</span><b>${visibleCourseCount}</b></div><div><span>الأنشطة</span><b>${activityCount}</b></div><div><span>الكويزات</span><b>${quizCount}</b></div><div><span>الواجبات</span><b>${homeworkCount}</b></div></section>
+  ${trainersHtml}
+  <footer class="footer"><span>Prudle Language Institute · Academic Supervision</span><span>يعرض فقط العناصر الظاهرة حسب الفلاتر الحالية</span></footer>
+  </main><script>window.onload=function(){setTimeout(function(){window.print();},300)};<\/script></body></html>`);
+  w.document.close();
+}
+
 function groupedAcademicTasks(){
 
   if(!FILTERED.length){
@@ -8294,6 +8424,7 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 <span style="margin-right:8px">الفرز:</span>
 <button class="${TASK_SORT_MODE==="period"?"active":""}" onclick="setTaskSort('period')">حسب الفترة</button>
 <button class="${TASK_SORT_MODE==="course"?"active":""}" onclick="setTaskSort('course')">حسب الدورة</button>
+<button class="task-pdf-btn" onclick="exportVisibleTrainerActivitiesPDF()">PDF النشاطات الظاهرة</button>
 </div></div>${groupedAcademicTasks()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
   if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يحسب كل خانة طالب غير مرصودة في يوم دراسي فعلي كحالة عدم تحضير مستقلة</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>حالات عدم التحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
