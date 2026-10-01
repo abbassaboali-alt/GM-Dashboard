@@ -4051,6 +4051,16 @@
   }
 }
 
+
+/* ===== Attendance / Absence detail popups ===== */
+.detail-click{border:0;background:transparent;padding:3px 5px;border-radius:8px;font:inherit;font-weight:900;cursor:pointer}
+.detail-click.red{color:var(--red);background:#fff0f1}.detail-click.green{color:var(--green);background:#e8f8f2}
+.detail-click:hover{box-shadow:0 0 0 2px rgba(22,68,120,.12)}
+.detail-modal{width:min(920px,96vw);max-height:90vh}
+.detail-modal-body{padding:15px 18px 20px}.detail-modal-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.detail-modal-summary{font-size:12px;font-weight:800;color:#557087}.detail-modal-pdf{border:0;border-radius:10px;background:#e7f7f1;color:#107a58;padding:9px 14px;font-weight:900}
+.detail-table{width:100%;border-collapse:collapse;min-width:650px}.detail-table th{background:#eef4f8;color:#164478;padding:10px;border:1px solid #dce5ec;font-size:11px}.detail-table td{padding:10px;border:1px solid #e5ebf0;font-size:11px;text-align:center;vertical-align:middle}.detail-table tbody tr:nth-child(even){background:#fbfdfe}.detail-students{text-align:right!important;line-height:1.8}.detail-empty{padding:28px;text-align:center;color:#71839a;font-weight:800}
+@media(max-width:650px){.detail-modal-body{padding:10px}.detail-table{min-width:560px}.detail-table th,.detail-table td{font-size:10px;padding:8px}}
 </style>
 </head>
 <body>
@@ -4199,6 +4209,23 @@
   </section>
 </div>
 
+
+
+<div class="modal-bg hidden" id="detailModalBg" onclick="closeDetailModal(event)">
+  <section class="modal detail-modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><span class="kind" id="detailModalKind"></span><h2 id="detailModalTitle"></h2><p id="detailModalSub"></p></div>
+      <button class="close" onclick="closeDetailModal()">×</button>
+    </div>
+    <div class="detail-modal-body">
+      <div class="detail-modal-tools">
+        <div class="detail-modal-summary" id="detailModalSummary"></div>
+        <button type="button" class="detail-modal-pdf" id="detailModalPdf">PDF</button>
+      </div>
+      <div class="table-wrap" id="detailModalTable"></div>
+    </div>
+  </section>
+</div>
 
 <section class="print-report" id="printReport">
   <div class="print-cover">
@@ -7599,6 +7626,47 @@ function exportAllAbsencePDF(selectedOnly=true){
   );
 }
 
+
+/* ===== Detail popup: trainer missing attendance + student absences ===== */
+let DETAIL_MODAL_PDF_ACTION=null;
+function closeDetailModal(event){
+  if(event && event.target && event.target.id!=="detailModalBg") return;
+  const bg=$("detailModalBg"); if(bg) bg.classList.add("hidden");
+  DETAIL_MODAL_PDF_ACTION=null;
+}
+function showDetailModal({kind,title,sub,summary,tableHtml,pdfAction}){
+  $("detailModalKind").textContent=kind||"تفاصيل";
+  $("detailModalTitle").textContent=title||"";
+  $("detailModalSub").textContent=sub||"";
+  $("detailModalSummary").textContent=summary||"";
+  $("detailModalTable").innerHTML=tableHtml||'<div class="detail-empty">لا توجد بيانات</div>';
+  DETAIL_MODAL_PDF_ACTION=pdfAction||null;
+  $("detailModalPdf").onclick=()=>{ if(DETAIL_MODAL_PDF_ACTION) DETAIL_MODAL_PDF_ACTION(); };
+  $("detailModalBg").classList.remove("hidden");
+}
+function trainerAttendanceDetailRows(course){
+  return (course?.incompleteAttendanceDetails||[]).map((item,index)=>({
+    index:index+1,date:item.date,missingCount:Number(item.missingCount||0),
+    names:(item.missingStudentNames&&item.missingStudentNames.length?item.missingStudentNames:(item.missingStudentIds||[]).map(id=>DATA.students.find(s=>s.id===id)?.name||id)).filter(Boolean)
+  }));
+}
+function openTrainerAttendanceDetails(courseId){
+  const course=DATA.courses.find(c=>clean(c.id)===clean(courseId)); if(!course)return;
+  const rows=trainerAttendanceDetailRows(course);
+  const table=`<table class="detail-table"><thead><tr><th>#</th><th>التاريخ</th><th>عدد الحالات غير المرصودة</th><th>الطلاب الذين لم يتم تحضيرهم</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.index}</td><td>${esc(r.date)}</td><td><b class="red">${r.missingCount}</b></td><td class="detail-students">${esc(r.names.join(" · ")||"—")}</td></tr>`).join("")||'<tr><td colspan="4">تم رصد جميع الطلاب في الأيام المطلوبة</td></tr>'}</tbody></table>`;
+  showDetailModal({kind:"عدم التحضير",title:course.name||"الدورة",sub:`${course.trainer||"—"} · ${course.period||"—"} · ${course.branch||"—"}`,summary:`${course.missingAttendanceStudentsTotal||0} حالة ناقصة · ${course.attendanceMissing||0} يوم متأثر`,tableHtml:table,pdfAction:()=>exportTrainerAttendanceDetailsPDF(course.id)});
+}
+function exportTrainerAttendanceDetailsPDF(courseId){
+  const course=DATA.courses.find(c=>clean(c.id)===clean(courseId)); if(!course)return; const rows=trainerAttendanceDetailRows(course);
+  printWindow(`تفاصيل عدم التحضير - ${course.name||""}`,`<div class="kpis"><div class="kpi"><span>المدرب</span><b style="font-size:12px">${esc(course.trainer||"—")}</b></div><div class="kpi"><span>الدورة</span><b style="font-size:12px">${esc(course.name||"—")}</b></div><div class="kpi"><span>الأيام المتأثرة</span><b>${course.attendanceMissing||0}</b></div><div class="kpi"><span>الحالات الناقصة</span><b>${course.missingAttendanceStudentsTotal||0}</b></div></div><div class="section"><h2>أماكن عدم التحضير</h2><table><thead><tr><th>#</th><th>التاريخ</th><th>عدد الحالات</th><th>الطلاب دون رصد</th></tr></thead><tbody>${rows.map(r=>`<tr class="danger"><td>${r.index}</td><td>${esc(r.date)}</td><td>${r.missingCount}</td><td>${esc(r.names.join(" · ")||"—")}</td></tr>`).join("")||'<tr><td colspan="4">لا توجد حالات عدم تحضير</td></tr>'}</tbody></table></div>`,`portrait`);
+}
+function openStudentAbsenceDetails(studentId){
+  const row=studentAbsenceRows().find(x=>clean(x.student.id)===clean(studentId)); if(!row)return;
+  const records=absenceRecordsForStudent(row.student).map((record,index)=>({index:index+1,date:attendanceRecordDate(record),status:attendanceStatusText(record)||"غائب"})).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const table=`<table class="detail-table"><thead><tr><th>#</th><th>تاريخ الغياب</th><th>الحالة</th></tr></thead><tbody>${records.map(r=>`<tr><td>${r.index}</td><td>${esc(r.date||"—")}</td><td><span class="badge bad">غائب</span></td></tr>`).join("")||'<tr><td colspan="3">لا توجد غيابات</td></tr>'}</tbody></table>`;
+  showDetailModal({kind:"غيابات الطالب",title:row.student.name||"الطالب",sub:`${row.course.name||"—"} · ${row.course.trainer||"—"} · ${row.course.period||"—"}`,summary:`إجمالي الغياب: ${row.absences}`,tableHtml:table,pdfAction:()=>exportStudentAbsencePDF(row.student.id)});
+}
+
 function renderStudentAbsences(){
   if(!FILTERED.length){
     return `
@@ -7814,9 +7882,9 @@ function renderStudentAbsences(){
                 </td>
 
                 <td>
-                  <span class="absence-count ${r.absences>3?"danger":""}">
+                  <button type="button" class="detail-click ${r.absences>0?"red":"green"}" data-student-id="${esc(r.student.id)}" onclick="openStudentAbsenceDetails(this.dataset.studentId)" title="عرض تفاصيل الغياب">
                     ${r.absences}
-                  </span>
+                  </button>
                 </td>
 
                 <td>
@@ -8457,9 +8525,9 @@ function render(){renderStats();const titles={overview:"نظرة عامة",cours
 </div></div>${groupedAcademicTasks()}</section>`;
   if(ACTIVE_VIEW==="courses")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>جميع الدورات</h2><p>الإنجاز والحضور والتعليقات والتنبيهات</p></div><span class="count-chip">${FILTERED.length} دورة</span></div>${coursesTable()}</section>`;
   if(ACTIVE_VIEW==="attendance")$("viewBox").innerHTML=`<section class="panel full-panel"><div class="panel-head"><div><h2>متابعة تحضير المدربين</h2><p>يحسب كل خانة طالب غير مرصودة في يوم دراسي فعلي كحالة عدم تحضير مستقلة</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>الدورة</th><th>المدرب</th><th>الفترة</th><th>نسبة الحضور</th><th>حالات عدم التحضير</th><th>الحالة</th></tr></thead><tbody>${FILTERED.map(c=>`<tr><td><b>${esc(c.name)}</b><small class="td-sub">${esc(c.branch)} · ${esc(c.section)}</small></td><td>${esc(c.trainer)}</td><td>${esc(c.period)}</td><td><div class="progress-label"><b>${c.attendance}%</b>${progress(c.attendance,c.attendance<90?"red":"green")}</div></td><td>
-  <b class="${c.missingAttendanceStudentsTotal?"red":"green"}">
+  <button type="button" class="detail-click ${c.missingAttendanceStudentsTotal?"red":"green"}" data-course-id="${esc(c.id)}" onclick="openTrainerAttendanceDetails(this.dataset.courseId)">
     ${c.missingAttendanceStudentsTotal||0}
-  </b>
+  </button>
 
   <small class="td-sub">
     الأيام المتأثرة:
