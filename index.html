@@ -4872,7 +4872,6 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
     id:s.id,
     name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),
     iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),
-    studentId:clean(first(s,["studentId","studentID","StudentID","ID"],"")),
     phone:clean(first(s,["phone","Phone","mobile","Mobile","phoneNumber","PhoneNumber","studentPhone","StudentPhone"])),
     courseId:clean(first(s,["courseId","CourseId"])),
     records:Array.isArray(s.records)?s.records:[],
@@ -5316,10 +5315,6 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
             (
               s.iqama &&
               clean(r.studentIqama)===s.iqama
-            ) ||
-            (
-              s.studentId &&
-              clean(r.studentId)===s.studentId
             )
           );
 
@@ -8823,11 +8818,7 @@ function openSkill(courseId,skill){
   (DATA.skillEvaluations||[])
     .filter(r=>clean(r.courseId)===courseId && clean(r.skill).toLowerCase()===clean(skill).toLowerCase() && hasValue(r.score))
     .forEach(r=>{
-      const matched=students.find(s=>
-        s.id===clean(r.studentId) ||
-        (s.iqama && clean(r.studentIqama)===s.iqama) ||
-        (s.studentId && clean(r.studentId)===s.studentId)
-      );
+      const matched=students.find(s=>s.id===clean(r.studentId)||(s.iqama&&clean(r.studentIqama)===s.iqama));
       if(!matched)return;
       const score=Number(r.score);
       const total=skillMaximum(skill);
