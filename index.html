@@ -4694,6 +4694,45 @@ async function safeReadCollection(name,limit=5000){
   }
 }
 
+/* Read large collections completely instead of stopping at 5000 docs. */
+async function readAllCollection(name,pageSize=1000){
+  const rows=[];
+  let lastDoc=null;
+
+  while(true){
+    let query=db.collection(name)
+      .orderBy(firebase.firestore.FieldPath.documentId())
+      .limit(pageSize);
+
+    if(lastDoc){
+      query=query.startAfter(lastDoc);
+    }
+
+    const snap=await query.get();
+
+    snap.docs.forEach(doc=>{
+      rows.push({id:doc.id,...doc.data()});
+    });
+
+    if(snap.empty || snap.size<pageSize){
+      break;
+    }
+
+    lastDoc=snap.docs[snap.docs.length-1];
+  }
+
+  return rows;
+}
+
+async function safeReadAllCollection(name,pageSize=1000){
+  try{
+    return await readAllCollection(name,pageSize);
+  }catch(error){
+    console.warn("Full collection could not be read:",name,error);
+    return [];
+  }
+}
+
 async function loadAll(){
   $("notice").className="notice loading";$("notice").textContent="جاري تحديث البيانات...";$("notice").classList.remove("hidden");
   $("connection").classList.remove("error");$("connectionTitle").textContent="جاري الاتصال";$("connectionText").textContent="يتم تحميل بيانات برودل...";
@@ -4723,7 +4762,7 @@ async function loadAll(){
       safeReadCollection("FunActivityLiveSessions"),
       readCollection("StudyPlans"),
       safeReadCollection("StudyPlanProgress"),
-      safeReadCollection("EnglishActivities"),
+      safeReadAllCollection("EnglishActivities",1000),
       readCollection("DeviceLoginLogs",1000),
       safeReadCollection("AbsenceCommunications",2000)
     ]);
@@ -4867,13 +4906,66 @@ function buildStudentResultMap(students,findResult,totalFallback=0){
   return map;
 }
 
+
+/* =========================================================
+   ENGLISH ACTIVITIES COMPATIBILITY
+   Supports old + new skill records used by different trainers.
+========================================================= */
+function normalizeSkillRecord(r){
+  r = r || {};
+  return {
+    courseId: clean(first(r,["courseId","CourseId","courseID","CourseID","course","Course"],"")),
+    studentId: clean(first(r,["studentId","studentID","StudentID","studentDocId","studentDocID","StudentDocId","ID"],"")),
+    studentIqama: clean(first(r,["studentIqama","StudentIqama","iqama","Iqama","studentID","StudentID","ID"],"")),
+    skill: clean(first(r,["skill","skillName","Skill","SkillName","category","Category","type","Type"],"")),
+    score: first(r,["score","Score","grade","Grade","points","Points","mark","Mark"],"")
+  };
+}
+
+function normalizeSkillKey(value){
+  const v = clean(value).toLowerCase().replace(/[\s_-]+/g,"");
+  const aliases = {
+    listening:"listening",
+    listen:"listening",
+    speaking:"speaking",
+    speak:"speaking",
+    reading:"reading",
+    read:"reading",
+    writing:"writing",
+    write:"writing",
+    grammar:"grammar",
+    vocabulary:"vocabulary",
+    vocab:"vocabulary"
+  };
+  return aliases[v] || v;
+}
+
+function sameSkillStudent(student, record){
+  const sid = clean(student?.id);
+  const storedStudentId = clean(student?.studentId);
+  const iqama = clean(student?.iqama);
+
+  const rid = clean(record?.studentId);
+  const riqama = clean(record?.studentIqama);
+
+  return Boolean(
+    (sid && rid && sid===rid) ||
+    (storedStudentId && rid && storedStudentId===rid) ||
+    (iqama && rid && iqama===rid) ||
+    (iqama && riqama && iqama===riqama) ||
+    (storedStudentId && riqama && storedStudentId===riqama)
+  );
+}
+
 function derive(rawCourses,rawStudents,exams,results,activities,activityResults,activityUsage,activityLiveSessions,plans,studyProgress,skillEvaluations,logs){
   const students=rawStudents.map(s=>({
     id:s.id,
     name:clean(first(s,["name","StudentName","studentName","Name"],"طالب")),
-    iqama:clean(first(s,["iqama","studentIqama","studentID","StudentID","ID"])),
+    iqama:clean(first(s,["iqama","studentIqama","Iqama","studentID","StudentID","ID"],"")),
+    studentId:clean(first(s,["studentId","studentID","StudentID","ID","iqama","studentIqama"],"")),
+    studentId:clean(first(s,["studentId","studentID","StudentID","ID"],"")),
     phone:clean(first(s,["phone","Phone","mobile","Mobile","phoneNumber","PhoneNumber","studentPhone","StudentPhone"])),
-    courseId:clean(first(s,["courseId","CourseId"])),
+    courseId:clean(first(s,["courseId","CourseId","courseID","CourseID"],"")),
     records:Array.isArray(s.records)?s.records:[],
     trainerComment:clean(s.trainerComment),
     midterm:s.midterm,
@@ -5295,27 +5387,21 @@ function derive(rawCourses,rawStudents,exams,results,activities,activityResults,
 
     SUPERVISION_SKILLS.forEach(skill=>{
 
-      const records=(skillEvaluations||[]).filter(r=>
-        clean(r.courseId)===id &&
-        clean(r.skill).toLowerCase()===
-          skill.toLowerCase() &&
-        hasValue(r.score)
-      );
+      const records=(skillEvaluations||[])
+        .map(normalizeSkillRecord)
+        .filter(r=>
+          r.courseId===id &&
+          normalizeSkillKey(r.skill)===normalizeSkillKey(skill) &&
+          hasValue(r.score)
+        );
 
       const scoredStudentIds=new Set();
       const weakStudentIds=new Set();
 
       records.forEach(r=>{
-        const recordStudentId=
-          clean(r.studentId);
-
         const matched=
           courseStudents.find(s=>
-            s.id===recordStudentId ||
-            (
-              s.iqama &&
-              clean(r.studentIqama)===s.iqama
-            )
+            sameSkillStudent(s,r)
           );
 
         if(matched){
@@ -8816,9 +8902,16 @@ function openSkill(courseId,skill){
   const item=c.skillSummary?.[skill]||{done:0,total:students.length,completedIds:[],pendingIds:students.map(s=>s.id)};
   const studentResults={};
   (DATA.skillEvaluations||[])
-    .filter(r=>clean(r.courseId)===courseId && clean(r.skill).toLowerCase()===clean(skill).toLowerCase() && hasValue(r.score))
+    .map(normalizeSkillRecord)
+    .filter(r=>
+      r.courseId===courseId &&
+      normalizeSkillKey(r.skill)===normalizeSkillKey(skill) &&
+      hasValue(r.score)
+    )
     .forEach(r=>{
-      const matched=students.find(s=>s.id===clean(r.studentId)||(s.iqama&&clean(r.studentIqama)===s.iqama));
+      const matched=students.find(s=>
+        sameSkillStudent(s,r)
+      );
       if(!matched)return;
       const score=Number(r.score);
       const total=skillMaximum(skill);
